@@ -605,13 +605,13 @@ clean:
 - **动态**：动态加载，运行时才加载
 - **链接**：指库文件和二进制程序分离，用某种手段维护两者之间的关系
 - **扩展名**：Windows(.dll)，Linux(.so)
-- **常用选项**：
+- **常用命令选项选项**：
 
   ```makefile
   -fPIC     # 位置无关代码
   -shared   # 共享库
-  -l        # 指定动态库
-  -I        # 指定头文件目录，默认当前目录
+  -l        # 指定动态库 注意区分大小写 这里是小写的l
+  -I        # 指定头文件目录，默认当前目录 注意区分大小写 这里是大写的i
   -L        # 指定库搜索目录
   ```
 
@@ -626,8 +626,6 @@ clean:
 #define __SOTEST_H__
 class SoTest
 {
-private:
-    /* data */
 public:
     void func1();
     virtual void func2();
@@ -824,13 +822,215 @@ clean:
 
 ### 7.3 静态库示例
 
+- **同一目录**
+
 ```bash
-# 编译静态库
+└── 002/
+     ├── aTest.h       # 头文件
+     ├── aTest.cpp
+     ├── Makefile
+     └── Test.cpp
+```
+
+**`aTest.h`**
+
+```cpp
+#ifndef __ATEST_H__
+#define __ATEST_H__
+class aTest
+{
+public:
+    void func1();
+    virtual void func2();
+    virtual void func3() = 0;
+};
+#endif
+```
+
+**`aTest.cpp`**
+
+```cpp
+#include <iostream>
+#include "aTest.h"
+
+void aTest::func1()
+{
+    std::cout << "aTest::func1() called" << std::endl;
+}
+
+void aTest::func2()
+{
+    std::cout << "aTest::func2() called" << std::endl;
+}
+```
+
+**`Test.cpp`**
+
+```cpp
+#include <iostream>
+#include "aTest.h"
+
+class test : public aTest
+{
+public:
+    void func2()
+    {
+        std::cout << "test::func1() called" << std::endl;
+    }
+
+    void func3()
+    {
+        std::cout << "test::func1() called" << std::endl;
+    }
+};
+
+int main()
+{
+    test t;
+    t.func1(); // Calls aTest::func1()
+    t.func2(); // Calls test::func2()
+    t.func3(); // Calls test::func3()
+
+    return 0;
+}
+```
+
+**`Makefile`**
+
+```makefile
+.PHONY: all clean test
+
+# 编译器和工具设置
+CXX = g++
+AR = ar
+
+all: libaTest.a
+# 静态库构建规则
+libaTest.a: aTest.o
+	$(AR) -r libaTest.a aTest.o
+	@echo "静态库构建完成：libaTest.a"
+
+# 源文件编译规则
+aTest.o: aTest.cpp
+	$(CXX) -c aTest.cpp -o aTest.o
+
+# 测试程序构建目标
+test: test.o libaTest.a
+	$(CXX) test.o -L. -laTest -o test
+	@echo "测试程序构建完成：test"
+
+test.o: test.cpp
+	$(CXX) -c test.cpp -o test.o
+
+# 清理规则
+clean:
+	$(RM) *.o *.a test
+	@echo "已清理所有生成文件"
+```
+
+编译执行
+
+```bash
+[root@localhost 002]# make clean;make ;make test
+rm -f *.o *.a test
+已清理所有生成文件
 g++ -c aTest.cpp -o aTest.o
 ar -r libaTest.a aTest.o
+ar: creating libaTest.a
+静态库构建完成：libaTest.a
+g++ -c test.cpp -o test.o
+g++ test.o -L. -laTest -o test
+测试程序构建完成：test
+[root@localhost 002]# ./test
+aTest::func1() called
+test::func1() called
+test::func1() called
+```
 
-# 使用静态库
-g++ -lsoTest -laTest main.cpp -o main
+- **外部使用**
+
+```bash
+├── Makefile
+├── main.cpp
+└── 002/
+     ├── libaTest.a    # 静态库文件
+     └── aTest.h       # 头文件
+```
+
+- **`main.cpp`**
+
+```cpp
+#include "aTest.h"
+#include <iostream>
+
+class MainTest : public aTest
+{
+public:
+    void func2()
+    {
+        std::cout << "MainTest::func2() called" << std::endl;
+    }
+
+    void func3()
+    {
+        std::cout << "MainTest::func3() called" << std::endl;
+    }
+};
+
+int main()
+{
+    MainTest t;
+    t.func1(); // Calls aTest::func1()
+    t.func2(); // Calls MainTest::func2()
+    t.func3(); // Calls MainTest::func3()
+
+    return 0;
+}
+```
+
+**`Makefile`**
+
+```Makefile
+.PHONY: all clean
+
+# 设置库目录（使用相对路径）
+LIB_DIR := ./002
+
+# 添加头文件搜索路径变量
+INC_DIR := -I$(LIB_DIR)
+
+all:main
+
+main: main.o
+	@test -f $(LIB_DIR)/libaTest.a || (echo "错误：找不到静态库 $(LIB_DIR)/libaTest.a" && exit 1)
+	$(CXX) main.o -L$(LIB_DIR) -laTest -o main
+
+# 关键：添加头文件搜索路径 -I$(LIB_DIR) 初学很喜欢忘记 。
+main.o: main.cpp
+	$(CXX) -c main.cpp $(INC_DIR) -o main.o
+
+clean:
+	$(RM) *.o main
+```
+
+编译执行
+
+```bash
+[root@localhost class06]# make clean;make
+rm -f *.o main
+g++ -c main.cpp -I./002 -o main.o
+g++ main.o -L./002 -laTest -o main
+[root@localhost class06]# ./main
+aTest::func1() called
+MainTest::func2() called
+MainTest::func3() called
+```
+
+通过 **`objdump`** 反汇编命令查看 可执行文件 中的汇编代码 可以查看在atst.cpp 中的函数全都在mian 文件中而动态链接中中的osTest.cpp中的动态函数就没。
+![1750929538425](image/Makefile入门/1750929538425.png)
+![1750929555049](image/Makefile入门/1750929555049.png)
+```bash
+objdump -DC main > main.s
 ```
 
 ## 八、通用部分做公共文件头
