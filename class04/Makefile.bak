@@ -1,0 +1,25 @@
+OBJS = add.o div.o multi.o sub.o calc.o
+TARGET = calc
+
+.PHONY:clean
+
+$(TARGET):$(OBJS)
+	$(CXX) $^ -o $@
+
+add.o : add.cpp
+	$(CXX) -c $^ -o $@
+
+div.o : div.cpp
+	$(CXX) -c $^ -o $@
+
+multi.o : multi.cpp
+	$(CXX) -c $^ -o $@
+
+sub.o : sub.cpp
+	$(CXX) -c $^ -o $@
+
+calc.o : calc.cpp
+	$(CXX) -c $^ -o $@
+
+clean:
+	$(RM) $(TARGET) $(OBJS)

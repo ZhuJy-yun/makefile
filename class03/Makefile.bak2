@@ -1,0 +1,31 @@
+# 自定义变量 目标和二进制文件
+OBJS = add.o div.o multi.o sub.o calc.o
+TARGET = calc
+
+$(TARGET):$(OBJS)
+	$(CXX) $(OBJS) -o $(TARGET)
+
+add.o : add.cpp
+	$(CXX) -c add.cpp -o add.o
+
+div.o : div.cpp
+	$(CXX) -c div.cpp -o div.o
+
+multi.o : multi.cpp
+	$(CXX) -c multi.cpp -o multi.o
+
+sub.o : sub.cpp
+	$(CXX) -c sub.cpp -o sub.o
+
+calc.o : calc.cpp
+	$(CXX) -c calc.cpp -o calc.o
+
+clean:
+	$(RM) $(TARGET) $(OBJS)
+
+show:
+	@echo  $(AS)
+	@echo  $(CC)
+	@echo  $(CPP)
+	@echo  $(CXX)
+	@echo  $(RM)
