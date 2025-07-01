@@ -64,6 +64,10 @@ target: dependencies
 	commands
 ```
 
+**target**：可以是一个object file(目标文件)，也可以是一个执行文件，还可以是一个标签（label）。对于标签这种特性，在后续的“伪目标”章节中会有叙述。
+**dependencies**：生成该target所依赖的文件和/或target。
+**commands**：该target要执行的命令(任意的shell命令)。
+
 **命令前面必须用tab空格**，如果想用别的需用 `.RECIPEPREFIX` 指定。不建议修改
 
 ```mermaid
@@ -92,12 +96,12 @@ makefile文件
 
 ```makefile
 hello:hello.c
-        gcc hello.c -o hello
+   gcc hello.c -o hello
 clean:
-        rm hello
+   rm hello
 ```
 
-clean不是别的目标的依赖，所以只在执行 make clean时候才被执行，这种被称为伪目标。为避免存在clean文件。我们显式指定为伪目标，用关键词.PHONY. 出错继续执行在 rm前面加-
+clean不是别的目标的依赖，所以只在执行 make clean时候才被执行，这种被称为伪目标。为避免存在clean文件。我们显式指定为伪目标，用关键词 **`.PHONY`**. 出错继续执行在 rm前面加-
 
 ```makefile
 hello:hello.c
