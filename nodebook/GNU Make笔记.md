@@ -68,7 +68,11 @@ target: dependencies
 **dependencies**：生成该target所依赖的文件和/或target。
 **commands**：该target要执行的命令(任意的shell命令)。
 
+<<<<<<< HEAD
 **：每一个命令行必须以[Tab]字符开始，[Tab]字符告诉make此行是一个命令行**，如果想用别的需用 `.RECIPEPREFIX` 指定。不建议修改
+=======
+**命令前面必须用tab空格**，如果想用别的需用 `.RECIPEPREFIX` 指定。不建议修改
+>>>>>>> bca2ac931de0a95f8f3c38720c3f41a5cb55b5b2
 
 ```mermaid
 graph LR
