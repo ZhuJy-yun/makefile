@@ -4,6 +4,8 @@
 
 ### 1.1. 基本概术(Overview of make)
 
+makefile：一个工程中的源文件不计其数，并且按类型、功能、模块分别放在若干个目录中，makefile **定义一系列的规则**，哪些文件需要先编译，哪些文件需要后编译，哪些文件需要重新编译，甚至于进行更复杂的功能操作，因为 makefile 就像一个 Shell 脚本一样，其中也可以执行操作系统的命令。
+
 > make 工具能自动检查哪些源代码需要编译（或重新编译），并执行对应的编译命令。
 > 要使用 make 工具，必须先编写名为 makefile 的配置文件，其中需定义：
 >
@@ -16,17 +18,16 @@
 - Makefile的好处是能够使用一行命令来完成“自动化编译”，一旦提供一个（通常对于一个工程来说会是多个）正确的Makefile。编译整个工程你所要做的唯一的一件事就是在shell 提示符下输入make命令。整个工程完全自动编译，极大提高了效率。
   - make是一个命令工具，它解释Makefile中的指令（应该说是规则）在Makefile文件中描述了整个工程所有文件的编译顺序、编译规则。Makefile有自己的书写**格式**、**关键字**、**函数**。像其他编程语言一样有自己的格式、关键字和函数一样。而且在Makefile中可以使用系统shell所提供的任何命令来完成想要的工作。Makefile（在其它的系统上可能是另外的文件名）在绝大多数的IDE开发环境中都在使用，已经成为一种工程的编译方法。
 
-### 1.2. 准备知识
+### 1.2. 准备知识(How to Read This Manual)
 
 make的讨论之前，首先需要明确一些基本概念：
 
-- 编译的流程 **预处理**，**汇编**，**编译**，**连接**
+- 编译的流程 **预处理(Preprocessing)**，**汇编(Assembly)**，**编译(compile)**，**连接(link)**
 
   - **预处理(Preprocessing)**：在代码翻译前处理宏展开、文件包含和条件编译的编译阶段，将从C/C++源文件做预处理，包含的头文件全部展开到源文件中 `g++ -E mian.cpp -o main.i`
   - **汇编(Assembly)**：将汇编语言助记符翻译为机器码指令的过程。将展开后的预处理文件转化为汇编文件 `g++ -S mian.cpp/main.i -o main.s`
   - **编译(compile)**：把高级语言书写的代码转换为机器可识别的机器指令文件，即二进制文件。`g++ -c main.cpp/main.i/main.s -o main.o`
   - **链接(link)**：将多.o文件，或者.o文件和库文件链接成为可被操作系统执行的可执行程序（Linux环境下，可执行文件的格式为“ELF”格式）`g++ main.cpp/main.i/main.s/main.o -o main`
-
 - 完整编译流程术语链
 
 ```mermaid
@@ -112,14 +113,146 @@ clean:
         -rm hello
 ```
 
-### 2.3. How make Processes a Makefile
+### 2.3. make 是如何工作的(How make Processes a Makefile)
 
-1. 通常我们运行make，它只会查找第一个目标执行。如果我们想指定运行某个目标可以使用 **`.DEFAULT_GOAL`** 关键词手动指定。
-2. make根据依赖是否发生变化来判断是否需要重新生成目标。
+`make` 是一个自动化构建工具，它通过解析 `Makefile` 文件来确定项目中文件的依赖关系，并仅重新构建已更改的部分。以下是其工作原理的详细说明：
 
-可以看到依赖未变化，不会重新生成目标。
+---
 
-### 2.4. Variables Make Makefiles Simpler
+#### **核心流程**
+
+1. **读取 `Makefile`**
+   - 默认读取名为 `Makefile` 或 `makefile` 的文件（可通过 `-f` 指定其他文件）。
+   - 解析变量定义（如 `CC = gcc`）、隐式规则（如 `.c.o:`）和显式规则。
+
+2. **确定构建目标**
+   - 若命令行未指定目标（如 `make`），则构建第一个目标（通常为 `all`）。
+   - 若指定目标（如 `make clean`），则构建该目标。
+
+3. **构建依赖树**
+   - 递归分析目标的所有依赖项，形成有向无环图（DAG）。
+   *示例规则：*
+
+   ```makefile
+   app: main.o utils.o          # 目标 `app` 依赖 main.o 和 utils.o
+       gcc -o app main.o utils.o  # 构建命令
+   ```
+
+4. **检查文件时间戳**
+   - 对每个目标，比较其依赖项的修改时间：
+     - 若目标文件不存在，**执行命令**。
+     - 若依赖项比目标更新（依赖项修改时间更晚），**执行命令**。
+     - 否则跳过构建。
+
+5. **执行构建命令**
+   - 在 Shell 中执行规则中的命令（每行命令独立运行，除非用 `\` 连接）。
+   - 若命令以 `@` 开头，抑制输出回显。
+
+6. **递归更新依赖**
+   - 若依赖项本身是其他规则的目标，则先递归构建该依赖项。
+
+---
+
+#### **关键机制**
+
+##### 1. **变量展开**
+
+- 变量使用 `$(VAR)` 或 `${VAR}` 引用：
+
+```makefile
+CC = gcc
+app: main.c
+   $(CC) -o app main.c  # 展开为 gcc -o app main.c
+```
+
+##### 2. **自动推导（隐式规则）**
+
+- `make` 内置常见规则（如从 `.c` 生成 `.o`）：
+
+```makefile
+main.o: main.h  # 无需写命令，make 自动调用 `$(CC) -c main.c -o main.o`
+```
+
+##### 3. **伪目标（`.PHONY`）**
+
+- 声明不生成文件的目标（如 `clean`）：
+
+```makefile
+.PHONY: clean
+clean:
+   rm -f *.o app
+```
+
+##### 4. **模式规则**
+
+- 通用规则匹配多个文件：
+
+```makefile
+%.o: %.c        # 从任意 .c 文件构建同名 .o 文件
+   $(CC) -c $< -o $@
+```
+
+- `$<` 表示第一个依赖项，`$@` 表示目标。
+
+##### 5. **函数调用**
+
+- 使用内置函数处理文本：
+
+```makefile
+FILES = $(wildcard *.c)  # 获取所有 .c 文件
+OBJS = $(patsubst %.c,%.o,$(FILES))  # 将 .c 替换为 .o
+```
+
+---
+
+#### **示例解析**
+
+假设 `Makefile` 内容如下：
+
+```makefile
+CC = gcc
+CFLAGS = -Wall
+
+app: main.o utils.o
+	$(CC) $(CFLAGS) -o app main.o utils.o
+
+main.o: main.c utils.h
+	$(CC) $(CFLAGS) -c main.c
+
+utils.o: utils.c utils.h
+	$(CC) $(CFLAGS) -c utils.c
+
+clean:
+	rm -f *.o app
+.PHONY: clean
+```
+
+##### 执行 `make` 时：
+
+1. 构建第一个目标 `app`。
+2. 检查依赖项 `main.o` 和 `utils.o`：
+   - 若 `main.o` 不存在或 `main.c/utils.h` 比 `main.o` 新，则重新编译 `main.o`。
+   - 同理处理 `utils.o`。
+3. 若 `main.o` 或 `utils.o` 被更新，则链接生成 `app`。
+
+##### 执行 `make clean` 时：
+
+- 因声明为 `.PHONY`，直接执行 `rm -f *.o app` 清理文件。
+
+---
+
+#### **总结**
+
+`make` 的核心是 **依赖驱动的时间戳检查**：
+
+1. 解析 `Makefile` 构建依赖树。
+2. 对比目标与依赖项的时间戳。
+3. 仅重建过时或缺失的文件。
+4. 通过变量、隐式规则和函数减少重复代码。
+
+这种机制显著提升构建效率，尤其适用于大型项目！
+
+### 2.4. makefile中使用变量(Variables Make Makefiles Simpler)
 
 变量使Makefile变的更简单。
 
@@ -137,7 +270,7 @@ clean:
         -rm hello hello.o
 ```
 
-### 2.5 Letting make Deduce the Recipes
+### 2.5 让make自动推导(Letting make Deduce the Recipes)
 
 make自动推断命令
 我们不需要指明编译的C文件，make可以自动推导出来。隐式规则。上述例子可以简化为：
