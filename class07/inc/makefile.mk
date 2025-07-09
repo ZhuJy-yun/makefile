@@ -1,0 +1,1 @@
+class0702var2 = inc/makefile

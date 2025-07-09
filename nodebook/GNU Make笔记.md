@@ -129,7 +129,7 @@ clean:
 
 ---
 
-#### **核心流程**
+#### 2.3.1. **核心流程**
 
 1. **读取 `Makefile`**
    - 默认读取名为 `Makefile` 或 `makefile` 的文件（可通过 `-f` 指定其他文件）。
@@ -163,7 +163,7 @@ clean:
 
 ---
 
-#### **关键机制**
+#### 2.3.2. **关键机制**
 
 ##### 1. **变量展开**
 
@@ -215,7 +215,7 @@ OBJS = $(patsubst %.c,%.o,$(FILES))  # 将 .c 替换为 .o
 
 ---
 
-#### **示例解析**
+#### 2.3.3. **示例解析**
 
 假设 `Makefile` 内容如下：
 
@@ -237,7 +237,7 @@ clean:
 .PHONY: clean
 ```
 
-##### 执行 `make` 时：
+##### 1. 执行 `make` 时：
 
 1. 构建第一个目标 `app`。
 2. 检查依赖项 `main.o` 和 `utils.o`：
@@ -245,13 +245,13 @@ clean:
    - 同理处理 `utils.o`。
 3. 若 `main.o` 或 `utils.o` 被更新，则链接生成 `app`。
 
-##### 执行 `make clean` 时：
+##### 2. 执行 `make clean` 时：
 
 - 因声明为 `.PHONY`，直接执行 `rm -f *.o app` 清理文件。
 
 ---
 
-#### **总结**
+#### 2.3.4. **总结**
 
 `make` 的核心是 **依赖驱动的时间戳检查**：
 
@@ -323,34 +323,55 @@ clean:
 1. 通过`.PHONY`特殊目标将`clean`目标声明为伪目标。避免当磁盘上存在一个名为`clean`文件时，目标`clean`所在规则的命令无法执行。
 2. 在命令行之前使用`-`，意思是忽略命令`rm`的执行错误。
 
-## 3. (Makefile 总述)Writing Makefiles
+## 3. Makefile 总述(Writing Makefiles)
 
-### 3.1. What Makefiles Contain
+### 3.1. Makefile的内容(What Makefiles Contain)
 
-Makefiles contain five kinds of things: **explicit rules**, **implicit rules**, **variable definitions**,**directives**, and **comments**
-显示规则，隐式规则，变量定义，指令和注释
+在一个完整的Makefile 中，包含了 5个东西：**显式规则**、**隐含规则**、**变量定义**、**指示符**和**注释**
 
-#### 3.1.1. Splitting Without Adding Whitespace
+- **显式规则**：它描述了在何种情况下如何更新一个或者多个被称为目标的文件（Makefile 的目标文件）。Makefile中需要明确地给出目标文件、目标的依赖文件列表以及更新目标文件所需要的命令（有些规则没有命令，这样的规则只是纯粹的描述了文件之间的依赖关系）。
+- **隐含规则**：它是make根据一类目标文件（典型的是根据文件名的后缀）而自动推导出来的规则。make根据目标文件的名，自动产生目标的依赖文件并使用默认的命令来对目标进行更新（建立一个规则）。关于隐含规则可参考 第十章 make的隐含规则。
+- **变量定义**：使用一个字符或字符串代表一段文本串，当定义了一个变量以后，Makefile后续在需要使用此文本串的地方，通过引用这个变量来实现对文本串的使用。第一章的例子中，我们就定义了一个变量“objects”来表示一个.o文件列表。关于变量的详细讨论可参考 第六章 Makefile中的变量
+- **Makefile 指示符**：指示符指明在make程序读取makefile 文件过程中所要执行的一个动作。其中包括：
+  - **读取一个文件，读取给定文件名的文件，将其内容作为makefile文件的一部分**。参考 3.3 包含其它makefile文件一节。
+  - **决定（通常是根据一个变量的得值）处理或者忽略Makefile中的某一特定部分**。参考 第七章Makefile的条件执。
+  - **定义一个多行变量**。参考 6.8 多行定义一节。
+- **注释**：以`#`字符后的内容被作为是注释内容。
+
+#### 3.1.1. 添加`$`表示精确控制换行时的空格(Splitting Without Adding Whitespace)
 
 如果你想把一行长串字符分行后，在中间不加空格，需要用$符号
 
 ```makefile
-var :=one$\
-    world
+#class0701 $\ 用于精确控制空白，\ 用于通用续行（自动插入空格）。
+var=hello$\
+world
+var2=hello\
+world
+
+class0701:
+	@echo $(var)
+	@echo $(var2)
 ```
 
-**`oneworld.`**  $代表一个变量，为空
+执行 make 输出内容 `hello world`
+![1752032864305](image/GNUMake笔记/1752032864305.png)
 
-### 3.2 What Name to Give Your Makefile
+**注意**：
 
-1. 对于GNU的make来说有三种命名：makefile、Makefile、GNUmakefile
-2. 可以用 -f 或者 -file来指定要执行的makefile
+- 所有以[Tab]字符开始的的行都是执行规则。make会将其交给系统shell程序去解释执行。包括注释行也会交给shell来处理。
+- 使用指示符`define`定义一个多行的变量或者命令包时，其定义体(`define`和`endef`之间的内容)会被完整的展开到Makefile中引用此变量的地方(包含定义体中的注释行)；make 在引用此变量的地方对所有的定义体进行处理，决定是注释还是有效内容。Makefile 中变量的引用和 C 语言中的宏类似（但是其实质并不相同）。对一个变量引用的地方make所做的就是将这个变量根据定义进行基于文本的展开，展开变量的过程不涉及到任何变量的具体含义和功能分析。
+
+### 3.2 makefile文件的命名(What Name to Give Your Makefile)
+
+1. 对于GNU的make来说有三种命名：`makefile`、`Makefile`、`GNUmakefile`
+2. 可以用 `-f` 或者 `-file`来指定要执行的makefile
 
 如果三个文件都存在，优先级的顺序为: GNUmakefile > makefile >Makefile
 
-### 3.3 Including Other Makefile
+### 3.3 包含其它makefile文件(Including Other Makefile)
 
-1. The include directive tells make to suspend reading the current makefile and read one or more other makefiles before continuing 。
+1. `include`指示符告诉 make 暂停读取当前的 Makefile，而转去读取`include`指定的一个或者多个文件，完成以后再继续当前Makefile 的读取。其形式如下：
 
    ```makefile
    include ./inc/makefile.mk
@@ -360,92 +381,757 @@ var :=one$\
 
    ```makefile
    include ./inc/makefile.mk
-   .PHNOY: test
-   test:
-           @echo $(var2)
+   .PHONY: class0702
+   class0702:
+      @echo $(class0702var2)
    ```
 
    **`./inc/makefile.mk`**
 
    ```makefile
-   var2 = inc/makefile
+   class0702var2 = inc/makefile
    ```
-2. 头文件查找
 
+2. include指定的文件没有给出路径那么头文件查找
    - `.INCLUDE_DIRS`  这个变量记录了默认搜索头文件的路径
    - `-I` 可以指定搜索头文件路径
+   - `/usr/gnu/include`
+   - `/usr/local/include`
+   - `/usr/include`
 
-### 3.4. The Variable MAKEFILES
+### 3.4. 变量 MAKEFILES(The Variable MAKEFILES)
 
-make会使用环境变量，`env`和 `set`命令可查看。
+在 Makefile 中，`MAKEFILES` 是一个特殊的环境变量，用于在 **make 启动前自动包含其他 Makefile**。理解它的关键点如下：
+
+#### 3.4.1. 核心作用
+
+```bash
+export MAKEFILES=/path/to/file1.mk:/path/to/file2.mk
+make  # 自动加载指定文件
+```
+
+1. **预加载机制**：在读取当前目录的 Makefile **之前**，自动包含指定的文件
+2. **隐式包含**：不需要在 Makefile 中使用 `include` 指令
+3. **环境级配置**：适用于需要全局生效的共享配置
+
+#### 3.4.2. 典型使用场景
+
+| 场景                | 示例                          | 优势                     |
+|---------------------|-------------------------------|--------------------------|
+| 共享工具链配置      | `MAKEFILES=~/toolchains.mk`   | 多项目统一编译参数       |
+| 企业级构建规范      | `MAKEFILES=/corp/build_rules` | 强制执行代码质量检查     |
+| 开发环境默认设置    | `MAKEFILES=~/.make-defaults`  | 个性化开发环境配置       |
+| 跨项目通用函数库    | `MAKEFILES=lib/make_utils.mk` | 复用复杂逻辑函数         |
+
+#### 3.4.3. 关键特性解析
 
 ```makefile
-.PHONY test
+# 假设设置：export MAKEFILES=preload.mk
+# preload.mk 内容：
+COMMON_FLAGS := -O2 -Wall
+
+# Makefile 内容：
+all:
+    @echo "Flags: $(COMMON_FLAGS)"
+```
+
+1. **加载顺序**：
+
+   ``` bash
+   MAKEFILES → Makefile → include 指令
+   ```
+
+2. **变量覆盖**：
+   - MAKEFILES 中的定义可被 Makefile 覆盖
+   - 类似命令行 `make VAR=value` 的优先级
+
+3. **递归忽略**：
+   - 子 make 调用时 **不会** 继承 MAKEFILES
+   - 避免嵌套包含导致冲突
+
+#### 3.4.3. 与 `include` 指令的区别
+
+| 特性                | MAKEFILES                     | include 指令               |
+|---------------------|-------------------------------|---------------------------|
+| **作用时机**        | make 启动前                   | make 解析时               |
+| **作用范围**        | 全局影响                      | 显式局部包含              |
+| **错误处理**        | 文件不存在时静默忽略           | 默认报错(-include可忽略)  |
+| **继承性**          | 不传递给子make                | 随Makefile传递            |
+| **可控性**          | 环境变量控制                  | Makefile内部控制          |
+
+#### 3.4.4. 实际应用示例
+
+**共享配置场景**：
+
+```bash
+# 用户配置 ~/.make_profile
+export MAKEFILES=$HOME/.make/colors.mk:$HOME/.make/docker.mk
+```
+
+**企业级构建系统**：
+
+```bash
+# CI 环境设置
+export MAKEFILES=/build-system/security-checks.mk:/build-system/metrics.mk
+```
+
+#### 3.4.5. 注意事项
+
+1. **谨慎使用**：
+   - 可能造成隐式依赖，导致构建行为不透明
+   - GNU make 文档明确建议："通常应该避免使用"
+
+2. **路径分隔符**：
+   - Unix 使用 `:` 分隔 (`file1.mk:file2.mk`)
+   - Windows 使用 `;` 分隔 (`file1.mk;file2.mk`)
+
+3. **调试技巧**：
+
+   ```bash
+   make -p | grep MAKEFILES  # 查看实际加载的文件
+   make --debug=v            # 显示详细加载过程
+   ```
+
+#### 3.4.6. 替代方案推荐
+
+```makefile
+# 更可控的显式包含方式
+include $(wildcard *.mk)
+-include $(PROJECT_CONFIG)
+
+# 命令行指定
+make -f common.mk -f Makefile
+```
+
+总结：`MAKEFILES` 是 make 的 **预加载机制**，适用于需要 **全局生效的共享配置**，但由于其隐式特性，在现代构建系统中更推荐使用显式的 `include` 机制。
+
+### 3.5. makefile文件的重建(How Makefiles Are Remade)
+
+#### 3.5.1. 核心概念解析：Makefile 的重建机制
+
+这段内容描述了 Makefile 的一个高级特性：**Makefile 本身也可以作为构建目标**。这意味着：
+
+1. Makefile 可以由其他文件生成（如 RCS/SCCS 版本控制文件）
+2. 当 Makefile 需要更新时，make 会先重建它再重新加载
+3. 这个机制会影响 make 的工作流程
+
+#### 3.5.2. 重建过程详解（分步骤说明）
+
+```mermaid
+graph TD
+    A[开始执行 make] --> B[读取所有 Makefile]
+    B --> C[将每个 Makefile 视为目标]
+    C --> D{检查是否需要<br>更新 Makefile?}
+    D -->|是| E[执行更新命令]
+    D -->|否| F[继续正常构建]
+    E --> G[更新后标记为&quot;需要重载&quot;]
+    G --> H{任何 Makefile<br>被更新?}
+    H -->|是| I[清除当前状态]
+    I --> B[重新读取所有 Makefile]
+    H -->|否| F[继续正常构建]
+    F --> J[执行实际构建任务]
+```
+
+#### 3.5.3. 关键机制解释
+
+1. **Makefile 作为构建目标**
+   - Makefile 可以像普通文件一样有构建规则
+   - 示例：从模板生成 Makefile
+
+     ```makefile
+     Makefile: Makefile.template
+         sed 's/__VERSION__/1.0/' $< > $@
+     ```
+
+2. **自动重载机制**
+   - 如果任何 Makefile 在初始读取后被更新：
+     - make 会**清除当前状态**
+     - **重新读取**所有 Makefile
+     - 再次检查是否需要更新（通常不需要）
+     - 然后执行实际构建任务
+
+3. **防止循环重建**
+   - 危险情况：无条件的 Makefile 更新规则
+
+     ```makefile
+     # 危险！会导致无限循环
+     Makefile:
+         touch $@
+     ```
+
+   - make 的特殊处理：
+     - 自动忽略**没有依赖项**的 Makefile 目标规则
+     - 防止 makefile 不断重建→重载→重建的死循环
+
+4. **命令行选项的特殊行为**
+
+   | 选项 | 对 Makefile 目标的影响 |
+   |------|------------------------|
+   | `-t` (touch) | **不**更新时间戳 |
+   | `-q` (question) | 正常检查更新 |
+   | `-n` (dry-run) | 打印命令但不执行 |
+
+   - 例外：当 Makefile 被指定为**最终目标**时，选项会生效
+
+#### 3.5.4. 实际场景示例
+
+**场景1：自动配置生成 Makefile**
+
+```bash
+# 首次执行（无 Makefile）
+$ make
+# 自动执行：
+#   1. 发现没有 Makefile
+#   2. 找到生成规则：通过 configure 脚本生成
+#   3. 运行 ./configure > Makefile
+#   4. 重新加载 Makefile
+#   5. 执行实际构建
+```
+
+**场景2：安全更新 Makefile**
+
+```makefile
+# 正确写法：添加依赖项防止循环
+Makefile: Makefile.in config.status
+    ./config.status
+```
+
+**场景3：避免重建的技巧**
+
+```bash
+# 不希望重建 mfile 时：
+make -f mfile -n mfile target
+
+# 执行流程：
+#   1. 读取 mfile
+#   2. 将 mfile 视为目标执行 -n 更新（只打印不执行）
+#   3. 构建 target（使用原始 mfile）
+```
+
+#### 3.5.5. 为什么需要这个机制？
+
+1. **动态构建系统**：当构建规则本身需要根据环境生成时
+   - 例如：autotools 生成的 Makefile
+
+2. **版本控制集成**：从 RCS/SCCS 检出最新 Makefile
+
+3. **条件化构建**：根据检测结果生成不同的构建规则
+
+#### 3.5.6. 重点注意事项
+
+1. **默认 Makefile 的自动创建**：
+   - 当不存在默认 Makefile 时
+   - make 会尝试按顺序创建：
+
+     ```bash
+     GNUmakefile → makefile → Makefile
+     ```
+
+2. **重建不是必须的**：
+   - 即使无法创建默认 Makefile，make 也不会报错
+   - 可以使用预定义的隐式规则继续构建
+
+3. **性能影响**：
+   - 重建 Makefile 会导致整个 make 重启
+   - 应避免频繁重建
+
+这个机制主要用在**高级构建系统**中（如 autoconf/automake），日常开发中较少需要手动处理 Makefile 的重建。理解它有助于调试复杂的构建问题，特别是当 Makefile 本身是由脚本生成的情况。
+
+### 3.6. 重载另外一个makefile(Overriding Part of Another Makefile)
+
+#### 🔍 3.6.1. 问题本质
+
+当两个 Makefile 中存在**同名目标但不同规则**时：
+
+```makefile
+# Makefile-A
+target:
+    command_A
+
+# Makefile-B
+target:
+    command_B  # 与A冲突
+```
+
+直接使用 `include` 会导致致命错误：
+
+```bash
+*** target has conflicting commands. Stop.
+```
+
+#### 💡 3.6.2. 解决方案：优先级委托模式
+
+通过**模式规则**实现智能委托，解决冲突：
+
+```makefile
+# Makefile-A (主控制文件)
+# 1. 定义需要自定义的目标
+target:
+    custom_command  # 自定义实现
+
+# 2. 委托规则：处理其他所有目标
+%: force
+    @$(MAKE) -f Makefile-B $@  # 委托给B
+
+# 3. 强制触发机制
+force: ;
+```
+
+#### 🛠️ 3.6.3. 工作原理（同名目标处理流程）
+
+```mermaid
+graph TD
+    A[用户请求目标X] --> B{目标X是否在<br>Makefile-A中定义？}
+    B -->|是| C[执行Makefile-A中的规则]
+    B -->|否| D[触发模式规则 %:force]
+    D --> E[执行委托命令：make -f Makefile-B X]
+```
+
+#### ✅ 3.6.4. 同名目标处理示例
+
+| 请求目标 | 处理结果 |
+|----------|----------|
+| `make target` | 执行 `Makefile-A` 中的 `custom_command` |
+| `make other_target` | 委托执行 `Makefile-B` 中的同名规则 |
+
+#### ⚠️ 3.6.5. 关键防御机制：`force` 目标
+
+```makefile
+force: ;  # 空命令声明
+```
+
+1. **强制触发**：确保模式规则始终执行（因 `force` 是伪目标）
+2. **防循环**：空命令阻止 make 查找构建 `force` 的规则
+3. **无副作用**：不产生实际文件，仅作为触发机制
+
+#### 🔧 3.6.6. 实际应用场景
+
+假设有两个项目：
+
+```bash
+project-A/
+  ├── Makefile   # 基础构建
+  └── src/
+
+project-B/
+  ├── Makefile   # 增强构建（需复用A）
+  └── tests/
+```
+
+**项目B的 Makefile 实现：**
+
+```makefile
+# 自定义测试目标
 test:
-	echo $(USER)
+    ./run_advanced_tests
+
+# 委托其他目标给项目A
+%: force
+    @$(MAKE) -C ../project-A $@
+
+force: ;
 ```
 
-通常我们也可以通过 `export`来定义临时环境变量。
+#### 💡 3.6.7. 执行效果
+
+```bash
+# 执行自定义目标（B优先）
+$ make test
+> ./run_advanced_tests
+
+# 执行基础目标（委托给A）
+$ make build
+> make -C ../project-A build
+```
+
+#### 🌟 3.6.8. 技术优势
+
+1. **无冲突继承**：
+
+   ```mermaid
+   graph LR
+     A[主Makefile] -- 自定义目标 --> B[专用规则]
+     A -- 其他目标 --> C[子Makefile规则]
+   ```
+
+2. **动态扩展**：添加新目标无需修改基础Makefile
+3. **隔离性**：基础构建系统保持独立稳定
+
+#### 🚫 3.6.9. 替代方案对比
+
+| 方案 | 优点 | 缺点 |
+|------|------|------|
+| **模式规则委托** | 目标隔离，无冲突 | 需要精心设计规则 |
+| `include` + `.SECONDEXPANSION` | 代码复用率高 | 同名目标直接冲突 |
+| 重构为通用模板 | 架构清晰 | 需要大规模改造 |
+
+> 这种模式在**嵌入式开发**和**多版本项目维护**中仍常见，例如：
+>
+> - Linux内核驱动扩展
+> - 产品线差异化构建（社区版/企业版）
+> - 遗留系统渐进式改造
+
+### 3.7. make如何解析makefile文件(How make Reads a Makefile)
+
+#### 📌 3.7.1. make 执行的完整流程
+
+```mermaid
+graph LR
+    A[开始] --> B[第一阶段：读取与解析]
+    B --> C[建立依赖关系图]
+    C --> D[第二阶段：执行构建]
+    D --> E[结束]
+```
+
+#### 🔍 3.7.2. 阶段详解
+
+**第一阶段：读取与解析（立即展开）**
+
+1. **读取所有 Makefile**：
+   - 包括 `MAKEFILES` 变量指定的
+   - `include` 指令包含的
+   - `-f` 选项指定的文件
+
+2. **构建依赖关系图**：
+
+   ```mermaid
+   graph TB
+     A[目标] --> B[依赖1]
+     A --> C[依赖2]
+     C --> D[子依赖]
+   ```
+
+3. **立即展开的元素**：
+   - 所有变量定义（根据赋值类型）
+   - 条件语句（`ifdef/ifeq` 等）
+   - 规则的目标和依赖部分
+
+**第二阶段：执行构建（延后展开）**
+
+1. **决定构建目标**：
+   - 基于文件时间戳检查
+   - 确定需要重建的目标
+
+2. **执行规则命令**：
+   - 命令行中的变量和函数
+   - 自动变量（如 `$@`, `$<`）
+
+#### ⚡ 3.7.3. 变量展开时机（关键区别）
+
+| 赋值方式          | 展开时机 | 示例                  | 特点                     |
+|-------------------|----------|-----------------------|--------------------------|
+| `VAR = value`     | 延后     | `CC = gcc`            | 每次引用时重新计算       |
+| `VAR := value`    | 立即     | `CUR_DIR := $(PWD)`   | 定义时立即固定值         |
+| `VAR ?= value`    | 延后     | `OPT ?= -O2`          | 仅当未定义时赋值         |
+| `VAR += value`    | 混合     | `CFLAGS += -Wall`     | 依赖原始变量类型         |
+| `define VAR ... endef` | 立即定义<br>延后值 | 多行变量 | 定义立即存在，值使用时展开 |
+
+**特殊说明 `+=`：**
 
 ```makefile
-export HELLO := hi
+# 情况1：原始变量是 := 定义（立即）
+VAR1 := start
+VAR1 += end  # 立即展开 → "start end"
+
+# 情况2：原始变量是 = 定义（延后）
+VAR2 = start
+VAR2 += end  # 延后展开 → $(VAR2) + " end"
 ```
 
-### 3.5. How Makefiles Are Remade
-
-双冒号规则：
-
-1. 对于一个没有依赖而只有命令行的双冒号规则,**当引用此目标时,规则的命令将会被无条件执行**。
-2. 而普通单冒号规则,当规则的目标文件存在时,此规则的命令永远不会被执行(目标文件永远是最新的
+#### 🧩 3.7.4. 条件语句处理
 
 ```makefile
-hello::
-        gcc hello.c -o hello
-clean:
-        rm hello
+ifeq ($(OS),Windows)
+    # Windows 特定规则（立即展开）
+else
+    # Linux/Mac 规则（立即展开）
+endif
 ```
 
-跟下面伪目标的效果是相同的。
+- **立即展开**：在解析阶段就确定分支
+- **实际效果**：如同编译器预处理
+
+#### ⚙️ 3.7.5. 规则展开模式
 
 ```makefile
-.PHONY: hello
-hello:
-	gcc hello.c -o hello
+# 语法模板
+目标: 依赖 ; 命令
+	命令
 ```
 
-### 3.6. Overriding Part of Another Makefile
+| 组件     | 展开时机 | 示例                  |
+|----------|----------|-----------------------|
+| 目标     | 立即     | `$(EXE): $(OBJS)`    |
+| 依赖     | 立即     | `OBJS = main.o util.o` |
+| 命令     | 延后     | `gcc -o $@ $^`       |
 
-如果存在多个目标相同，以最后一个目标为准
+**示例解析：**
 
-### 3.7. How make Reads a Makefile
+```makefile
+# 第一阶段处理：
+TARGET := app  # 立即展开
+SOURCES = $(wildcard *.c)  # 延后展开
 
-GNU make 分两个不同的阶段完成它的工作。立即展开和延迟展开
+# 第二阶段执行：
+$(TARGET): $(SOURCES)  # 目标立即→app, 依赖延后→*.c
+    gcc -o $@ $^  # 命令延后展开
+```
 
-1. 读取所有makefiles和include makefile，(internalizes )内在化所有显式规则和隐式规则的变量和值，建立一个所有目标和所有依赖的关系图
-2. make通过这些内在化的数据来决定执行更新目标和执行命令
-   变量和函数的展开发生在第一阶段，就叫做**立即展开**，否则称为**延迟展开**
+#### 💡 3.7.6. 关键理解要点
 
-### 3.8. How Makefiles Are Parsed
+1. **立即展开**发生在：
+   - 变量定义时（`:=`）
+   - 条件语句判断时
+   - 规则的目标/依赖解析时
+
+2. **延后展开**发生在：
+   - 命令行执行时
+   - 递归变量（`=`）使用时
+   - 自动变量（`$@`等）求值时
+
+3. **设计哲学**：
+
+   ```mermaid
+   graph LR
+     A[静态依赖图] -->|立即确定| B[构建计划]
+     C[动态执行] -->|延后处理| D[实际命令]
+   ```
+
+#### 🚀 3.7.7. 实际应用技巧
+
+**技巧1：性能优化**
+
+```makefile
+# 立即展开提高性能
+FILES := $(shell find . -name '*.c')  # 避免多次执行find
+```
+
+**技巧2：动态命令**
+
+```makefile
+# 延后展开实现动态性
+print-%:
+    @echo '$* = $($*)'  # 运行时展开变量名
+```
+
+**技巧3：安全条件判断**
+
+```makefile
+# 立即展开确保正确分支
+ifneq ($(MAKECMDGOALS),clean)
+    include config.mk  # 非clean目标时才包含
+endif
+```
+
+理解两阶段模型能帮助您：
+
+1. 避免变量展开错误
+2. 优化 Makefile 性能
+3. 设计更可靠的构建系统
+4. 调试复杂的依赖问题
+
+当遇到变量行为不符合预期时，首先考虑它的展开时机，这是解决大多数 Makefile 谜题的关键！
+
+### 3.8. 如何解析 Makefile(How Makefiles Are Parsed)
 
 GNU make是一行一行解析makefiles的，解析的流程：
 
-1. 读取完整的逻辑行，包含反斜线的转义
-2. 去除注释
-3. 如果该行以命令前缀字符(tab)开头，并且我们处于规则上下文中，将该行添加到当前命令并阅读下一行
-4. 将立即展开的元素展开
-5. 扫描行中的分隔符（如“：”或“=”），以确定该行是宏定义还是规则
-6. 内化(Internalize )生成的操作并阅读下一行
+make 的执行过程如下：
 
-### 3.9. Secondary Expansion
+1. 依次读取变量“MAKEFILES”定义的makefile文件列表
+2. 读取工作目录下的 makefile 文件（根据命名的查找顺序“GNUmakefile”，“makefile”，“Makefile”，首先找到那个就读取那个）
+3. 依次读取工作目录makefile文件中使用指示符“include”包含的文件
+4. 查找重建所有已读取的makefile文件的规则（如果存在一个目标是当前读取的某一个makefile文件，则执行此规则重建此makefile文件，完成以后从第一步开始重新执行）
+5. 初始化变量值并展开那些需要立即展开的变量和函数并根据预设条件确定执行分支
+6. 根据“终极目标”以及其他目标的依赖关系建立依赖关系链表
+7. 执行除“终极目标”以外的所有的目标的规则（规则中如果依赖文件中任一个文件的时间戳比目标文件新，则使用规则所定义的命令重建目标文件）
+8. 执行“终极目标”所在的规则
 
-```Makefile
-.SECONDEXPANSION: #添加二阶段展开关键词
-objs = hello
-.PHONY: print
-print: $$(objs)
-	@echo $^
- objs = hello.o
+### 3.9. 二次扩展(Secondary Expansion)
+
+#### 📌 3.9.1. 核心概念：什么是二次展开？
+
+二次展开是 GNU Make 的**高级特性**，它在标准的两阶段模型（立即展开 + 延迟展开）基础上增加了**第三个展开时机**。当启用此功能时：
+
+1. **标准流程**：
+
+   ```mermaid
+   graph LR
+     A[第一阶段] -->|立即展开| B[依赖关系图]
+     B --> C[第二阶段]
+     C -->|延迟展开| D[执行命令]
+   ```
+
+2. **二次展开流程**：
+
+   ```mermaid
+   graph LR
+     A[第一阶段] --> B[依赖关系图]
+     B --> C[二次展开]
+     C --> D[第二阶段]
+     D --> E[执行命令]
+   ```
+
+#### 🔑 3.9.2. 关键特性
+
+| 特性 | 说明 |
+|------|------|
+| **启用方式** | 必须定义特殊目标：`.SECONDEXPANSION:` |
+| **作用范围** | **仅针对依赖列表**（不包括目标或命令） |
+| **触发时机** | 检查目标依赖关系时（第二阶段开始前） |
+| **核心机制** | 使用 `$$` 转义变量/函数使其延迟到此时展开 |
+
+#### ⏰ 3.9.3. 三次展开时机对比
+
+| 展开类型 | 发生时机 | 典型元素 | 示例 |
+|----------|----------|----------|------|
+| **立即展开** | 第一阶段读取时 | `:=` 变量<br>条件语句<br>规则目标/依赖 | `TARGET := app` |
+| **延迟展开** | 第二阶段执行命令时 | 命令中的变量<br>`=` 变量 | `gcc $$@` |
+| **二次展开** | 第二阶段开始前<br>检查依赖时 | 转义的依赖变量<br>`$$()` 语法 | `$$($$@_OBJS)` |
+
+#### 🛠️ 3.9.4. 启用与使用语法
+
+```makefile
+# 必须在文件顶部声明
+.SECONDEXPANSION:
+
+# 使用 $$ 转义需要二次展开的内容
+target: $$(VARIABLE) $$(function $$@)
 ```
+
+#### 💡 3.9.5. 为什么需要二次展开？（使用场景）
+
+##### 场景1：依赖基于目标名动态生成
+
+```makefile
+.SECONDEXPANSION:
+main_OBJS = main.o util.o
+lib_OBJS = lib.o api.o
+
+main lib: $$($$@_OBJS)
+```
+
+- **执行过程**：
+  1. 首次展开：`main: $($@_OBJS)` → 未展开
+  2. 二次展开：`$@ = main` → `$(main_OBJS)` → `main.o util.o`
+
+##### 场景2：依赖包含自动变量
+
+```makefile
+.SECONDEXPANSION:
+%.o: $$(addsuffix /%.c,src dirs)
+    gcc -c $<
+```
+
+- 当构建 `foo.o` 时：
+  - 二次展开：`$(addsuffix /foo.c,src dirs)` → `src/foo.c dirs/foo.c`
+
+##### 场景3：解决变量覆盖问题
+
+```makefile
+.SECONDEXPANSION:
+VAR = initial
+target1: $(VAR)    # 立即展开 → initial
+target2: $$(VAR)   # 二次展开 → final
+VAR = final
+```
+
+#### 🔍 3.9.6. 自动变量在二次展开中的行为
+
+| 自动变量 | 二次展开值 | 示例 |
+|----------|------------|------|
+| `$$@` | 当前目标名 | `main` |
+| `$$*` | 词干（stem） | `foo`（对 `foo.o`） |
+| `$$<` | 第一个依赖 | `input.txt` |
+| `$$^` | 所有不重复依赖 | `file1.o file2.o` |
+| `$$+` | 所有依赖（含重复） | `file.o file.o` |
+
+##### 显式规则示例
+
+```makefile
+.SECONDEXPANSION:
+target: dep1 dep2 $$< $$^ $$+
+```
+
+- `$$<` = `dep1`
+- `$$^` = `dep1 dep2`
+- `$$+` = `dep1 dep2`
+
+#### ⚠️ 3.9.7. 特殊注意事项
+
+1. **作用域限制**：
+
+   ```makefile
+   # 仅影响此后的规则
+   .SECONDEXPANSION:
+   rule1: ...   # 启用
+
+   # 不影响之前的规则
+   rule2: ...   # 未启用
+   ```
+
+2. **不可用变量**：
+   - `$$?`（更新的依赖）始终为空
+   - `$$*` 在显式规则中无意义
+
+3. **隐式规则处理**：
+
+   ```makefile
+   .SECONDEXPANSION:
+   %: %.c $$(wildcard $$@_*.h)
+       gcc $< -o $@
+   ```
+
+   - 构建 `app` 时：`wildcard app_*.h` 动态查找头文件
+
+#### 🧪 3.9.8. 实际应用案例
+
+##### 案例1：多项目统一管理
+
+```makefile
+.SECONDEXPANSION:
+PROJECTS = frontend backend
+
+# 动态生成每个项目的依赖
+$(PROJECTS): $$($$@_DEPS)
+    $(MAKE) -C $@
+
+frontend_DEPS = ui-lib auth-lib
+backend_DEPS = api-lib db-lib
+```
+
+##### 案例2：带路径重构的编译
+
+```makefile
+.SECONDEXPANSION:
+OBJ_DIR = build
+
+%.o: src/%.c $$(OBJ_DIR)/%.d
+    gcc -I$$(dir $$<) -c $< -o $@
+
+$(OBJ_DIR)/%.d: src/%.c
+    generate_dep $< > $@
+```
+
+##### 案例3：条件依赖注入
+
+```makefile
+.SECONDEXPANSION:
+DEBUG_LIBS = debug.o
+RELEASE_LIBS = optim.o
+
+app: $$(if $$(DEBUG),$$(DEBUG_LIBS),$$(RELEASE_LIBS))
+```
+
+#### 💎 3.9.9. 总结：何时使用二次展开？
+
+1. **需要基于目标名动态生成依赖**（最常见场景）
+2. **依赖列表中需要自动变量**（`$$@`, `$$*` 等）
+3. **解决变量值被后续覆盖的问题**
+4. **复杂路径/文件名重构**
+5. **模式规则中需要上下文感知的依赖**
+
+> **使用建议**：在简单项目中避免过度使用，但在管理复杂构建系统（如内核编译）时，这是强大的元编程工具。掌握它能写出更动态、更灵活的 Makefile。不需要掌握，知道即可，知道什么是二次展开，看到会知道，做简单的修改。
 
 ## 4. Writing Rules
 
