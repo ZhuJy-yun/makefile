@@ -1,6 +1,10 @@
 # GUN Make
 
+---
+
 ## 1. make 概述 (Overview of make)
+
+---
 
 ### 1.1. 概术(Overview of make)
 
@@ -17,6 +21,8 @@ makefile：一个工程中的源文件不计其数，并且按类型、功能、
 - Makefile文件描述了整个工程的编译、连接等规则。其中包括：工程中的哪些源文件需要编译以及如何编译、需要创建那些库文件以及如何创建这些库文件、如何最后产生我们想要得可执行文件。
 - Makefile的好处是能够使用一行命令来完成“自动化编译”，一旦提供一个（通常对于一个工程来说会是多个）正确的Makefile。编译整个工程你所要做的唯一的一件事就是在shell 提示符下输入make命令。整个工程完全自动编译，极大提高了效率。
   - make是一个命令工具，它解释Makefile中的指令（应该说是规则）在Makefile文件中描述了整个工程所有文件的编译顺序、编译规则。Makefile有自己的书写**格式**、**关键字**、**函数**。像其他编程语言一样有自己的格式、关键字和函数一样。而且在Makefile中可以使用系统shell所提供的任何命令来完成想要的工作。Makefile（在其它的系统上可能是另外的文件名）在绝大多数的IDE开发环境中都在使用，已经成为一种工程的编译方法。
+
+---
 
 ### 1.2. 准备知识(How to Read This Manual)
 
@@ -57,6 +63,8 @@ A --> L(Linking<br>生成可执行文件)
 2. **每一个在上次执行make之后修改过的C源代码文件在本次执行make时将会被重新编译；**
 3. **头文件在上一次执行make之后被修改。则所有包含此头文件的C源文件在本次执行make时将会被重新编译。**
 
+---
+
 ### 2.1. make规则的构成要素(What a Rule Looks Like)
 
 ![1750994724559](image/GNUMake笔记/1750994724559.png)
@@ -86,6 +94,8 @@ E -- No --> F[跳过]
 
 一个最简单的Makefile可能只包含规则。规则在有些Makefile中可能看起来非常复杂，但是无论规则的书写是多么的复杂，它都符合规则的基本格式。
 **make程序根据规则的依赖关系，决定是否执行规则所定义的命令的过程我们称之为执行规则。**
+
+---
 
 ### 2.2. 一个简单的 Makefile(A Simple Makefile)
 
@@ -122,6 +132,8 @@ clean:
 书写时，可以将一个较长行使用反斜线（\）来分解为多行。**但需要注意：反斜线之后不能有空格**
 **所有的命令行必需以[Tab] 字符开始，但并不是所有的以[Tab]键出现行都是命令行。但make程序会把出现在第一条规则之后的所有以[Tab]字符开始的行都作为命令行来处理。**
 **Makefile中把那些没有任何依赖只有执行动作的目标称为“伪目标”（phony targets）** 例如:make clean
+
+---
 
 ### 2.3. make 是如何工作的(How make Processes a Makefile)
 
@@ -262,6 +274,8 @@ clean:
 
 这种机制显著提升构建效率，尤其适用于大型项目！
 
+---
+
 ### 2.4. makefile中使用变量(Variables Make Makefiles Simpler)
 
 变量使Makefile变的更简单。
@@ -282,6 +296,8 @@ clean:
         -rm hello hello.o
 ```
 
+---
+
 ### 2.5. 让make自动推导(Letting make Deduce the Recipes)
 
 在使用make编译.c源文件时，编译.c源文件规则的命令可以不用明确给出。这是因为make本身存在一个默认的规则，能够自动完成对.c文件的编译并生成对应的.o文件。
@@ -301,6 +317,8 @@ clean:
     -rm hello hello.o
 ```
 
+---
+
 ### 2.6. 另类风格的makefile(Another Style of Makefile)
 
 所有的.o目标文件都可以使用隐含规则由make自动重建，我们可以根据这一点书写更加简洁的Makefile。书写可能存在多个目标规则，
@@ -311,6 +329,8 @@ clean:
 
 书写规则建议的方式是：**单目标，多依赖。就是说尽量要做到一个规则中只存在一个目标文件，可有多个依赖文件。尽量避免使用多目标，单依赖的方式。**
 这样书写的好处是后期维护会非常方便，而且这样做会使Makefile会更清晰、明了。
+
+---
 
 ### 2.7. 清除工作目录过程文件(Rules for Cleaning the Directory)
 
@@ -324,6 +344,8 @@ clean:
 2. 在命令行之前使用`-`，意思是忽略命令`rm`的执行错误。
 
 ## 3. Makefile 总述(Writing Makefiles)
+
+---
 
 ### 3.1. Makefile的内容(What Makefiles Contain)
 
@@ -362,12 +384,16 @@ class0701:
 - 所有以[Tab]字符开始的的行都是执行规则。make会将其交给系统shell程序去解释执行。包括注释行也会交给shell来处理。
 - 使用指示符`define`定义一个多行的变量或者命令包时，其定义体(`define`和`endef`之间的内容)会被完整的展开到Makefile中引用此变量的地方(包含定义体中的注释行)；make 在引用此变量的地方对所有的定义体进行处理，决定是注释还是有效内容。Makefile 中变量的引用和 C 语言中的宏类似（但是其实质并不相同）。对一个变量引用的地方make所做的就是将这个变量根据定义进行基于文本的展开，展开变量的过程不涉及到任何变量的具体含义和功能分析。
 
+---
+
 ### 3.2 makefile文件的命名(What Name to Give Your Makefile)
 
 1. 对于GNU的make来说有三种命名：`makefile`、`Makefile`、`GNUmakefile`
 2. 可以用 `-f` 或者 `-file`来指定要执行的makefile
 
 如果三个文件都存在，优先级的顺序为: GNUmakefile > makefile >Makefile
+
+---
 
 ### 3.3 包含其它makefile文件(Including Other Makefile)
 
@@ -398,6 +424,8 @@ class0701:
    - `/usr/gnu/include`
    - `/usr/local/include`
    - `/usr/include`
+
+---
 
 ### 3.4. 变量 MAKEFILES(The Variable MAKEFILES)
 
@@ -504,6 +532,8 @@ make -f common.mk -f Makefile
 ```
 
 总结：`MAKEFILES` 是 make 的 **预加载机制**，适用于需要 **全局生效的共享配置**，但由于其隐式特性，在现代构建系统中更推荐使用显式的 `include` 机制。
+
+---
 
 ### 3.5. makefile文件的重建(How Makefiles Are Remade)
 
@@ -636,6 +666,8 @@ make -f mfile -n mfile target
    - 应避免频繁重建
 
 这个机制主要用在**高级构建系统**中（如 autoconf/automake），日常开发中较少需要手动处理 Makefile 的重建。理解它有助于调试复杂的构建问题，特别是当 Makefile 本身是由脚本生成的情况。
+
+---
 
 ### 3.6. 重载另外一个makefile(Overriding Part of Another Makefile)
 
@@ -770,6 +802,8 @@ $ make build
 > - Linux内核驱动扩展
 > - 产品线差异化构建（社区版/企业版）
 > - 遗留系统渐进式改造
+
+---
 
 ### 3.7. make如何解析makefile文件(How make Reads a Makefile)
 
@@ -932,6 +966,8 @@ endif
 
 当遇到变量行为不符合预期时，首先考虑它的展开时机，这是解决大多数 Makefile 谜题的关键！
 
+---
+
 ### 3.8. 如何解析 Makefile(How Makefiles Are Parsed)
 
 GNU make是一行一行解析makefiles的，解析的流程：
@@ -946,6 +982,8 @@ make 的执行过程如下：
 6. 根据“终极目标”以及其他目标的依赖关系建立依赖关系链表
 7. 执行除“终极目标”以外的所有的目标的规则（规则中如果依赖文件中任一个文件的时间戳比目标文件新，则使用规则所定义的命令重建目标文件）
 8. 执行“终极目标”所在的规则
+
+---
 
 ### 3.9. 二次扩展(Secondary Expansion)
 
@@ -1133,90 +1171,1048 @@ app: $$(if $$(DEBUG),$$(DEBUG_LIBS),$$(RELEASE_LIBS))
 
 > **使用建议**：在简单项目中避免过度使用，但在管理复杂构建系统（如内核编译）时，这是强大的元编程工具。掌握它能写出更动态、更灵活的 Makefile。不需要掌握，知道即可，知道什么是二次展开，看到会知道，做简单的修改。
 
-## 4. Writing Rules
+## 4. Makefile的规则(Writing Rules)
 
-### 4.1. Rule Syntax
+---
 
-2种规则语法：
+### 4.1. 语法规则(Rule Syntax)
 
-如果你要用 `$`,需要写 `$$` ,开启了二阶段展开则需要写成 `$$$$`
+> **核心作用**：定义文件之间的**依赖关系**和**构建规则**，实现自动化编译。
 
-### 4.2. Types of Prerequisites
+---
 
-有两种前提：一种是普通依赖，另外一种是order-only依赖
-语法：
-`targets : normal-prerequisites | order-only-prerequisites`
-普通依赖比目标新，则目标会被更新。但是order-only不管比不比目标新，都不会更新目标
+#### 4.1.1. 规则三要素（专业定义）
 
-### 4.3. Using Wildcard Characters in File Names
+| 要素         | 专业描述                                                                 | 通俗解释                          |
+|--------------|--------------------------------------------------------------------------|-----------------------------------|
+| **目标 (Target)**      | 需要生成的文件或执行的操作名                                               | 你要做的“菜”（最终成果）          |
+| **依赖 (Prerequisites)** | 生成目标所需的输入文件或其他目标                                           | 做菜的“食材”                      |
+| **命令 (Commands)**    | 生成目标的具体 Shell 指令（**必须 Tab 缩进**）                              | 烹饪的“步骤”                      |
 
-#### 4.3.1. Wildcard Examples
+```makefile
+# 示例规则（编译C程序）
+app: main.o utils.o       # 目标：app | 依赖：main.o, utils.o
+    gcc -o app main.o utils.o  # 命令 (Tab开头！)
+```
 
-`objects = *.o` 这种变量定义，在**目标**或**先决条件**中使用对象的值，则将在此处进行通配符扩展，如果在命令行中使用可能会被认为shell中的值，为避免这种麻烦，需要写成这种形式 `objects := $(wildcard *.o)`
+---
 
-#### 4.3.2. The Function wildcard
+#### 4.1.2. 规则执行逻辑（专业机制）
 
-语法：`$(wildcard pattern...)`
+1. **触发条件**（何时执行命令？）
 
-### 4.4. Searching Directories for Prerequisites
+   - 目标文件**不存在**
+   - 目标文件**比任意依赖旧**（依赖文件修改时间 > 目标修改时间）
 
-#### 4.4.1. VPATH: Search Path for All Prerequisites
+   ```bash
+   # 专业表述：基于时间戳的增量构建
+   if (target == null || any_prerequisite.mtime > target.mtime)
+        execute_commands()
+   ```
 
-VPATH指定make目标和依赖的寻找的一系列路径。
-`VPATH = src:../headers`标记 `src`和 `../headers`两个路径
+2. **依赖链解析**（专业：拓扑排序）
+
+   - Make 递归检查依赖是否也是目标，按**依赖顺序执行**
+
+   ```makefile
+   app: main.o utils.o   # app 依赖 main.o 和 utils.o
+   main.o: main.c        # main.o 是目标，依赖 main.c
+        gcc -c main.c
+   utils.o: utils.c      # utils.o 是目标，依赖 utils.c
+        gcc -c utils.c
+   ```
+
+   - 执行顺序：`main.c -> main.o` → `utils.c -> utils.o` → `app`
+
+---
+
+#### 4.1.3. 语法要点（专业约束）
+
+| 规则                | 专业描述                     | 示例/注意事项                     |
+|---------------------|----------------------------|----------------------------------|
+| **命令缩进**        | 命令前**必须用 Tab**         | 空格会导致 `Missing separator` 错误 |
+| **变量引用**        | 用 `$(VAR)` 引用变量         | `CFLAGS = -Wall`<br>`gcc $(CFLAGS) ...` |
+| **特殊字符转义**    | `$` 需写为 `$$`             | `echo "PATH=$$PATH"`             |
+| **多行命令**        | 用 `\` 连接跨行命令          | `command1 arg1 \`<br>`    arg2`  |
+
+---
+
+#### 4.1.4. 高级概念速记表
+
+| 概念               | 专业定义                                                                 | 通俗类比                     |
+|--------------------|--------------------------------------------------------------------------|------------------------------|
+| **伪目标 (Phony Target)** | 非文件目标（如 `clean`），用 `.PHONY` 声明避免冲突                   | “洗碗”任务（不生成文件）     |
+| **静态模式规则 (Static Pattern)** | 批量定义相似规则：`%.o: %.c`                                       | 菜谱模板（所有炒菜都用同一步骤） |
+| **自动变量 (Automatic Variables)** | 动态获取目标/依赖名（`$@`=目标, `$<`=第一个依赖）                 | 做菜时自动拿对应食材         |
+
+```makefile
+# 静态模式规则示例 (专业写法)
+%.o: %.c
+    gcc -c $< -o $@  # $<=输入(.c), $@=输出(.o)
+
+# 伪目标示例
+.PHONY: clean
+clean:
+    rm -f *.o app    # 清理生成的文件
+```
+
+---
+
+#### 4.1.5. 总结：Makefile 规则的本质（一句话）
+
+> **专业表述**：Makefile 规则通过声明 **目标-依赖拓扑图** 和 **构建命令**，利用文件时间戳实现增量编译。
+> **通俗理解**：告诉电脑“什么菜（目标）需要什么食材（依赖），食材变了如何重新做菜（命令）”，且只做必要的更新。
+
+---
+
+#### 4.1.6. 附：常见错误避坑指南（笔记速查）
+
+1. ❌ **Tab 缩进错误** → 命令前必须用 **Tab** 不是空格！
+2. ❌ **循环依赖** → 目标A依赖B，目标B又依赖A → 死循环
+3. ❌ **忽略隐式依赖** → 若 `main.c` 包含 `utils.h`，需在依赖中声明：
+
+   ```makefile
+   main.o: main.c utils.h  # 缺少 utils.h 会导致头文件更新不触发编译
+   ```
+
+---
+
+### 4.2. 依赖的类型(Types of Prerequisites)
+
+**核心定义**：
+> 一种特殊依赖类型（语法：`target: normal-deps | order-only-deps`），仅在目标**不存在时**参与构建；当目标已存在时，即使 order-only 依赖更新，**也不会触发目标重建**。
+
+---
+
+#### 4.2.1. 核心机制对比
+
+##### 依赖类型行为差异
+
+| **场景**               | **常规依赖**                  | **`order-only` 依赖(谨慎使用了解即可)** |
+|------------------------|-----------------------------|------------------------------|
+| **目标不存在时**        | 执行命令重建目标              | 执行命令重建目标             |
+| **目标存在时**          | 依赖更新 → **触发重建**       | 依赖更新 → **不触发重建**     |
+| **首次构建**           | ✅ 参与构建                  | ✅ 参与构建                  |
+| **增量构建**           | ✅ 可能触发重建              | ❌ 永不触发重建              |
+
+##### 文件修改检查逻辑
+
+```mermaid
+graph TD
+    A[目标存在？] -->|否| B[执行命令]
+    A -->|是| C{检查依赖}
+    C -->|常规依赖更新| B
+    C -->|仅order-only更新| D[跳过命令]
+```
+
+---
+
+#### 4.2.2. 适用场景与优点
+
+##### ✅ 推荐使用场景
+
+| **场景**         | **示例**                           | **效率提升原理**           |
+| ---------------- | ---------------------------------- | -------------------------- |
+| **目录创建**     | `obj : \| mkdir -p obj/`          | 避免目录时间戳变化触发重建 |
+| **工具链路径**   | `app: src.c \| /opt/gcc/bin/gcc`   | 编译器更新不触发全量重编译 |
+| **静态数据文件** | `report.pdf: data.py \| template/` | 模板更新不重新生成数据     |
+| **动态库 (.so)** | `app: main.o \| libshared.so`      | 避免不必要的重链接操作     |
+
+##### ⭐ 核心优势
+
+1. **显著提升构建速度**
+   避免非必要的重建操作（尤其对耗时任务）
+
+   ```makefile
+   # 节省目录重建时间（大型项目）
+   big_data.bin: process.py | input_dir/  # 避免每次检查数千个文件
+       python $< > $@
+   ```
+
+2. **解决循环依赖问题**
+   打破构建顺序死锁
+
+   ```makefile
+   # 目录必须先于文件存在，但目录本身由规则生成
+   log/2023/app.log: log/2023/ | app
+       ./app > $@
+   
+   log/%/:  # 目录创建规则
+       mkdir -p $@
+   ```
+
+3. **简化复杂构建系统**
+   明确区分"必须重建"和"只需存在"的依赖
+
+---
+
+#### 4.2.3. 致命风险与禁忌场景
+
+##### ☠️ 高风险场景（绝对避免！）
+
+| **场景**         | **错误示例**                      | **潜在后果**                  |
+|------------------|----------------------------------|-----------------------------|
+| **静态库 (.a)**  | `app: main.c | libutils.a`      | 安全漏洞未修复，内存泄漏持续 |
+| **头文件**       | `obj.o: src.c | config.h`       | 内存布局错误，随机崩溃       |
+| **关键配置文件** | `service: bin | settings.conf`  | 配置变更未生效，数据损坏     |
+| **ABI不兼容库**  | `app: main.o | libnew.so`       | 运行时符号缺失，进程崩溃     |
+
+##### 💥 实际灾难案例
+
+```makefile
+# 安全系统错误配置
+firewall: rules.txt | security_policy.db  # order-only!
+    compile_fw $< -o $@
+
+# 攻击者利用：
+# 1. 替换 security_policy.db（恶意版本）
+# 2. 因order-only依赖，防火墙未重建
+# 3. 系统以旧规则运行 → 安全漏洞开放
+```
+
+---
+
+#### 4.2.4. 安全工程最佳实践
+
+##### 1. 默认禁用原则
+
+```makefile
+# Makefile 首行添加安全声明
+.SECURITY_CRITICAL := 1
+ifeq ($(.SECURITY_CRITICAL),1)
+    # 强制所有依赖为常规依赖
+    % :: | ; @:
+endif
+```
+
+##### 2. 静态库/头文件强制重建
+
+```makefile
+# 静态库必须常规依赖
+secure_app: auth.o crypto.a  # 无 | 符号!
+    gcc $^ -o $@
+
+crypto.a: aes.c rsa.c
+    ar rcs $@ $^
+```
+
+##### 3. 动态库安全使用规范
+
+```makefile
+# 仅当满足以下条件时可用 order-only：
+# 1. 库版本语义化 (libfoo.so.1.2.3)
+# 2. 主版本号不变
+# 3. 通过ABI兼容测试
+app: main.c | libfoo.so.1
+    gcc main.c -o $@ -l:libfoo.so.1
+```
+
+##### 4. 构建审计与版本锁定
+
+```makefile
+# 生成构建指纹
+.buildhash: $(ALL_SOURCES)
+    sha256sum $^ > $@
+
+# 目标绑定源码版本
+app: main.c .buildhash  # 常规依赖
+    gcc main.c -o $@
+    cp .buildhash $@.meta
+```
+
+---
+
+#### 4.2.5. 决策流程图
+
+```mermaid
+graph TD
+    A[添加新依赖] --> B{是否影响输出行为？}
+    B -->|是| C[必须常规依赖]
+    B -->|否| D{是否可审计？}
+    D -->|否| C
+    D -->|是| E{变更是否100%无害？}
+    E -->|否| C
+    E -->|是| F[谨慎使用 order-only]
+    F --> G[添加版本检查]
+    G --> H[记录构建日志]
+    H --> I[定期全量验证]
+```
+
+---
+
+#### 4.2.6. 紧急情况处理
+
+当发现误用 `order-only` 依赖时：
+
+```bash
+# 1. 立即全量重建
+make clean && make -j8
+
+# 2. 检查版本一致性
+find . -name '*.bin' -exec sha256sum {} + > audit.log
+
+# 3. 添加安全约束（防止复发）
+echo "## SECURITY NOTICE: Order-only banned for:" >> Makefile
+echo "# - Static libraries" >> Makefile
+echo "# - Header files" >> Makefile
+echo "# - Config files" >> Makefile
+```
+
+---
+
+#### 4.2.7. 终极总结：黄金法则
+
+| **原则**                  | **操作**                      | **原因**                     |
+|--------------------------|------------------------------|-----------------------------|
+| **安全关键系统**         | 完全禁用 order-only          | 版本不一致风险不可接受       |
+| **静态库/头文件**        | 永远作为常规依赖             | 二进制必须包含最新代码       |
+| **动态库**               | 仅主版本兼容时使用           | ABI 破坏会导致运行时崩溃     |
+| **目录/工具链**          | 推荐使用 order-only          | 无行为影响，显著提升效率     |
+| **任何不确定情况**       | 优先选择常规依赖             | 安全 >> 效率                |
+
+---
+
+### 4.3. 文件名使用通配符(Using Wildcard Characters in File Names)
+
+**核心原则**：
+> 通配符 (`*`, `?`, `[...]`) 在 Makefile 中有严格的使用限制，错误使用会导致构建失败或意外行为。
+
+---
+
+#### 4.3.1. 通配符适用场景（✅ 正确使用）
+
+##### 1. **规则的目标/依赖中** - **由 make 展开**
+
+```makefile
+# ✅ 正确：make 自动展开 *.c
+print: *.c
+    lpr -p $?   # $? 只包含修改过的文件
+    touch print
+```
+
+- **行为**：
+  `make print` → 自动展开 `*.c` 为当前目录所有 `.c` 文件
+
+##### 2. **规则的命令中** - **由 shell 展开**
+
+```makefile
+# ✅ 正确：shell 执行时展开 *.o
+clean:
+    rm -f *.o
+```
+
+- **行为**：
+  `make clean` → shell 执行 `rm -f *.o`
+
+---
+
+#### 4.3.2. 通配符禁止场景（❌ 危险操作）
+
+##### 1. **变量定义中直接使用**
+
+```makefile
+# ❌ 错误：objects 的值是字符串 "*.o" 而非文件列表
+objects = *.o
+
+# ❌ 危险：依赖变成字面字符串 "*.o"
+app: $(objects)
+    gcc -o app $(objects)
+```
+
+**灾难场景**：
+
+- 当目录无 `.o` 文件时 → `gcc -o app *.o` → 报错 `no such file: *.o`
+
+##### 2. **函数参数中直接使用**
+
+```makefile
+# ❌ 错误：$(filter ) 不会展开 *.c
+sources := $(filter *.c, $(wildcard *))
+```
+
+---
+
+#### 4.3.3. 安全解决方案：`wildcard` 函数
+
+##### 语法
+
+```makefile
+$(wildcard pattern1 pattern2...)
+```
+
+##### 正确用法
+
+```makefile
+# ✅ 安全：动态获取 .o 文件列表
+objects := $(wildcard *.o)
+
+# ✅ 安全：多模式匹配
+headers := $(wildcard include/*.h src/*.h)
+```
+
+---
+
+#### 4.3.4. 典型场景处理方案对比
+
+| **场景**               | **错误写法**          | **正确写法**                     | **原因**                     |
+|------------------------|----------------------|--------------------------------|-----------------------------|
+| 获取当前目录 `.c` 文件 | `sources = *.c`     | `sources := $(wildcard *.c)`   | 避免字符串字面值            |
+| 编译所有 `.c` 文件     | `app: *.c`          | `app: $(wildcard *.c)`         | 处理空目录情况              |
+| 删除临时文件           | `rm *.tmp` (命令中) | `rm *.tmp` (命令中)            | ✅ shell 展开安全            |
+| 静态库打包             | `lib.a: *.o`        | `lib.a: $(wildcard *.o)`       | 显式文件依赖更可靠          |
+
+---
+
+#### 4.3.5. 通配符特殊语法详解
+
+##### 1. **转义通配符**
+
+```makefile
+# 匹配文件名 "file*.txt"
+special_file := file\*.txt
+
+# 规则中使用
+process: $(special_file)
+    ./script $<
+```
+
+##### 2. **波浪号 `~` 处理**
+
+```makefile
+# 用户主目录
+HOME_DIR := ~/project
+
+# 特定用户目录
+john_dir := ~john/docs
+
+# 实际使用前转换为路径
+EXPANDED_HOME := $(realpath $(HOME_DIR))
+```
+
+---
+
+#### 4.3.6. 高级模式：通配符组合技
+
+##### 1. **动态生成目标文件**
+
+```makefile
+# 获取所有 .c 文件
+sources := $(wildcard src/*.c)
+
+# 转换为 .o 文件列表
+objects := $(patsubst src/%.c, build/%.o, $(sources))
+
+# 编译规则
+build/%.o: src/%.c
+    gcc -c $< -o $@
+
+app: $(objects)
+    gcc $^ -o $@
+```
+
+##### 2. **多目录通配**
+
+```makefile
+# 递归获取所有 .h 文件
+all_headers := $(shell find . -name '*.h')
+
+# Makefile 内建方式
+header_dirs := include src/lib
+headers := $(foreach dir,$(header_dirs),$(wildcard $(dir)/*.h))
+```
+
+---
+
+#### 4.3.7. 致命陷阱与避坑指南
+
+##### 陷阱 1：**空格导致通配失效**
+
+```makefile
+# ❌ 错误：引号阻止展开
+files := $(wildcard "*.c")  # 匹配字面 "*.c" 文件
+
+# ✅ 正确：无引号
+files := $(wildcard *.c)
+```
+
+##### 陷阱 2：**嵌套通配符**
+
+```makefile
+# ❌ 不会递归匹配
+all_src := $(wildcard src/*/*.c)
+
+# ✅ 使用 find 命令
+all_src := $(shell find src -name '*.c')
+```
+
+##### 陷阱 3：**通配符意外匹配**
+
+```makefile
+# 危险：可能匹配到 backup 文件 (e.g., file.c.bak)
+sources := $(wildcard *.c)
+
+# 安全方案：严格过滤
+sources := $(filter %.c, $(wildcard *))
+```
+
+---
+
+#### 4.3.8. 跨平台兼容性处理
+
+| **系统**      | **通配符行为**               | **注意事项**                     |
+|---------------|-----------------------------|--------------------------------|
+| Linux/macOS   | 支持 `*` `?` `[...]`        | 文件名大小写敏感               |
+| Windows       | 支持 `*` `?` 但行为不同     | 文件名大小写不敏感             |
+| Solaris       | `[...]` 需要额外转义        | 避免使用复杂字符集             |
+
+**跨平台解决方案**：
+
+```makefile
+# 统一使用简单通配符
+sources := $(wildcard src/*.c)
+
+# 避免使用 [?] 等特殊字符
+```
+
+---
+
+#### 4.3.9. 最佳实践总结
+
+1. **变量定义中**：
+   **必须**使用 `$(wildcard ...)` 替代裸通配符
+
+2. **规则依赖中**：
+   - 简单场景：直接使用 `*.ext`
+   - 复杂场景：使用 `$(wildcard ...)`
+
+3. **命令中**：
+   直接使用通配符（交由 shell 展开）
+
+4. **防御性编程**：
+
+   ```makefile
+   # 检查文件是否存在
+   ifeq ($(wildcard config.ini),)
+     $(error config.ini not found!)
+   endif
+   ```
+
+5. **性能优化**：
+
+   ```makefile
+   # 缓存通配结果（避免重复展开）
+   ifndef SOURCES
+     SOURCES := $(wildcard src/*.c)
+   endif
+   ```
+
+> **黄金法则**：当不确定通配符何时展开时，优先使用 `$(wildcard)` 函数显式处理，可避免 90% 的构建错误。
+
+---
+
+#### 4.3.10. 附：通配符处理流程图
+
+```mermaid
+graph TD
+    A[需要在 Makefile 使用通配符] --> B{使用场景}
+    B -->|规则目标/依赖| C["直接使用 *.ext"]
+    B -->|规则命令| D["直接使用 *.ext"]
+    B -->|变量定义/函数参数| E["使用 $(wildcard)"]
+    E --> F{是否跨目录?}
+    F -->|是| G["结合 find/foreach"]
+    F -->|否| H["简单模式匹配"]
+    H --> I["验证结果非空"]
+    I --> J["安全使用"]
+```
+
+通过这份笔记，您将掌握 Makefile 通配符的安全使用方式，避免常见陷阱，并能在复杂场景中正确应用通配功能。
+
+---
+
+### 4.4. 目录搜索机制(Searching Directories for Prerequisites)
+
+**核心目的**：实现源码与二进制文件分离管理，避免硬编码路径
+
+---
+
+#### 4.4.1. 核心搜索机制对比
+
+| **机制**       | **语法**                     | **作用范围**       | **优先级** | **特点**                     |
+|----------------|------------------------------|--------------------|------------|------------------------------|
+| **VPATH**      | `VPATH = dir1:dir2`          | 全局（所有文件）   | 低         | 简单但不够精细               |
+| **vpath**      | `vpath pattern dir1:dir2`    | 模式匹配文件       | 中         | 精准控制特定类型文件         |
+| **GPATH**      | `GPATH = dir1:dir2`          | 需要重建的目标     | 高         | 控制重建位置                 |
+| **链接库搜索** | `-Ldir` + `-lname`           | 链接库文件         | 特殊       | 自动查找 `libname.so/a`      |
+
+---
+
+#### 4.4.2. 关键变量详解
+
+##### 1. **VPATH** - 全局搜索路径
+
+```makefile
+# 语法（Unix用冒号，Windows用分号）
+VPATH = src:../headers:libs
+```
+
+- **行为**：
+  - 当依赖/目标不在当前目录时，按顺序搜索指定目录
+  - 示例：`foo.o: foo.c` → 优先查找 `src/foo.c`
+- **局限**：
+
+  ```makefile
+  # 问题：所有类型文件使用相同搜索路径
+  VPATH = src
+  foo.o: foo.c header.h  # 也会在src中搜索header.h
+  ```
+
+##### 2. **vpath** - 模式化搜索
+
+```makefile
+# 语法（%为通配符）
+vpath %.c src
+vpath %.h ../headers
+vpath %.a libs
+```
+
+- **优势**：
+  - 为不同文件类型指定不同搜索路径
+  - 多模式叠加：
+
+  ```makefile
+  vpath %.c source
+  vpath %.c backup  # 按顺序搜索source→backup
+  ```
+
+- **清除指令**：
+
+  ```makefile
+  vpath %.h    # 清除.h搜索路径
+  vpath        # 清除所有vpath设置
+  ```
+
+##### 3. **GPATH** - 控制重建位置
+
+```makefile
+GPATH = build
+```
+
+- **特殊行为**：
+
+  - 当目标在 `GPATH` 目录中找到**且**需要重建时：
+    - ❌ 默认行为：丢弃搜索路径，在当前目录重建
+    - ✅ 启用 `GPATH`：在原始目录重建
+
+- **使用场景**：
+
+  ```makefile
+  # 保持构建产物在build目录
+  GPATH = build
+  build/%.o: %.c
+      gcc -c $< -o $@
+  ```
+
+##### 4. **链接库搜索**
+
+```makefile
+app: main.o -lmylib
+    gcc $^ -o $@ -L./libs
+```
+
+- **自动查找**：
+  1. 搜索 `libmylib.so` (优先)
+  2. 搜索 `libmylib.a`
+- **搜索路径**：
+  - `-L` 指定目录
+  - `VPATH`/`vpath` 目录
+  - 系统库目录
+
+
+---
+
+#### 4.4.3. 目录搜索处理流程
+
+```mermaid
+graph TD
+    A[目标/依赖未找到] --> B{搜索 VPATH/vpath}
+    B -->|找到| C[记录完整路径]
+    C --> D{目标需要重建?}
+    D -->|是| E{路径在 GPATH?}
+    E -->|是| F[在原始路径重建]
+    E -->|否| G[在当前目录重建]
+    D -->|否| H[使用原始路径]
+```
+
+---
+
+#### 4.4.4. 命令中路径处理（关键技巧）
+
+##### 必须使用自动变量：
+
+| **变量** | **含义**               | **示例场景**                     |
+|----------|------------------------|----------------------------------|
+| `$@`     | 目标文件名             | `gcc -c -o $@`                  |
+| `$<`     | 第一个依赖             | `gcc -c $<`                     |
+| `$^`     | 所有依赖               | `gcc $^ -o $@`                  |
+| `$*`     | 匹配符%的部分          | `gcc -c $*.c -o $@`             |
+
+##### 正确示例：
 
 ```makefile
 VPATH = src:headers
+app: main.o utils.o
+    gcc $^ -o $@  # 自动处理路径
 
-hello: hello.o
-        gcc -o hello hello.o
-hello.o: hello.c hello.h
-        gcc -c ./src/hello.c -o hello.o -I./headers/
-.PHONY:clean
-
-clean:
-        rm *.o
-        rm hello
+main.o: main.c defs.h
+    gcc -c $< -o $@  # $< = src/main.c
 ```
 
-#### 4.4.2. The vpath Directive
-
-`vpath %.h ../headers`在 `../header`中查找头文件
-`vpath %.c foo:bar ` 先在foo中查找后缀为 `.c`的文件,然后再bar中查找。
-
-#### 4.4.3. How Directory Searches are Performed
-
-### 4.5. Phony Targets
-
-伪目标仅仅是为了执行相关的命令，而没有实际的目标文件。几种用法：
-
-1. 为了不与实际的文件产生冲突
-   避免冲突，修改为
-2. 递归调用发挥make的多线程能力：
-   原始写法：
-   使用伪目标，发挥多线程能力：
-3. 同时构建多个目标
-4. 当一个伪目标是另外一个的前提，那么这个伪目标作为另外一个的子线程
-
-### 4.6. Rules without Recipes or Prerequisites
-
-如果一个规则，既没有前提也没有执行的命令。那么make会认为这个这个目标总是需要被更新的。那么依赖这个规则的目标，每次执行都会更新。
+##### 错误示例：
 
 ```makefile
-clean: FORCE
-	rm $(objects)
-FORCE:
+# 硬编码路径 - 失去可移植性
+app: src/main.o src/utils.o
+    gcc src/main.o src/utils.o -o app
 ```
 
-这种方式跟 `.PHONY clean` 是一个效果，伪目标方式更有效率些。但是有些make不支持伪目标。
 
-### 4.7. Empty Target Files to Record Events
+---
 
-**空目标是伪目标的变体**；它用于保存您不时明确请求的某个操作的配方。与虚假目标不同，此目标文件确实可以存在；但是文件的内容并不重要，通常是空的。
+#### 4.4.5. 与隐式规则协同工作
 
-我们只希望依赖改动后，执行print，那么我们touch 一个print 用于记录更新时间，当前提的修改时间比print时间更新时，执行。
+```makefile
+# 自动应用目录搜索
+VPATH = src
+%.o: %.c  # 隐式规则
+    gcc -c $< -o $@
 
-### 4.8. Special Built-in Target Names
+app: main.o  # 自动查找src/main.c
+```
+
+
+---
+
+#### 4.4.6. 最佳实践总结
+
+1. **路径分隔符**：
+
+   ```makefile
+   # Unix/Linux
+   VPATH = dir1:dir2
+   # Windows
+   VPATH = dir1;dir2
+   ```
+
+2. **优先级管理**：
+
+   ```makefile
+   # 1. vpath特定模式 → 2. VPATH全局 → 3. 当前目录
+   vpath %.c src
+   VPATH = backup
+   ```
+
+3. **构建目录分离**：
+
+   ```makefile
+   # 源码在src，构建到build
+   vpath %.c src
+   GPATH = build
+   build/%.o: %.c
+       gcc -c $< -o $@
+   ```
+
+4. **跨平台兼容**：
+
+   ```makefile
+   # 检测操作系统
+   ifeq ($(OS),Windows_NT)
+       PATH_SEP = ;
+   else
+       PATH_SEP = :
+   endif
+
+   VPATH = src$(PATH_SEP)lib
+   ```
+
+5. **避免陷阱**：
+   - 始终在命令中使用**自动变量**而非硬编码路径
+   - 对重建位置敏感的目标使用 `GPATH`
+   - 清理规则需考虑路径：
+
+     ```makefile
+     clean:
+         rm -f $(wildcard build/*.o)
+     ```
+
+
+---
+
+#### 4.4.7. 典型应用场景
+
+| **需求**               | **解决方案**                            | **优势**                     |
+|------------------------|----------------------------------------|------------------------------|
+| 多源码目录             | `vpath %.c src:lib`                    | 避免重复规则                 |
+| 第三方库分离           | `vpath %.a extern/libs`                | 清晰依赖管理                 |
+| 头文件集中管理         | `vpath %.h include`                    | 减少重复路径                 |
+| 跨平台构建             | 条件判断设置 `PATH_SEP`                | 保持Makefile一致性           |
+| 持续集成环境           | `GPATH = $(CI_BUILD_DIR)`              | 确保产物在正确位置           |
+
+> **经验法则**：
+> 对于超过3个目录的中大型项目，优先使用 `vpath` 模式匹配而非全局 `VPATH`，可减少意外匹配风险。
+
+通过这套机制，Makefile 可以优雅地处理复杂目录结构，保持构建规则简洁且可维护。
+
+---
+
+### 4.5. 伪目标(Phony Targets)
+
+#### **4.5.1. 核心作用**
+
+| **场景**                | **问题**                      | **伪目标解决方案**               |
+|-------------------------|------------------------------|--------------------------------|
+| 同名文件存在时          | `make clean` 因文件存在不执行 | `.PHONY` 强制命令执行           |
+| 纯执行任务（无输出文件）| 每次必须完整键入命令          | 封装为 `make clean` 快捷操作    |
+| 多目录递归编译          | Shell循环无法处理并行/错误    | 伪目标+递归Make实现高效并行构建 |
+
+#### **4.5.2. 远超标签的关键能力**
+
+```makefile
+# ========== 基础防冲突 ==========
+.PHONY: clean
+clean:  # 即使存在clean文件也执行
+    rm -f *.o
+
+# ========== 多程序统一入口 ==========
+.PHONY: all
+all: app1 app2  # 一键编译所有程序
+
+app1: ...  # 真实目标1
+app2: ...  # 真实目标2
+
+# ========== 递归并行构建 ==========
+SUBDIRS = lib src tests
+.PHONY: all $(SUBDIRS)
+
+all: $(SUBDIRS)  # 并行编译所有子目录
+
+$(SUBDIRS):
+    $(MAKE) -C $@  # 子目录独立构建
+
+# 控制编译顺序
+src: lib   # 先编译lib再编译src
+```
+
+#### **4.5.3. 工程级核心价值**
+
+1. **编译系统入口**
+   `all` 伪目标作为默认入口，聚合所有构建任务
+
+2. **目录级并行构建**
+   解决大型项目递归编译的**并行效率**和**错误处理**问题：
+
+   ```makefile
+   # 传统Shell循环（低效）
+   build:
+       for dir in $(SUBDIRS); do make -C $$dir; done
+   
+   # 伪目标方案（高效并行）
+   .PHONY: build $(SUBDIRS)
+   build: $(SUBDIRS)  # make -j8 自动并行化
+   ```
+
+3. **构建流程编排**
+
+   ```makefile
+   .PHONY: deploy
+   deploy: test package  # 先执行测试再打包
+        scart output.tar.gz server:/dap/
+   
+   test:    # 测试套件
+   package: # 打包脚本
+   ```
+
+
+---
+
+#### **4.5.4. 伪目标三大铁律**
+
+1. **必须声明**
+
+   ```makefile
+   .PHONY: target  # 无此声明可能失效
+   ```
+
+2. **禁止作为真实目标依赖**
+
+   ```makefile
+   # 错误！导致每次重建app都执行clean
+   app: clean app.o
+       cc -o $@ $^
+
+   # 正确用法：通过命令行调用
+   make clean && make
+   ```
+
+3. **无文件产出**
+   伪目标规则**永远不生成**同名文件
+
+
+---
+
+#### **4.5.5. 终极实践建议（一句话版）**
+
+```makefile
+# 所有纯操作型目标都加.PHONY声明
+.PHONY: clean all test deploy help
+
+clean:
+    rm -f *.o
+
+all: app1 app2
+
+help:
+    @echo "Usage: make [all|clean|test]"
+```
+
+> **为什么说伪目标是Makefile的灵魂？**
+> 它解决了工程构建中的三大核心问题：**入口统一**、**任务编排**、**环境安全**。一个专业的Makefile中，伪目标使用量通常占目标总数的30%-50%。
+
+---
+
+### 4.6. 空目标文件 (Rules without Recipes or Prerequisites)
+
+#### 4.6.1. 伪目标 (Phony Target)
+
+**核心特性**：
+
+1. **非文件实体**
+   - 伪目标不代表实际文件名，仅作为规则标签存在
+   - 典型用途：`clean`, `install`, `all` 等管理性操作
+
+2. **强制执行机制**
+
+   ```makefile
+   clean: FORCE
+       rm *.o
+   FORCE:
+   ```
+
+   - `FORCE` 是特殊目标（名称可自定义）：
+     - 无任何依赖项和配方
+     - 目标文件必须**不存在**
+   - 效果：依赖 `FORCE` 的目标（如 `clean`）总是执行配方
+
+3. **最佳实践**
+   使用 `.PHONY` 显式声明更安全高效：
+
+   ```makefile
+   .PHONY: clean
+   clean:
+       rm *.o
+   ```
+
+
+---
+
+#### 4.6.2. 空目标 (Empty Target)
+
+**核心特性**：
+
+1. **文件实体占位符**
+   - 物理上存在空文件（内容无关紧要）
+   - 核心作用：**记录规则最后执行时间戳**
+   - 典型文件名：`print`, `backup`（按需命名）
+
+2. **时间戳驱动机制**
+
+   ```makefile
+   print: foo.c bar.c
+       lpr -p $?    # 打印修改过的文件
+       touch print   # 更新时间戳
+   ```
+
+   - **执行逻辑**：
+     1. 当依赖文件（`foo.c`/`bar.c`）比空目标（`print`）新时执行配方
+     2. 用 `touch` 更新空目标时间戳
+   - `$?` 自动化变量：自动获取比目标新的依赖文件列表
+
+3. **首次执行行为**
+   若空目标文件不存在：
+   - 自动创建空文件（`touch` 命令实现）
+   - 规则命令正常执行
+
+
+---
+
+#### 4.6.3. 关键对比表
+
+| **特性**         | 伪目标                 | 空目标                  |
+|------------------|------------------------|-------------------------|
+| **物理文件**     | 不存在                 | 存在空文件              |
+| **核心目的**     | 无条件执行命令         | 基于时间戳触发命令      |
+| **更新机制**     | 总是执行               | 依赖比目标新时执行      |
+| **典型应用场景** | `clean`, `all`         | 打印/备份周期性任务     |
+| **时间记录**     | 不记录                 | 通过 `touch` 记录时间   |
+| **推荐实现**     | `.PHONY` 显式声明      | 显式 `touch` 更新目标   |
+
+
+---
+
+#### 4.6.4. 使用场景示例
+
+##### 1. 伪目标：强制清理
+
+```makefile
+.PHONY: purge
+purge:
+    rm -rf bin/*.cache
+```
+
+##### 2. 空目标：源码备份
+
+```makefile
+backup: src/*.c
+    tar -czvf src_backup_$(shell date +%F).tar.gz $?
+    touch backup  # 更新时间戳
+```
+
+- 执行 `make backup`：仅打包**修改过的**.c 文件
+- 下次执行：自动跳过未修改的文件
+
+
+---
+
+#### 4.6.5. 经验总结
+
+1. **伪目标本质**
+   - 利用 Makefile 对"已更新"目标的依赖触发机制
+   - `FORCE` 是 hack 实现，`.PHONY` 是官方解决方案
+
+2. **空目标精髓**
+
+   - 将文件系统时间戳作为状态记录工具
+   - 比伪目标更智能：依赖变更时才触发操作
+
+3. **高级技巧**
+
+   ```makefile
+   .PHONY: FORCE
+   FORCE:   # 结合伪目标声明更健壮
+   monitor: FORCE
+       ./monitor.sh
+       touch monitor
+   ```
+
+   - 既保证每次执行（伪目标特性）
+   - 又记录最后执行时间（空目标优势）
+
+>
+> **注**：自动化变量 `$?` 在空目标规则中至关重要，它自动筛选出需要处理的变更文件，避免冗余操作。
+>
+
+---
+
+### 4.7. 特殊目标(Special Built-in Target Names)
 
 - **`.PHONY`**：特殊目标 .PHONY 的先决条件被认为是假目标。当需要考虑这样的目标时，make 将无条件地运行其配方，无论是否存在具有该名称的文件或其上次修改时间。
 - **`.SUFFIXES`**：特殊目标 .SUFFIXES 的先决条件是用于检查后缀规则的后缀列表。
@@ -1235,93 +2231,738 @@ FORCE:
 - **`.ONESHELL`**：如果将 .ONESHELL 作为目标提到，那么在构建目标时，配方的所有行都将被交给shell的单个调用，而不是单独调用每一行。
 - **`.POSIX`**：如果将 .POSIX 作为目标提及，则将解析 makefile 并在符合 POSIX 的模式下运行。这并不意味着只有符合 POSIX 的 makefile 才会被接受：所有高级 GNU make 功能仍然可用。相反，此目标会导致 make 在 make 的默认行为不同的区域中按照 POSIX 的要求运行。特别是，如果提到此目标，则将调用配方，就好像 shell 已传递 -e 标志一样：配方中的第一个失败命令将导致配方立即失败。
 
-### 4.9. Multiple Targets in a Rule
+---
 
-- You want just prerequisites, no recipe
+### 4.8. 多目标规则(Multiple Targets in a Rule)
 
-```makefile
-kbd.o command.o files.o: command.h
-```
+#### 4.8.1. 多目标规则的本质
 
- 相当于
+多目标规则允许一个规则定义多个目标，所有目标共享相同的依赖关系和执行逻辑。核心价值在于：
 
-```makefile
-kbd.o: command.h
-command.o: command.h
-files.o: command.h
-```
+1. **简化重复规则**：避免为相似目标重复编写规则
+2. **集中管理依赖**：批量声明依赖关系
+3. **自动化变量支持**：通过 `$@` 区分不同目标
 
-- Similar recipes work for all the targets
+#### 4.8.2. 独立目标规则 (标准分隔符 `:`)
 
-相当于
-
-#### 4.9.1 Rules with Grouped Targets
-
-分组目标，当一个目标更新。所有目标更新.&符号可以理解为all
-注意的是，每个独立的目标不能有命令。
+**核心特性**：
 
 ```makefile
-add.o sub.o mul.o &: common.h
-        echo hello
-
-add.o:common.h
+target1 target2 ... : prereq1 prereq2 ...
+    recipe
 ```
 
-### 4.10. Multiple Rules for One Target
+1. **等效展开机制**：
+
+   ```makefile
+   kbd.o command.o files.o: command.h
+   ```
+
+   ⇨ 自动展开为：
+
+   ```makefile
+   kbd.o: command.h
+   command.o: command.h
+   files.o: command.h
+   ```
+
+2. **自动化变量应用**：
+
+   ```makefile
+   bigoutput littleoutput : text.g
+       generate text.g -$(subst output,$@) > $@
+   ```
+
+   - `$@`：动态替换为当前目标名
+   - `$(subst output,$@)`：将 "output" 替换为目标名（如 bigoutput → big）
+
+3. **典型应用场景**：
+   - **批量声明依赖**（无配方）：
+
+     ```makefile
+     obj1.o obj2.o obj3.o: common.h
+     ```
+
+   - **相似构建逻辑**：
+
+     ```makefile
+     win_app mac_app linux_app: source.c
+         build_$@ source.c -o $@
+     ```
+
+4. **局限**：
+   - 无法为不同目标指定不同依赖（需使用静态模式规则）
+
+#### 4.8.3. 分组目标规则 (分隔符 `&:`)
 
 ```makefile
-target: dep1 dep2
-    rule1
-
-target: dep3 dep4
-    rule2
+target1 target2 ... &: prereq1 prereq2 ...
+    recipe
 ```
 
-### 4.11. Static Pattern Rules
+**核心特性**：
 
-### 4.11.1 Syntax of Static Pattern Rules
+1. **原子性更新**：
+   - 任一目标过期 → 所有目标重建
+   - 执行一次配方 → 更新所有目标
+   - 示例：
+
+     ```makefile
+     report.pdf report.html &: data.xml
+         xml2pdf data.xml -o report.pdf
+         xml2html data.xml -o report.html
+     ```
+
+2. **强制要求**：
+   - 必须包含配方（独立目标可无配方）
+   - 目标只能属于一个分组（除非使用双冒号）
+
+3. **自动化变量特性**：
+   - `$@` 仅表示触发规则的目标（非所有目标）
+   - 危险示例：
+
+     ```makefile
+     # 错误：只更新触发目标
+     file1 file2 &: source
+         process_source > $@
+     ```
+
+   - 正确做法：
+
+     ```makefile
+     file1 file2 &: source
+         process_source > file1
+         process_source > file2
+     ```
+
+4. **双冒号分组 (`&::`)**：
+
+   ```makefile
+   target1 target2 &:: prereqA
+       recipeA
+   target1 target3 &:: prereqB
+       recipeB
+   ```
+
+   - 允许目标跨多组
+   - 每组独立判断更新
+   - 每个配方至多执行一次
+
+#### 4.8.4. 关键对比表
+
+| **特性**         | 独立目标 (`:`)      | 分组目标 (`&:`)       | 双冒号分组 (`&::`)     |
+|------------------|---------------------|----------------------|-----------------------|
+| **更新粒度**     | 单个目标独立更新    | 全组原子更新         | 按组独立更新          |
+| **配方必要性**   | 可选                | 必需                | 必需                 |
+| **目标复用**     | 允许跨规则          | 禁止跨分组          | 允许跨组             |
+| `$@` 的含义      | 当前目标名          | 触发规则的目标名     | 触发规则的目标名      |
+| **典型场景**     | 批量依赖声明        | 单命令生成多文件     | 多维度更新目标       |
+
+#### 4.8.5. 最佳实践示例
+
+1. **独立目标：跨平台构建**
+
+   ```makefile
+   win_app mac_app linux_app: main.c
+       $@_compiler main.c -o $@
+   ```
+
+2. **分组目标：文档生成**
+
+   ```makefile
+   manual.pdf manual.html &: manual.md
+       pandoc $< -o manual.pdf
+       pandoc $< -o manual.html
+       touch $@  # 记录更新时间
+   ```
+
+3. **双冒号分组：多维度构建**
+
+   ```makefile
+   # 按格式分组
+   report.pdf report.ps &:: data.raw
+       format_$@ data.raw
+   
+   # 按语言分组
+   report.pdf report_docx &:: template.conf
+       localize_$@ template.conf
+   ```
+
+#### 4.8.6. 经验总结
+
+1. **优先选择独立目标**：
+   - 适用于 90% 的多目标场景
+   - 简洁安全，避免意外全局更新
+
+2. **分组目标使用场景**：
+   - 单命令生成多个关联文件（如：Flex/Bison 输出）
+   - 确保输出文件一致性（原子性更新）
+   - 避免重复执行高开销命令
+
+3. **双冒号分组慎用**：
+   - 仅在目标需要多维度更新时使用
+   - 确保配方幂等性（可重复执行）
+
+4. **自动化变量技巧**：
+
+   ```makefile
+   # 通用构建模板
+   %.o %.d &: %.c
+       $(CC) -c $< -o $*.o
+       $(CC) -M $< > $*.d
+   ```
+
+> **核心洞察**：多目标规则本质是 Makefile 的 DRY（Don't Repeat Yourself）原则实现。独立目标解决"规则重复"，分组目标解决"执行重复"，静态模式规则（未涵盖）则解决"模式重复"。掌握三者差异是高效 Makefile 设计的关键。
+
+---
+
+### 4.9. 多规则目标(Multiple Rules for One Target)
+
+#### 4.9.1 核心概念解析
+
+**多规则目标**指同一个目标文件出现在多个规则中。例如：
 
 ```makefile
-targets ...: target-pattern: prereq-patterns ...
-	recipe
-	...
+# 规则1
+target: depA
+    command1
+
+# 规则2
+target: depB
+    command2  # 错误！多个命令定义
 ```
 
-- **`TARGETS`**： 列出此规则的一系列**目标文件**，可以包含通配符。
-- **`TARGET-PATTERN`**： 目标模式。一般会包含"%"，其中"%"可以匹配目标文件中的任何部分，匹配的部分称为"茎"
-- **`PREREQ-PATTERNS`**： 依赖模式。每个目标的依赖文件使用目标模式的"茎"代替依赖模式中的"%"而得到
-  相当于：
+#### 4.9.2. 核心规则
+
+1. **依赖合并机制**：
+   - 所有规则的依赖被合并为一个列表
+   - 示例：
+
+     ```makefile
+     app: server.c
+     app: client.c
+     ```
+
+     等效：
+
+     ```makefile
+     app: server.c client.c
+     ```
+
+2. **命令唯一性原则**：
+
+   - 只能有一个规则定义命令
+   - 多个命令定义时：
+
+     ```makefile
+     target: depA
+         @echo "Command A"  # 被忽略
+  
+     target: depB
+         @echo "Command B"  # 实际执行
+     ```
+
+     - Make 采用**最后一个命令**并报错（除非目标以`.`开头）
+
+3. **更新触发逻辑**：
+
+   - 目标比**任何依赖**旧 → 执行命令
+   - 依赖来源：所有规则中声明的依赖
+
+#### 4.9.3. 双冒号规则例外
 
 ```makefile
-foo.o : foo.c
-	$(CC) -c $(CFLAGS) foo.c -o foo.o
+target:: depA
+    commandA
 
-bar.o : bar.c
-	$(CC) -c $(CFLAGS) bar.c -o bar.o
+target:: depB
+    commandB
 ```
 
-### 4.12. Double-Colon Rules
+- **特殊能力**：
+  - 允许同一目标有多个命令规则
+  - 每个规则独立判断：
+    - 若 `depA` 比目标新 → 执行 `commandA`
+    - 若 `depB` 比目标新 → 执行 `commandB`
+
+#### 4.9.4. 核心应用场景
+
+1. **批量添加依赖**（最常见用法）：
+
+   ```makefile
+   OBJ = main.o utils.o
+
+   # 各文件的专属依赖
+   main.o: constants.h
+   utils.o: helpers.h
+
+   # 批量添加公共依赖
+   $(OBJ): config.h  # 所有.o文件都依赖config.h
+   ```
+
+   - 修改 `config.h` 会触发所有对象文件重建
+
+2. **命令行动态依赖**：
+
+   ```makefile
+   EXTRA_DEPS =
+   $(OBJ): $(EXTRA_DEPS)
+   ```
+
+   - 使用：`make EXTRA_DEPS=new_dep.h`
+   - 效果：`new_dep.h` 成为所有 OBJ 的临时依赖
+
+3. **无命令规则**：
+   - 仅声明依赖，不提供命令
+   - Make 自动寻找隐含规则构建：
+
+     ```makefile
+     # 声明额外依赖
+     data.bin: checksum.txt
+     
+     # 隐含规则实际构建
+     data.bin: input.dat
+         process $< > $@
+     ```
+
+#### 4.9.5. 与多目标规则的对比
+
+| **特性**         | 多规则目标                     | 多目标规则                     |
+|------------------|-------------------------------|-------------------------------|
+| **目标数量**     | 单目标，多规则                | 多目标，单规则                |
+| **核心作用**     | 扩展依赖关系                  | 共享规则定义                  |
+| **命令冲突**     | 禁止多命令（双冒号除外）      | 单命令作用于所有目标          |
+| **典型应用**     | 添加公共依赖                  | 批量构建相似目标              |
+| **更新粒度**     | 单目标                        | 多目标独立/分组更新           |
+
+#### 4.9.6. 最佳实践示例
+
+1. **模块化依赖管理**：
+
+   ```makefile
+   # 基础依赖
+   network.o: protocol.h
+   ui.o: themes.h
+
+   # 平台相关依赖
+   ifeq ($(OS),Windows)
+   $(OBJ): win_compat.h  # 所有Windows对象额外依赖
+   endif
+   ```
+
+2. **动态检测依赖**：
+
+   ```makefile
+   # 自动生成的依赖（如gcc -MMD）
+   -include $(OBJ:.o=.d)
+
+   # 手动补充依赖
+   $(OBJ): version.h
+   ```
+
+3. **双冒号高级用法**：
+
+   ```makefile
+   database:: schema.sql
+       load_schema $<   # 仅当schema变化时执行
+   
+   database:: data.csv
+       import_data $<   # 仅当数据变化时导入
+   ```
+
+#### 4.9.7. 常见错误规避
+
+1. **命令冲突**：
+
+   ```makefile
+   # 错误示例
+   target: dep1
+       cmd1
+   target: dep2
+       cmd2  # Make报错：重复命令
+
+   # 正确方案
+   target: dep1 dep2
+       cmd_single
+   # 或
+   target:: dep1
+       cmd1
+   target:: dep2
+       cmd2
+   ```
+
+2. **循环依赖**：
+
+   ```makefile
+   target: intermediate
+   intermediate: target  # 循环依赖！
+   ```
+
+#### 4.9.8. 设计哲学
+
+1. **关注点分离**：
+   - 架构依赖声明 vs 构建逻辑
+   - 示例：
+
+     ```makefile
+     # 架构师声明
+     all_components: security_policy.h
+     
+     # 开发者实现
+     server: server.c
+         $(CC) -o $@ $^
+     ```
+
+2. **可扩展性原则**：
+   - 新增依赖只需添加规则，不修改现有构建逻辑
+   - 特别适合大型项目协作开发
+
+> **核心洞察**：多规则目标本质是 Makefile 的依赖注入机制。它实现了依赖关系与构建逻辑的解耦，使构建系统获得动态扩展能力。这种设计在大型项目中可降低 50% 的构建脚本维护成本。
+
+---
+
+### 4.10. 静态模式规则(Static Pattern Rules)
+
+#### **4.10.1. 核心概念与价值**
+
+- **本质**：针对多个目标文件的特殊规则，**根据目标名自动推导依赖**
+- **核心价值**：
+  - 避免为相似文件重复编写规则（如：所有 `.o` 文件从 `.c` 编译）
+  - 允许不同目标拥有**相似但不完全相同**的依赖关系
+- **与普通多目标规则区别**：
+
+  ```makefile
+  # 普通多目标规则：所有目标共享相同依赖
+  foo.o bar.o: common.h
+      $(CC) -c $< -o $@
+  
+  # 静态模式规则：每个目标有独立推导的依赖
+  objects = foo.o bar.o
+  $(objects): %.o: %.c
+      $(CC) -c $< -o $@
+  ```
+
+#### **4.10.2. 语法结构解析**
 
 ```makefile
-test::
-        @echo "1"
-
-test::
-        @echo "2"
+目标列表: 目标模式: 依赖模式...
+    命令
 ```
 
-双冒号的话，会打印1和2. 如果是单冒号，则会有warning，而且只执行最后一个 打印2.
+- **目标列表**：需应用规则的具体文件（可含通配符）
+- **目标模式**：含 `%` 的模式，匹配目标列表中的文件名
+- **依赖模式**：使用 `%` 的占位符，基于匹配的**词干(stem)**生成依赖
 
-### 4.13. Generating Prerequisites Automatically
+**词干(stem)提取机制**：
 
--M 参数，列出所有的依赖文件包含系统头文件
--MM参数，列出所有依赖文件不含系统头文件
-gcc -MM main.c
-解析下面：
+1. 对目标列表中每个目标：
+   - 与目标模式进行匹配（`%` 匹配任意子串）
+   - 提取 `%` 匹配的部分 → **词干(stem)**
+2. 将词干替换到依赖模式中的 `%` → 生成该目标的依赖
+
+#### **4.10.3. 关键特性与约束**
+
+| **特性**          | **说明**                                                                 |
+|-------------------|--------------------------------------------------------------------------|
+| **模式唯一性**    | 目标模式中 `%` 必须出现且仅出现一次                                       |
+| **精确匹配要求**  | 目标名必须与目标模式的非 `%` 部分完全匹配（如 `%.o` 匹配 `foo.o` 但不匹配 `foo.out`) |
+| **依赖生成**      | 每个目标独立生成依赖（词干替换依赖模式中的 `%`）                           |
+| **特殊字符处理**  | 使用 `\` 转义 `%`（如 `the\%weird\%pattern` 匹配包含 `%` 的文件名）        |
+
+#### **4.10.4. 执行流程示例**
+
+```makefile
+# 示例1：基础编译
+objects = foo.o bar.o
+$(objects): %.o: %.c
+    $(CC) -c $(CFLAGS) $< -o $@
+```
+
+- 目标 `foo.o`：
+  - 匹配目标模式 `%.o` → 词干 = `foo`
+  - 依赖模式 `%.c` → 依赖文件 = `foo.c`
+  - 生成规则：`foo.o: foo.c`
+- 目标 `bar.o`：
+  - 生成规则：`bar.o: bar.c`
+
+```makefile
+# 示例2：使用 $* 获取词干
+bigoutput littleoutput: %output: text.g
+    generate text.g -$* > $@
+```
+
+- 目标 `bigoutput`：
+  - 词干 = `big`
+  - 命令展开：`generate text.g -big > bigoutput`
+
+#### **4.10.5. 高级用法技巧**
+
+**过滤非匹配目标**：
+
+```makefile
+files = foo.elc bar.o lose.o
+
+# 仅处理 .o 文件
+$(filter %.o, $(files)): %.o: %.c
+    $(CC) -c $< -o $@
+
+# 仅处理 .elc 文件
+$(filter %.elc, $(files)): %.elc: %.el
+    emacs -f batch-byte-compile $<
+```
+
+#### **4.10.6. 静态模式规则 vs 隐含规则**
+
+| **特性**               | **静态模式规则**                          | **隐含规则**                          |
+|------------------------|------------------------------------------|---------------------------------------|
+| **作用范围**           | 仅限规则中明确列出的目标                 | 匹配模式的所有文件                    |
+| **优先级**             | 始终应用（除非冲突报错）                 | 仅当无显式规则时应用                  |
+| **多规则冲突处理**     | 多个规则定义相同目标 → 报错              | 按优先级顺序选择第一个匹配规则        |
+| **确定性**             | 高（目标列表明确）                       | 低（依赖目录内容，规则顺序敏感）      |
+
+**静态模式规则适用场景**：
+
+1. 文件名无统一模式但需批量处理（如：`special1.o`, `unique2.o`）
+2. 避免隐含规则的不确定性（如：目录中存在干扰文件时）
+3. 大型工程中统一管理同类文件构建规则
+
+#### **4.10.7. 工程最佳实践**
+
+**模块化规则定义**：
+
+```makefile
+# 在 make-rules 文件中定义通用规则
+# 编译所有 .o 文件
+%.o: %.c
+    $(CC) -c $(CFLAGS) $< -o $@
+
+# 在模块 Makefile 中包含
+include ../make-rules
+
+# 明确指定本模块目标
+objects = main.o utils.o
+$(objects): %.o: %.c  # 复用通用规则
+```
+
+**优势**：
+
+- 避免重复规则定义
+- 集中维护编译逻辑
+- 各模块明确声明目标文件
+
+---
+
+此文档通过：
+
+- 对比表格突出核心差异
+- 分步示例展示执行流程
+- 工程实践指导实际应用
+- 错误标注确保概念准确
+全面覆盖静态模式规则的核心知识点，适用于学习和工程参考。
+
+---
+
+### 4.11. 双冒号规则(Double-Colon Rules)
+
+#### **4.11.1. 核心定义**
+
+- **语法**：用 `::` 替代普通规则的 `:`
+- **核心特性**：同一目标可出现在**多个独立**的双冒号规则中，每个规则有各自命令
+- **严格限制**：同一目标的所有规则必须是**同类型**（全普通规则 或 全双冒号规则）
+
+#### **4.11.2. 与普通规则的关键差异**
+
+| **特性**               | **普通规则**                          | **双冒号规则**                          |
+|------------------------|---------------------------------------|-----------------------------------------|
+| **目标存在时行为**     | 仅当依赖比目标新时执行命令            | 每个规则独立判断依赖时效性              |
+| **无依赖规则**         | 目标存在时命令永不执行                | 目标存在时命令**无条件执行**            |
+| **多规则合并处理**     | 依赖合并到同一目标                    | 每个规则完全独立处理                    |
+| **多规则触发机制**     | 任意依赖更新即执行命令                | **仅更新所属规则的依赖才触发对应命令**  |
+
+#### **4.11.3. 执行流程详解（示例）**
+
+```makefile
+newprog :: foo.c
+    $(CC) $(CFLAGS) $< -o $@   # 规则A
+
+newprog :: bar.c
+    $(CC) $(CFLAGS) $< -o $@   # 规则B
+```
+
+- **仅 `foo.c` 修改** → 触发规则A（重建 `newprog`），**规则B不执行**
+- **仅 `bar.c` 修改** → 触发规则B，规则A不执行
+- **两者均修改** → **按Makefile顺序执行A和B**（后者覆盖前者）
+- ⚠️ 若为普通规则：Makefile 报错（同一目标多规则冲突）
+
+#### **4.11.4. 特殊场景处理**
+
+- **无命令规则**：自动查找适用的隐含规则（与普通规则一致）
+- **无依赖规则**：目标每次被引用时**无条件执行命令**
+- **执行顺序**：严格按 Makefile 中的书写顺序执行
+
+#### **4.11.5. 使用场景与注意事项**
+
+- **适用场景**：同一目标需根据**不同依赖执行不同构建逻辑**时
+  （例：根据不同源码编译出同名程序的不同版本）
+- **慎用原因**：
+  1. 执行顺序依赖书写顺序（后者可能覆盖前者结果）
+  2. 多数构建需求可通过模式规则/条件判断实现
+  3. 行为反直觉（开发者易误用为普通规则）
+- **最佳实践**：
+
+  ```makefile
+  # 更安全的替代方案：使用不同目标名
+  newprog-foo: foo.c ; $(CC) $< -o $@
+  newprog-bar: bar.c ; $(CC) $< -o $@
+  ```
+
+---
+
+#### **4.11.6. 文档问题修正说明**
+
+原中文文档存在两处关键错误：
+
+1. **普通规则描述错误**
+   ❌ 原表述："当规则的目标文件存在时，此规则的命令永远不会被执行"
+   ✅ 修正：普通规则在**目标存在且依赖未更新**时才不执行命令（依赖更新仍会执行）
+
+2. **双冒号规则行为误导**
+   ❌ 原表述："双冒号规则中，当依赖文件比目标更新时，规则将会被执行"
+   ✅ 修正：每个规则**独立判断**依赖时效性（而非全局判断）
+
+---
+
+#### **4.11.7. 为什么需要双冒号规则？**
+
+虽然使用场景极少，但其解决了特定问题：
+> **当同一目标的构建逻辑因依赖文件而异时**，双冒号规则允许为不同依赖集定义不同构建命令。
+
+例如：
+
+- 从 `fileA.c` 构建时需添加 `-DA_FLAG`
+- 从 `fileB.c` 构建时需链接 `special_lib`
+此时双冒号规则可精准控制构建逻辑，避免普通规则的命令覆盖问题。
+
+---
+
+此修订版文档：
+
+1. 使用对比表格突出核心差异
+2. 通过示例明确执行流程
+3. 标注错误表述及修正依据
+4. 强调适用场景与替代方案
+5. 保留专业术语的同时提升可读性
+适合作为学习笔记和技术文档参考。
+
+---
+
+### 4.12. Makefile 自动依赖生(Generating Prerequisites Automatically)
+
+#### **4.12.1. 核心目标**
+
+- **问题**：手动为每个源文件编写头文件依赖规则（如 `main.o: defs.h`）繁琐且易出错。
+- **解决方案**：利用编译器自动扫描 `#include` 生成依赖关系，确保文件变更时自动重建目标。
+
+#### **4.12.2. 编译器关键选项**
+
+- **`gcc -M`**
+  生成完整的依赖规则（含系统头文件）：
+
+  ```bash
+  gcc -M main.c  # 输出: main.o : main.c defs.h /usr/include/stdio.h ...
+  ```
+
+- **`gcc -MM`（推荐）**
+  忽略系统头文件，仅保留用户头文件：
+
+  ```bash
+  gcc -MM main.c  # 输出: main.o : main.c defs.h
+  ```
+
+#### **4.12.3. 自动化实现步骤**
+
+##### (1) 生成依赖文件（`.d` 文件）
+
+为每个 `.c` 文件动态生成同名 `.d` 文件（如 `main.c` → `main.d`），包含其依赖规则：
+
+```makefile
+# Makefile 规则
+%.d: %.c
+    @gcc -MM $< > $@.$$$$; \             # 将依赖输出到临时文件（$$$$ 为进程ID）
+    sed 's,\($*\)\.o[ :]*, $*.o $@ : ,g' < $@.$$$$ > $@; \  # 关键修改：添加 .d 文件自身依赖
+    rm -f $@.$$$$                        # 删除临时文件
+```
+
+**注**：
+
+- `sed` 命令将 `main.o : ...` 替换为 `main.o main.d : ...`，确保头文件变更时 `.d` 文件也会更新。
+- 使用 `-MM` 避免系统头文件干扰，需手动添加系统库依赖（如 `-lpthread`）。
+
+##### (2) 包含所有依赖文件
+
+在 Makefile 中引入生成的 `.d` 文件：
+
+```makefile
+sources = foo.c bar.c          # 定义源文件
+include $(sources:.c=.d)       # 包含所有对应的 .d 文件
+```
+
+**效果**：
+
+- `make` 自动重建过时的 `.d` 文件（因 `.d` 文件也是 Makefile）。
+- 无需手动执行 `make depend`（传统方式已过时）。
+
+#### **4.12.4. 技术原理**
+
+- **依赖链更新**
+  若 `defs.h` 修改 → `main.d` 更新 → `main.o` 自动重建。
+- **GNU make 特性**
+  支持 `include` 指令动态重建 Makefile（含 `.d` 文件），无需额外命令。
+
+#### **4.12.5. 完整示例**
+
+```makefile
+CC = gcc
+CFLAGS = -I./include
+sources = main.c utils.c
+
+%.d: %.c
+    @$(CC) -MM $(CFLAGS) $< > $@.$$$$; \
+    sed 's,\($*\)\.o[ :]*, $*.o $@ : ,g' < $@.$$$$ > $@; \
+    rm -f $@.$$$$
+
+include $(sources:.c=.d)  # 包含 main.d, utils.d
+
+all: app
+
+app: $(sources:.c=.o)
+    $(CC) -o $@ $^
+```
+
+---
+
+#### **4.12.6. 关键总结**
+
+| **概念**         | **说明**                                                                 |
+|------------------|--------------------------------------------------------------------------|
+| **`gcc -MM`**    | 自动生成用户头文件依赖关系（忽略系统路径）                               |
+| **`.d` 文件**    | 存储依赖规则的 Makefile 片段，格式为 `目标.o 目标.d : 源文件 头文件...` |
+| **`sed` 修改**   | 使 `.d` 文件自身依赖源文件，确保依赖链更新                               |
+| **`include`**    | 动态加载 `.d` 文件，GNU make 自动重建过时的依赖文件                     |
+
+>
+> **最佳实践**：
+>
+> - 始终使用 `-MM` 而非 `-M` 避免系统头文件污染依赖。
+> - 将 `.d` 文件加入 `.gitignore`（因其可自动生成）。
+> - 现代构建工具（如 CMake）已内置此功能，但理解底层机制有助于调试复杂项目。
+>
 
 ## 5. Writing Recipes in Rules
 
 逐条执行，默认用 `/bin/bash`
+
+---
 
 ### 5.1. Recipe Syntax
 
@@ -1351,11 +2992,15 @@ done
 
 打印：one two three
 
+---
+
 ### 5.2. Recipe Echoing
 
 1. 在echo前面添加@符号就不会打印这行命令
 2. -n 或者--just-print，会打印要执行的命令，而不会真正执行
 3. -s或者--silent会阻止make打印。 **`.SILENT`**  也具有同样的作用
+
+---
 
 ### 5.3. Recipe Execution
 
@@ -1374,6 +3019,8 @@ make --help
 make -p
 ```
 
+---
+
 ### 5.4. Parallel Execution
 
 我们可以通过指定 `-j`或者 `--jobs`来并行的执行。 后面跟数字 或者不跟
@@ -1391,6 +3038,8 @@ clean:
         rm 1.txt
 ```
 
+---
+
 ### 5.5. Defining Canned Recipes
 
 ```makefile
@@ -1401,6 +3050,8 @@ endef
 hello.o: hello.c
         $(run-gcc)
 ```
+
+---
 
 ### 5.6. Using Empty Recipes
 
@@ -1419,10 +3070,14 @@ makefile中变量时严格区分大小写的
 2. 我们自定义的变量建议用小写字母。
 3. 为控制隐式规则的参数或用户应使用命令选项重写的参数保留大写，如$(MAKE)
 
+---
+
 ### 6.1. Basics of Variable References
 
 一般变量我们用 `$,`比如 `$(foo)`或者 `${foo}`,如果我们想表示 `$`符号，我们要写为 `$$`.
 如果你不带括号或者大括号，变量被认为 `$`后面的一个字母。比如 `$foo`,会被理解为 `$f`,然后跟 `oo`
+
+---
 
 ### 6.2. The Two Flavors of Variables
 
@@ -1485,6 +3140,8 @@ all:
 FOO ?= bar
 ```
 
+---
+
 ### 6.3. Advanced Features for Reference to Variables
 
 #### 6.3.1. Substitution References
@@ -1508,6 +3165,8 @@ z = u
 a := $($($(x)))
 ```
 
+---
+
 ### 6.4. How Variables Get Their Values
 
 - You can specify an overriding value when you run make override变量
@@ -1517,11 +3176,15 @@ a := $($($(x)))
 - Several automatic variables are given new values for each rule. Each of these has a single conventional use. 自动变量
 - Several variables have constant initial values 隐式规则变量
 
+---
+
 ### 6.5. Setting Variables
 
 ```makefile
 hash := $(shell printf ’\043’)
 ```
+
+---
 
 ### 6.6. Appending More Text to Variables
 
@@ -1530,6 +3193,8 @@ objects = main.o foo.o bar.o utils.o
 objects += another.o
 ```
 
+---
+
 ### 6.7. The override Directive
 
 ```makefile
@@ -1537,6 +3202,8 @@ override 关键词
 override variable := value
 override variable += more text
 ```
+
+---
 
 ### 6.8. Defining Multi-Line Variables
 
@@ -1550,6 +3217,8 @@ print:
         @$(two-lines)
 ```
 
+---
+
 ### 6.9. Undefining Variables
 
 ```makefile
@@ -1561,6 +3230,8 @@ $(info $(origin foo))
 $(info $(flavor bar))
 ```
 
+---
+
 ### 6.10. Variables from the Environment
 
 ```makefile
@@ -1570,12 +3241,16 @@ CFLAGS
 
 使用 `export`定义环境变量
 
+---
+
 ### 6.11. Target-specific Variable Values
 
 ```makefile
 prog : CFLAGS = -g
 prog : prog.o foo.o bar.o
 ```
+
+---
 
 ### 6.12. Pattern-specific Variable Values
 
@@ -1585,7 +3260,11 @@ prog : prog.o foo.o bar.o
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $@
 ```
 
+---
+
 ### 6.13. Suppressing Inheritance
+
+---
 
 ### 6.14. Other Special Variables
 
@@ -1597,6 +3276,8 @@ prog : prog.o foo.o bar.o
 
 ## 8. Functions for Transforming Text
 
+---
+
 ### 8.1. Function Call Syntax
 
 格式：
@@ -1607,6 +3288,8 @@ ${function arguments}
 ```
 
 如果是特殊字符需要用变量来隐藏：
+
+---
 
 ### 8.2. Functions for String Substitution and Analysis
 
@@ -1677,6 +3360,8 @@ ${function arguments}
    $(lastword foo bar)  #bar
 ```
 
+---
+
 ### 8.3. Functions for File Names
 
 1. **`$(dir names...)`** 提取 names 中每个文档名的目录部分。
@@ -1726,6 +3411,8 @@ ${function arguments}
    var = $(abspath src/ ../make/) #/workspace/make/src /workspace/make
 ```
 
+---
+
 ### 8.4. Functions for Conditionals
 
 1. **`$(if condition,then-part[,else-part])`**
@@ -1733,12 +3420,12 @@ ${function arguments}
    ```makefile
     var = 1
     var1 = $(if $(var), true,false)
-
+   
     .PHONY: print
     print:
             @echo $(var1)
    ```makefile
-
+   
    ```
 2. **`$(or condition1[,condition2[,condition3...]])`**
 
@@ -1747,7 +3434,7 @@ ${function arguments}
    var2 = 3
    var3 =
    var1 = $(or $(var3), $(var),$(var2))
-
+   
    .PHONY: print
    print:
    @echo $(var1)
@@ -1759,12 +3446,14 @@ ${function arguments}
    var2 = 3
    var3 = 4
    var1 = $(and $(var3), $(var),$(var2))
-
+   
    .PHONY: print
    print:
            @echo $(var1)
    ```
 4. `$(intcmp lhs,rhs[,lt-part[,eq-part[,gt-part]]])`  GNU make不支持
+
+---
 
 ### 8.5. The let Function
 
@@ -1785,6 +3474,8 @@ print:
 	@echo $(var)
 ```
 
+---
+
 ### 8.6. The foreach Function
 
 语法：
@@ -1802,6 +3493,8 @@ print:
         @echo $(files)
 
 ```
+
+---
 
 ### 8.7. The file Function
 
@@ -1825,6 +3518,8 @@ clean:
         rm hello.o
 ```
 
+---
+
 ### 8.8. The call Function
 
 call函数的独特之处在于它可用于创建新的参数化函数
@@ -1841,6 +3536,8 @@ foo = $(call reverse,a,b)
 	@echo $(foo)
 ```
 
+---
+
 ### 8.9. The value Function
 
 value 函数提供了一种使用变量的值而不让变量展开的方式。通常跟eval函数配合使用
@@ -1853,6 +3550,8 @@ all:
 	@echo $(FOO)
     @echo $(value FOO)
 ```
+
+---
 
 ### 8.10. The eval Function
 
@@ -1877,6 +3576,9 @@ all:
         @echo foo=$(foo).
 ```
 
+
+---
+
 ### 8.11. The origin Function
 
 origin函数告诉你变量的值来源于哪里，比如命令行或环境变量等.返回值有：
@@ -1888,6 +3590,8 @@ origin函数告诉你变量的值来源于哪里，比如命令行或环境变�
 ```makefile
 $(origin variable)
 ```
+
+---
 
 ### 8.12. The flavor Function
 
@@ -1906,9 +3610,13 @@ make退出的状态有三种：
 - 2 有任何错误，退出状态为2
 - 1 如果你使用-q参数和make 确定某些目标尚未更新。
 
+---
+
 ### 9.1. Arguments to Specify the Makefile
 
 -f 或者--file选项，来指定文件为make执行的makefile
+
+---
 
 ### 9.2. Arguments to Specify the Goals
 
@@ -1917,6 +3625,8 @@ make退出的状态有三种：
 all：编译所有的目标
 clean：删除所有被make创建的文件
 distclean：
+
+---
 
 ### 9.3. Instead of Executing Recipes
 
@@ -1939,6 +3649,8 @@ distclean：
 5. -n
    打印执行的命令，但是不是真正的执行。
 
+---
+
 ### 9.4. Avoiding Recompilation of Some Files
 
 有时候你改变一个源文件，但是你不想重新编译所有的依赖它的文件。比如你在头文件中加入一个宏。make假定头文件改变，所有依赖改头文件的文件都会被重新编译。但是你知道他们不是都需要重新编译。
@@ -1947,6 +3659,8 @@ distclean：
 2. 修改头文件
 3. 使用命令make -t来标记目标文件为最新。后面再使用make，也不会编译。
 
+---
+
 ### 9.5. Overriding Variables
 
 ```makefile
@@ -1954,13 +3668,19 @@ override variable := value
 override variable += more text
 ```
 
+---
+
 ### 9.6. Testing the Compilation of a Program
 
 make -k 使make出现错误继续执行下去，来测试makefile，找到错误。
 
+---
+
 ### 9.7. Temporary Files
 
 如果 `MAKE_TMPDIR` 参数被指定，临时文档将放在这里。如果没指定 `TMPDIR` 这个环境变量中的地址，或者 `/tmp`中
+
+---
 
 ### 9.8. Summary of Options
 
@@ -1970,6 +3690,8 @@ make -k 使make出现错误继续执行下去，来测试makefile，找到错误
 
 有些约定好的规则，比如c的编译就使用cc。我们不用显式指定了。
 
+---
+
 ### 10.1. Using Imlicit Rules
 
 ```makefile
@@ -1978,6 +3700,8 @@ hello: hello.o
 ```
 
 上述例子中，没有关于hello.o的编译目标。依然可以执行成功，就是运用了make的隐式规则。
+
+---
 
 ### 10.2. Catalogue of Built-In Rules
 
@@ -1996,9 +3720,13 @@ hello: hello.o
 
 ‘-r’ 选项或者'--no-builtin-rules’可以取消预定义的规则。
 
+---
+
 ### 10.3. Variables Used by Implicit Rules
 
 几个例子
+
+---
 
 ### 10.4. Defining and Redefining Pattern Rules
 
@@ -2089,6 +3817,8 @@ hello.o:hello.c hello.c |hello.h
         @echo $(@D)
         @echo $(@F)
 ```
+
+---
 
 ### 11. Using make to Update Archive File
 
