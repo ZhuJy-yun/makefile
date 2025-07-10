@@ -6405,11 +6405,604 @@ program: .EXTRA_PREREQS = $(CC)  # 添加编译器依赖
 
 掌握这些特殊变量，可大幅提升构建系统的健壮性和跨平台能力！
 
-## 7. Conditional Parts of Makefiles
+## 7. Makefile的条件执行(Conditional Parts of Makefiles)
 
-#### 7.1.1 Example of a Conditional
+条件语句可以根据一个变量的值来控制make执行或者忽略Makefile的特定部分。条件语句可以是两个不同变量、或者变量和常量值的比较。要注意的是：条件语句只能用于控制make实际执行的makefile文件部分，它不能控制规则的shell命令执行过程。Makefile 中使用条件控制可以做到处理的灵活性和高效性。
 
-#### 7.1.2 Syntax of Conditionals
+### 7.1 条件语句示例(Example of a Conditional)
+
+#### 7.1.1. 条件语句核心作用
+
+根据变量值动态改变构建行为，实现：
+- 不同编译器使用不同编译选项
+- 跨平台兼容性处理
+- 调试/发布版本差异化构建
+- 环境特定依赖管理
+
+---
+
+#### 7.1.2. 条件语句基本结构
+
+```makefile
+ifeq (参数1, 参数2)  # 条件判断开始
+    # 条件成立时执行的命令
+else
+    # 条件不成立时执行的命令
+endif               # 条件结束
+```
+
+**指令解析**：
+
+| 指令  | 作用                          | 必要性   | 参数说明                     |
+|-------|-------------------------------|----------|----------------------------|
+| ifeq  | 条件判断开始，比较两参数是否相等 | 必须     | 逗号分隔，括号包裹           |
+| else  | 提供备选执行路径              | 可选     | 无参数                      |
+| endif | 结束条件块                    | 必须     | 无参数                      |
+
+---
+
+#### 7.1.3. 完整示例解析
+
+```makefile
+# 定义条件变量
+libs_for_gcc = -lgnu
+normal_libs =
+
+# 条件规则示例
+foo: $(objects)
+ifeq ($(CC),gcc)           # 检测CC变量是否为gcc
+    $(CC) -o foo $(objects) $(libs_for_gcc)
+else
+    $(CC) -o foo $(objects) $(normal_libs)
+endif
+```
+
+**执行效果**：
+
+```bash
+# 场景1：使用gcc编译
+$ make CC=gcc
+gcc -o foo main.o utils.o -lgnu
+
+# 场景2：使用clang编译
+$ make CC=clang
+clang -o foo main.o utils.o
+```
+
+---
+
+#### 7.1.4. 优化实现方案（推荐）
+
+```makefile
+# 条件变量赋值
+libs_for_gcc = -lgnu
+normal_libs =
+
+ifeq ($(CC),gcc)
+    libs = $(libs_for_gcc)
+else
+    libs = $(normal_libs)
+endif
+
+# 统一规则
+foo: $(objects)
+    $(CC) -o foo $(objects) $(libs)
+```
+
+**优势**：
+
+1. 规则部分保持简洁
+2. 条件逻辑与执行逻辑分离
+3. 更易维护和扩展
+
+---
+
+#### 7.1.5. 关键机制解析
+
+1. **文本级处理**：
+
+   - Make 在解析阶段处理条件语句
+   - 实际执行时只保留符合条件的代码块
+   - 等效于直接编写最终生效的规则
+
+2. **变量展开时机**：
+
+   ```makefile
+   ifeq ($(CC),gcc)  # 解析时立即展开$CC
+   ```
+
+3. **跨规则语法**：
+
+   ```makefile
+   ifeq (...)
+   target1:  # 规则可跨条件指令
+       recipe1
+   else
+   target2:  # 不同分支可包含完整规则
+       recipe2
+   endif
+   ```
+
+---
+
+#### 7.1.6. 进阶用法示例
+
+```makefile
+# 多条件判断
+DEBUG ?= 0
+
+ifeq ($(OS),Windows_NT)
+    PLATFORM_LIBS = -lwsock32
+else ifeq ($(shell uname),Linux)
+    PLATFORM_LIBS = -lpthread
+else
+    PLATFORM_LIBS = -framework CoreFoundation
+endif
+
+ifeq ($(DEBUG),1)
+    CFLAGS += -g -O0
+else
+    CFLAGS += -O3
+endif
+
+app: main.c
+    $(CC) $(CFLAGS) $^ -o $@ $(PLATFORM_LIBS)
+```
+
+**执行场景**：
+
+```bash
+# Linux发布版本
+$ make DEBUG=0
+gcc -O3 main.c -o app -lpthread
+
+# macOS调试版本
+$ make DEBUG=1
+clang -g -O0 main.c -o app -framework CoreFoundation
+```
+
+---
+
+#### 7.1.2. 注意事项
+
+1. **缩进要求**：
+
+   - 条件指令（ifeq/else/endif）必须顶格写
+   - 配方命令必须使用 Tab 缩进
+
+2. **语法陷阱**：
+
+   ```makefile
+   # 错误：缺少逗号
+   ifeq ($(CC) gcc)
+
+   # 错误：多余空格
+   ifeq ( gcc , $(CC) )  # 比较" gcc "和" gcc" 不相等！
+   ```
+
+3. **变量未定义处理**：
+
+   ```makefile
+   # 安全写法：赋予默认值
+   ifeq ($(origin CC),default)
+     CC = gcc
+   endif
+   ```
+
+>
+> 最佳实践：复杂条件逻辑应在Makefile开头集中处理，保持规则部分简洁明了
+>
+
+### 7.2. 判断语法(Syntax of Conditionals)
+
+#### 7.2.1. 条件判断基本结构
+
+```makefile
+# 简单结构（无 else 分支）
+CONDITIONAL-DIRECTIVE
+TEXT-IF-TRUE
+endif
+
+# 完整结构（带 else 分支）
+CONDITIONAL-DIRECTIVE
+TEXT-IF-TRUE
+else
+TEXT-IF-FALSE
+endif
+```
+
+**核心机制**：
+
+- Make 在解析阶段处理条件语句
+- 仅保留符合条件的文本块
+- 最终执行的 Makefile 不包含被忽略的条件分支
+- 条件指令必须顶格书写（不能以 Tab 开头）
+
+---
+
+#### 7.2.2. 四种条件判断关键字
+
+##### 1. `ifeq` (判断相等)
+
+```makefile
+ifeq (arg1, arg2)  # 标准格式
+ifeq 'arg1' 'arg2'  # 单引号格式
+ifeq "arg1" "arg2"  # 双引号格式
+```
+
+**执行逻辑**：
+
+- 展开并比较 arg1 和 arg2
+- 值相同 → 执行 TEXT-IF-TRUE
+- 值不同 → 执行 TEXT-IF-FALSE（若有）
+
+**空值检测技巧**：
+
+```makefile
+# 正确检测变量是否为空（包含空格处理）
+ifeq ($(strip $(var)),)
+    @echo "变量为空"
+endif
+```
+
+##### 2. `ifneq` (判断不等)
+
+```makefile
+ifneq (arg1, arg2)
+ifneq 'arg1' 'arg2'
+ifneq "arg1" "arg2"
+```
+
+**执行逻辑**：
+
+- arg1 ≠ arg2 → 执行 TEXT-IF-TRUE
+- arg1 = arg2 → 执行 TEXT-IF-FALSE
+
+##### 3. `ifdef` (判断变量已定义)
+
+```makefile
+ifdef variable-name
+```
+
+**关键特性**：
+
+- 仅检查变量是否被定义（不检查值内容）
+- 变量值为空但已定义 → 条件成立
+- 变量未定义 → 条件不成立
+
+**典型陷阱**：
+
+```makefile
+bar =
+foo = $(bar)  # foo 已定义
+
+ifdef foo     # 成立（因foo已定义）
+    @echo "foo 已定义"
+endif
+```
+
+##### 4. `ifndef` (判断变量未定义)
+
+```makefile
+ifndef variable-name
+```
+
+**执行逻辑**：
+
+- 变量未定义 → 执行 TEXT-IF-TRUE
+- 变量已定义 → 执行 TEXT-IF-FALSE
+
+---
+
+#### 7.2.3. 关键注意事项
+
+1. **空格处理**：
+
+   ```makefile
+   # 错误！前导空格导致比较失败
+   ifeq ( gcc, $(CC) )  # 比较 " gcc" vs "gcc"
+
+   # 正确用法
+   ifeq (gcc,$(CC))
+   ```
+
+2. **变量展开时机**：
+
+   - 条件参数在解析时立即展开
+   - 自动化变量（如 `$@`, `$<`）不能在条件中使用（它们在规则执行时才定义）
+
+3. **多分支结构**：
+
+   ```makefile
+   ifeq ($(OS),Linux)
+       LIBS = -lpthread
+   else ifeq ($(OS),Windows)
+       LIBS = -lws2_32
+   else
+       LIBS = -ldl
+   endif
+   ```
+
+---
+
+#### 7.2.4. 完整示例演示
+
+##### 示例 1：编译器检测
+
+```makefile
+# 条件判断
+ifeq ($(CC),gcc)
+    CFLAGS += -fPIC
+else ifeq ($(CC),clang)
+    CFLAGS += -Weverything
+endif
+
+# 规则应用
+app: main.c
+    $(CC) $(CFLAGS) $^ -o $@
+```
+
+**执行效果**：
+
+```bash
+$ make CC=gcc
+gcc -fPIC main.c -o app
+
+$ make CC=clang
+clang -Weverything main.c -o app
+```
+
+##### 示例 2：空值检测对比
+
+```makefile
+# 场景1：ifdef vs ifeq
+VAR1 =
+VAR2 = $(EMPTY)
+
+test:
+ifdef VAR1
+    @echo "ifdef: VAR1 已定义"
+endif
+ifeq ($(strip $(VAR1)),)
+    @echo "ifeq: VAR1 值为空"
+endif
+
+ifdef VAR2
+    @echo "ifdef: VAR2 已定义"
+endif
+ifeq ($(strip $(VAR2)),)
+    @echo "ifeq: VAR2 值为空"
+endif
+```
+
+**执行效果**：
+
+```bash
+$ make test
+ifdef: VAR1 已定义
+ifeq: VAR1 值为空
+ifdef: VAR2 已定义
+ifeq: VAR2 值为空
+```
+
+##### 示例 3：平台适配
+
+```makefile
+# 检测操作系统
+ifdef ComSpec
+    RM = del /Q  # Windows
+else
+    RM = rm -f   # Unix-like
+endif
+
+clean:
+    $(RM) *.o app
+```
+
+**执行效果**：
+
+```bash
+# Windows
+> make clean
+del /Q *.o app
+
+# Linux
+$ make clean
+rm -f *.o app
+```
+
+---
+
+#### 7.2.5. 最佳实践总结
+
+1. **空值检测**：
+
+   - 使用 `ifeq ($(strip $(var)),)` 而非 `ifdef`
+   - 避免 `ifdef` 对空值变量的误判
+
+2. **复杂条件**：
+
+   - 优先在 Makefile 开头集中处理条件逻辑
+   - 避免在规则内部嵌入复杂条件
+
+3. **可移植性**：
+
+   ```makefile
+   # 使用 uname 检测平台
+   UNAME_S := $(shell uname -s)
+   ifeq ($(UNAME_S),Linux)
+       PLATFORM_FLAGS = -D LINUX
+   endif
+   ```
+
+4. **错误预防**：
+
+   ```makefile
+   # 给变量设置默认值
+   CC ?= gcc
+   DEBUG ?= 0
+   ```
+
+>
+> 关键记忆点：条件判断是文本级处理，发生在 Makefile 解析阶段，最终执行的只有符合条件的文本块。
+>
+
+### 7.3. 标志检测条件语句(Conditionals that Test Flags)
+
+#### 7.3.1. 核心机制解析
+
+**标志检测原理**：
+
+```makefile
+ifneq (,$(findstring t,$(firstword -$(MAKEFLAGS))))
+```
+1. **`MAKEFLAGS` 变量**：
+
+   - 存储所有单字母命令行选项（如 `-t`, `-n`）
+   - 单字母选项合并为第一个单词
+   - 无单字母选项时第一个单词为空
+
+2. **特殊处理技巧**：
+
+   ```makefile
+   -$(MAKEFLAGS)  # 添加前导短横线确保非空
+   firstword ...   # 提取选项字符串
+   ```
+
+3. **`findstring` 函数**：
+
+   - `$(findstring 子串, 字符串)`
+   - 存在子串 → 返回子串
+   - 不存在 → 返回空
+
+---
+
+#### 7.3.2. 完整示例解析
+
+```makefile
+archive.a: ...
+ifneq (,$(findstring t,$(firstword -$(MAKEFLAGS))))
+    +touch archive.a           # 强制更新时间戳
+    +ranlib -t archive.a       # 安全更新存档索引
+else
+    ranlib archive.a           # 常规更新
+endif
+```
+
+**关键元素**：
+
+| 元素            | 作用                                                                 |
+|-----------------|----------------------------------------------------------------------|
+| `+` 前缀        | 强制命令执行（即使使用 `-t`/`-n` 标志）                              |
+| `ranlib -t`     | 安全模式：仅当文件变化时才更新索引（避免不必要的时间戳变更）          |
+| `firstword`     | 确保只检查单字母选项（长选项如 `--debug` 在后续单词）                 |
+
+---
+
+#### 7.3.3. 执行场景演示
+
+##### 场景1：使用 `-t` 标志（试运行）
+
+```bash
+$ make -t archive.a
+touch archive.a
+ranlib -t archive.a
+```
+
+- `+` 前缀强制命令执行
+- `-t` 模式使用安全更新
+
+##### 场景2：正常构建
+
+```bash
+$ make archive.a
+ranlib archive.a
+```
+
+- 常规更新操作
+
+##### 场景3：组合标志（`-t` 和 `-j`）
+
+```bash
+$ make -tj4 archive.a
+touch archive.a
+ranlib -t archive.a
+```
+
+- 正确处理多标志情况
+- 并行构建（`-j4`）不受影响
+
+---
+
+#### 7.3.4. 扩展应用场景
+
+##### 1. 检测 `-n` (dry-run) 标志
+
+```makefile
+build:
+ifneq (,$(findstring n,$(firstword -$(MAKEFLAGS))))
+    @echo "Dry run mode: commands would be:"
+    $(CC) -c main.c  # 实际不会执行
+else
+    $(CC) -c main.c
+endif
+```
+
+##### 2. 跨平台调试检测
+
+```makefile
+ifneq (,$(findstring d,$(firstword -$(MAKEFLAGS))))
+    DEBUG_FLAGS = -g -O0
+else
+    DEBUG_FLAGS = -O2
+endif
+```
+
+##### 3. 递归 Make 特殊处理
+
+```makefile
+subsystem:
+    cd subdir && $(MAKE)  # 默认不传递标志
+
+ifneq (,$(findstring t,$(firstword -$(MAKEFLAGS))))
+subsystem:
+    cd subdir && $(MAKE) -t  # 显式传递 -t
+endif
+```
+
+---
+
+#### 7.3.5. 最佳实践指南
+
+1. **`+` 前缀使用原则**：
+
+   - 仅用于必须执行的命令（如时间戳更新）
+   - 避免滥用（会破坏 `-t`/`-n` 的标志作用）
+
+2. **安全更新模式**：
+
+   ```makefile
+   # 存档文件更新标准模式
+   +ranlib -t $@  # 优先使用 -t 选项
+   ```
+
+3. **多标志检测技巧**：
+
+   ```makefile
+   # 检测多个标志
+   ifneq (,$(filter t n,$(firstword -$(MAKEFLAGS))))
+   ```
+
+4. **现代替代方案**：
+
+   ```makefile
+   # 使用 MAKECMDGOALS 直接检测目标
+   ifeq (test,$(filter test,$(MAKECMDGOALS)))
+   ```
+
+>
+> **关键记忆点**：标志检测发生在 Makefile 解析阶段，通过 `MAKEFLAGS` + `findstring` 实现动态行为调整。
+>
 
 ## 8. Functions for Transforming Text
 
