@@ -3443,7 +3443,7 @@ graph TD
 
 #### 5.4.1. 并发执行核心机制
 
-##### 5.4.1.1. 基本使用
+##### 1. 基本使用
 
 ```bash
 make -j 4        # 同时执行4个任务
@@ -3452,7 +3452,7 @@ make -j          # 无限制并行（根据系统资源）
 
 ---
 
-##### 5.4.1.2. 工作原理图解
+##### 2. 工作原理图解
 
 ```mermaid
 graph TD
@@ -3471,7 +3471,7 @@ graph TD
 
 #### 5.4.2. 并发执行三大问题及解决方案
 
-##### 5.4.2.1. 输出混乱问题
+##### 1. 输出混乱问题
 
 **现象**：多进程输出混杂，难以阅读错误信息
 
@@ -3485,7 +3485,7 @@ make -j4 -Orecurse  # 按子make分组输出
 
 ---
 
-##### 5.4.2.2. 输入冲突问题
+##### 2. 输入冲突问题
 
 **现象**：多进程竞争标准输入导致管道破裂
 
@@ -3500,7 +3500,7 @@ make -j4 -Orecurse  # 按子make分组输出
 
 ---
 
-##### 5.4.2.3. 资源竞争问题
+##### 3. 资源竞争问题
 
 **现象**：多任务同时写入同一文件导致损坏
 
@@ -3515,7 +3515,7 @@ final_target: step1 step2 .WAIT step3
 
 #### 5.4.3. 高级并发控制技巧
 
-##### 5.4.3.1. 动态负载调节
+##### 1. 动态负载调节
 
 ```bash
 make -j -l 2.5  # 当系统负载>2.5时暂停启动新任务
@@ -3523,7 +3523,7 @@ make -j -l 2.5  # 当系统负载>2.5时暂停启动新任务
 
 ---
 
-##### 5.4.3.2. 精细控制执行顺序
+##### 2. 精细控制执行顺序
 
 ```makefile
 # 部分目标串行执行
@@ -3535,7 +3535,7 @@ build: stage1 .WAIT stage2 stage3
 
 ---
 
-##### 5.4.3.3. 递归Make并发控制
+##### 3. 递归Make并发控制
 
 ```makefile
 subsystem:
@@ -3546,7 +3546,7 @@ subsystem:
 
 #### 5.4.4. 并发安全实践指南
 
-##### 5.4.4.1. 安全模式模板
+##### 1. 安全模式模板
 
 ```makefile
 # 关键资源串行化
@@ -3561,7 +3561,7 @@ build: target1 target2 target3
 
 ---
 
-##### 5.4.4.2. 文件锁机制
+##### 2. 文件锁机制
 
 ```makefile
 update_shared:
@@ -3570,7 +3570,7 @@ update_shared:
 
 ---
 
-##### 5.4.4.3. 原子操作技巧
+##### 3. 原子操作技巧
 
 ```makefile
 output.data: input
@@ -3583,7 +3583,7 @@ output.data: input
 
 #### 5.4.5. 错误处理策略
 
-##### 5.4.5.1. 继续构建模式
+##### 1. 继续构建模式
 
 ```bash
 make -j4 -k  # 部分任务失败时继续构建其他目标
@@ -3591,7 +3591,7 @@ make -j4 -k  # 部分任务失败时继续构建其他目标
 
 ---
 
-##### 5.4.5.2. 错误收集技巧
+##### 2. 错误收集技巧
 
 ```makefile
 # 收集所有错误最后报告
@@ -3608,7 +3608,7 @@ target1:
 
 #### 5.4.6. 性能优化实践
 
-##### 5.4.6.1. 最优并行数计算
+##### 1. 最优并行数计算
 
 ```bash
 # 根据CPU核心数自动设置
@@ -3618,14 +3618,14 @@ make -j$((JOBS + 1))
 
 ---
 
-##### 5.4.6.2. 内存敏感任务处理
+##### 2. 内存敏感任务处理
 
 ```makefile
 # 限制内存密集型任务并发
 .NOTPARALLEL: memory-hungry-target
 ```
 
-##### 5.4.6.3. I/O密集型任务优化
+##### 3. I/O密集型任务优化
 
 ```makefile
 # 使用SSD缓存加速
@@ -4790,7 +4790,7 @@ test:
 
 #### 6.3.1. 变量替换引用（Substitution References）
 
-##### 基本语法
+##### 1. 基本语法
 
 ```makefile
 $(VAR:A=B)   # 或 ${VAR:A=B}
@@ -4803,7 +4803,7 @@ $(VAR:A=B)   # 或 ${VAR:A=B}
   - 中间出现的 `A` 不会被替换
   - 本质是 `patsubst` 函数的简化版
 
-##### 示例分析
+##### 2. 示例分析
 
 ```makefile
 # 基础替换
@@ -4815,7 +4815,7 @@ foo := a.o b.o ac.o
 bar := $(foo:.o=.c)   # bar = "a.c b.c ac.c"（ac.o → ac.c）
 ```
 
-##### 进阶模式替换
+##### 3. 进阶模式替换
 
 ```makefile
 # 使用通配符 % 实现精确替换
@@ -4837,13 +4837,13 @@ bar := $(patsubst %.o,%.c,$(foo))
 
 #### 6.3.2. 计算变量名（Computed Variable Names）
 
-##### 核心概念
+##### 1. 核心概念
 
 - **嵌套引用**：`$($(VAR))`
 - **展开规则**：从内向外逐层展开
 - **本质**：动态生成变量名
 
-##### 层级示例
+##### 2. 层级示例
 
 ```makefile
 # 两层嵌套
@@ -4858,7 +4858,7 @@ z = u
 a := $($($(x)))  # a = $($(y)) → $(z) → "u"
 ```
 
-##### 结合函数使用
+##### 3. 结合函数使用
 
 ```makefile
 # 使用 subst 函数处理变量名
@@ -4869,7 +4869,7 @@ z = y
 a := $($($(z)))        # a = $($(y)) → $(variable2) → "Hello"
 ```
 
-##### 混合文本与变量
+##### 4. 混合文本与变量
 
 ```makefile
 # 根据条件动态生成变量名
@@ -4885,7 +4885,7 @@ endif
 result := $($(prefix)_dirs)  # use_a=yes → "dira dirb"
 ```
 
-##### 结合替换引用
+##### 5. 结合替换引用
 
 ```makefile
 a_objects := a.o b.o c.o
@@ -4895,7 +4895,7 @@ sources := $($(prefix)_objects:.o=.c)
 # prefix=a → sources = "a.c b.c c.c"
 ```
 
-##### 关键限制
+##### 6. 关键限制
 
 ```makefile
 # 错误：无法动态调用函数
@@ -4917,7 +4917,7 @@ foo := $($(func) $(bar))  # 错误！实际展开为变量名 "sort a d b g q c"
 
 #### 6.3.3. 动态变量定义
 
-##### 在赋值左侧使用
+##### 1. 在赋值左侧使用
 
 ```makefile
 dir = foo
@@ -4925,7 +4925,7 @@ dir = foo
 $(dir)_sources := $(wildcard $(dir)/*.c)
 ```
 
-##### 在 define 中使用
+##### 2. 在 define 中使用
 
 ```makefile
 define $(dir)_print
@@ -5122,7 +5122,7 @@ $(MAKEFLAGS)       # 传递命令行参数
 
 #### 6.5.3. 特殊赋值方式
 
-##### Shell 命令结果赋值 (`!=`)
+##### 1. `Shell` 命令结果赋值 (`!=`)
 
 ```makefile
 # 获取当前 Git 提交哈希
@@ -5139,7 +5139,7 @@ GIT_HASH := $(shell git rev-parse --short HEAD)
 > - `$(shell)` 创建直接展开变量
 >
 
-##### 立即展开递归变量 (`:::=`)
+##### 2. 立即展开递归变量 (`:::=`)
 
 ```makefile
 ver = 1.0
@@ -5233,7 +5233,7 @@ test:
 
 #### 6.6.1. 变量追加操作 (`+=`)
 
-##### 基本行为
+##### 1. 基本行为
 
 ```makefile
 objects = main.o utils.o
@@ -5251,7 +5251,7 @@ objects += extra.o  # objects = "main.o utils.o extra.o"
 | **递归展开式 (`=`)** | `VAR = $(VAR) new_value`      | 保留原变量引用，延迟展开         |
 | **直接展开式 (`:=`)** | `VAR := $(VAR) new_value`     | 立即展开原值，静态追加新值       |
 
-##### 递归展开式示例
+##### 2. 递归展开式示例
 
 ```makefile
 CFLAGS = $(INCLUDES) -O
@@ -5266,7 +5266,7 @@ test:
 > **关键**：`INCLUDES` 可在后续定义，使用时才展开
 >
 
-##### 直接展开式对比
+##### 3. 直接展开式对比
 
 ```makefile
 CFLAGS := $(INCLUDES) -O
@@ -5280,7 +5280,7 @@ test:
 
 #### 6.6.2. `override` 指示符
 
-##### 核心功能
+##### 1. 核心功能
 
 ```makefile
 override CFLAGS = -Wall -O2
@@ -5289,7 +5289,7 @@ override CFLAGS = -Wall -O2
 - **作用**：防止命令行参数覆盖 Makefile 中的变量定义
 - **优先级**：`override` > 命令行 > Makefile 普通定义
 
-##### 使用场景
+##### 2. 使用场景
 
 ```bash
 # 命令行尝试覆盖
@@ -5301,7 +5301,7 @@ make CFLAGS="-O0"
 override CFLAGS = -Wall -O2  # 最终生效值: -Wall -O2
 ```
 
-##### 组合用法
+##### 3. 组合用法
 
 ```makefile
 # 覆盖基础定义
@@ -5866,7 +5866,7 @@ undefine VAR
 
 #### 6.10.2. 环境变量使用场景分析
 
-##### 安全使用模式
+##### 1. 安全使用模式
 
 ```makefile
 # 提供默认值，允许覆盖
@@ -5875,7 +5875,7 @@ PREFIX ?= /usr/local
 CI_MODE ?= $(CI)
 ```
 
-##### 危险使用模式
+##### 2. 危险使用模式
 
 ```makefile
 # 错误！依赖未定义的环境变量
@@ -7176,7 +7176,7 @@ objs := $(addprefix obj/,$(patsubst %.c,%.o,$(files)))
 
 #### 8.1.6. 高级应用示例
 
-##### 路径处理工具链
+##### 1. 路径处理工具链
 
 ```makefile
 # 定义特殊字符
@@ -7200,7 +7200,7 @@ final := $(subst $(space),:,$(quoted))
 # → '"/usr/bin":"/local/bin":"~/tools"'
 ```
 
-##### 安全函数封装
+##### 2. 安全函数封装
 
 ```makefile
 # 安全分割函数（处理含逗号内容）
@@ -7428,7 +7428,7 @@ SHORT_VER := $(MAJOR).$(MINOR)
 
 #### 8.2.4. 特殊技巧与陷阱
 
-##### 通配符转义
+##### 1. 通配符转义
 
 ```makefile
 # 匹配字面百分号
@@ -7437,7 +7437,7 @@ result := $(patsubst $(pattern),replaced,value\%special)
 # 正确匹配: "valuereplaced"
 ```
 
-##### 空值处理
+##### 2. 空值处理
 
 ```makefile
 # 避免空参数错误
@@ -7445,7 +7445,7 @@ empty :=
 safe_processed := $(if $(strip $(var)),$(process $(var)),default)
 ```
 
-##### 多层嵌套优化
+##### 3. 多层嵌套优化
 
 ```makefile
 # 低效写法
@@ -7456,7 +7456,7 @@ step1 := $(subst c,d,$(var))
 result := $(subst a,b,$(step1))
 ```
 
-##### 性能敏感操作
+##### 4. 性能敏感操作
 
 ```makefile
 # 大列表避免重复计算
@@ -7700,7 +7700,7 @@ install_paths := $(addprefix $(INSTALL_DIR)/,$(addsuffix /bin,$(versioned)))
 
 #### 8.3.4. 特殊技巧与陷阱
 
-##### 正确处理目录结尾
+##### 1. 正确处理目录结尾
 
 ```makefile
 # 错误：目录结尾导致空文件名
@@ -7711,7 +7711,7 @@ clean_path := $(patsubst %/,%,$(DIR))
 filename := $(notdir $(clean_path))
 ```
 
-##### 处理多扩展名
+##### 2. 处理多扩展名
 
 ```makefile
 # 提取最终扩展名
@@ -7723,7 +7723,7 @@ final_ext := $(suffix $(file)) # ".gz"
 main_ext := $(suffix $(basename $(file))) # ".tar"
 ```
 
-##### 安全路径连接
+##### 3. 安全路径连接
 
 ```makefile
 # 避免双斜杠
@@ -7738,7 +7738,7 @@ safe_join = $(patsubst //,/,$(1)/$(2))
 full := $(call safe_join,$(path1),$(path2))
 ```
 
-##### 递归通配符技巧
+##### 4. 递归通配符技巧
 
 ```makefile
 # 递归查找所有.c文件
@@ -7818,7 +7818,7 @@ project_sources := $(shell find src lib -name '*.c')
 
 #### 8.4.2. 四大条件函数详解
 
-##### 8.4.2.1. `$(if condition, then-part[, else-part])`
+##### 1. `$(if condition, then-part[, else-part])`
 
 **执行流程**：
 
@@ -7845,7 +7845,7 @@ COMPILER := $(if $(shell which gcc),gcc,clang)
 LOG := $(if $(ENABLE_LOG),$(shell mkdir -p logs),)
 ```
 
-##### 8.4.2.2. `$(or cond1[, cond2[, ...]])`
+##### 2. `$(or cond1[, cond2[, ...]])`
 
 **短路特性**：
 
@@ -7866,7 +7866,7 @@ PORT := $(or $(CONFIG_PORT),8080)
 API_KEY := $(or $(PROD_API_KEY),$(TEST_API_KEY),$(shell cat .secrets))
 ```
 
-##### 8.4.2.3. `$(and cond1[, cond2[, ...]])`
+##### 3. `$(and cond1[, cond2[, ...]])`
 
 **短路特性**：
 
@@ -7887,7 +7887,7 @@ BUILD_CMD := $(and $(JAVA_HOME),$(shell which mvn),mvn package)
 FEATURE_FLAG := $(and $(ENABLE_FEATURE),$(filter $(OS),Linux macOS),enable)
 ```
 
-##### 8.4.2.4. `$(intcmp lhs, rhs[, lt-part[, eq-part[, gt-part]]])`
+##### 4. `$(intcmp lhs, rhs[, lt-part[, eq-part[, gt-part]]])`
 
 **数值比较逻辑**：
 
@@ -7926,7 +7926,7 @@ BUILD_TYPE := $(intcmp $(words $(FEATURES)),3,minimal,standard,full)
 
 #### 8.4.3. 高级应用技巧
 
-##### 复合条件表达式
+##### 1. 复合条件表达式
 
 ```makefile
 # 复杂部署条件
@@ -7936,7 +7936,7 @@ SHOULD_DEPLOY := $(and \
     $(shell test -f .deploy_ok && echo 1))
 ```
 
-##### 带副作用的调试
+##### 2. 带副作用的调试
 
 ```makefile
 # 调试日志记录
@@ -7949,7 +7949,7 @@ build:
     @echo "Starting build..." $(LOG_CMD)
 ```
 
-##### 安全数值转换
+##### 3. 安全数值转换
 
 ```makefile
 # 安全整数转换函数
@@ -8192,7 +8192,7 @@ result := $(call min_max,$(values))  # 返回 "2 9"
 
 #### 8.5.5. 特殊技巧与陷阱
 
-##### 作用域穿透问题
+##### 1. 作用域穿透问题
 
 ```makefile
 value = outer
@@ -8205,7 +8205,7 @@ $(value)  # 意外变为 "inner" ❌
 $(let __temp,inner,$(__temp))  # 安全隔离
 ```
 
-##### 嵌套作用域处理
+##### 2. 嵌套作用域处理
 
 ```makefile
 $(let a,A,\
@@ -8213,7 +8213,7 @@ $(let a,A,\
 )
 ```
 
-##### 动态变量名生成
+##### 3. 动态变量名生成
 
 ```makefile
 gen_var = $(let prefix num,$1 $2,${prefix}_${num})
@@ -8222,7 +8222,7 @@ gen_var = $(let prefix num,$1 $2,${prefix}_${num})
 VAR := $(call gen_var,CONFIG,7)  # 创建变量名 "CONFIG_7"
 ```
 
-##### 性能优化技巧
+##### 4. 性能优化技巧
 
 ```makefile
 # 避免深层递归（迭代替代递归）
@@ -8634,14 +8634,14 @@ parallel_build:
 
 #### 8.7.4. 特殊技巧与陷阱
 
-##### 换行控制技巧
+##### 1. 换行控制技巧
 
 ```makefile
 # 禁止自动换行（需手动添加）
 $(file > output, $(subst $(space),,$(texts)))
 ```
 
-##### 二进制安全处理
+##### 2. 二进制安全处理
 
 ```makefile
 # 二进制文件读取（需base64编码）
@@ -8653,7 +8653,7 @@ recover:
     base64 -d encoded.txt > recovered.bin
 ```
 
-##### 大文件分块处理
+##### 3. 大文件分块处理
 
 ```makefile
 # 分块读取大文件
@@ -8665,7 +8665,7 @@ endef
 chunk1 := $(call read_chunk,1)
 ```
 
-##### 并发安全写入
+##### 4. 并发安全写入
 
 ```makefile
 # 使用PID创建唯一临时文件
@@ -8733,7 +8733,7 @@ $(file > $(TMP_FILE), $(DATA))
 
 #### 8.7.6. 高级应用示例
 
-##### 构建状态持久化
+##### 1. 构建状态持久化
 
 ```makefile
 BUILD_STATE := .build_state
@@ -8751,7 +8751,7 @@ ifneq ($(TIMESTAMP),)
 endif
 ```
 
-##### 增量编译支持
+##### 2. 增量编译支持
 
 ```makefile
 # 生成文件哈希记录
@@ -8769,7 +8769,7 @@ is_changed = $(filter-out $1:%, \
     $(filter $1:%, $(file < .hashes)))
 ```
 
-##### 元构建系统
+##### 3. 元构建系统
 
 ```makefile
 # 动态生成Makefile
@@ -9021,7 +9021,7 @@ safe_div = $(if $(filter-out 0,$(2)),\
 
 #### 8.8.7. 综合应用案例
 
-##### 动态构建规则系统
+##### 1. 动态构建规则系统
 
 ```makefile
 # 定义目标生成器
@@ -9037,7 +9037,7 @@ $(foreach t,$(targets),\
     $(call define_target,$t,$(t).c))
 ```
 
-##### 跨平台编译
+##### 2. 跨平台编译
 
 ```makefile
 # 编译器选择器
@@ -9091,14 +9091,14 @@ $(value VARIABLE_NAME)
 
 #### 8.9.2. 关键概念解析
 
-##### 变量展开机制对比
+##### 1. 变量展开机制对比
 
 | 访问方式         | 递归变量 (`FOO = $PATH`) | 立即变量 (`BAR := $PATH`) |
 |------------------|--------------------------|---------------------------|
 | 直接引用 `$(FOO)` | `ATH` (错误展开)         | `ATH` (错误展开)          |
 | `$(value FOO)`   | `$PATH` (原始文本)       | `/usr/bin:...` (已展开值) |
 
-##### 典型误区澄清
+##### 2. 典型误区澄清
 
 ```makefile
 # 错误期望：认为value能"取消"已发生的展开
@@ -9152,7 +9152,7 @@ execute:
 
 #### 8.9.4. 与 `eval` 的黄金组合
 
-##### 动态规则生成
+##### 1. 动态规则生成
 
 ```makefile
 define RULE_TEMPLATE
@@ -9167,7 +9167,7 @@ TEMPLATE := $(value RULE_TEMPLATE)
 $(eval $(call TEMPLATE,app,main.c util.c))
 ```
 
-##### 配置系统集成
+##### 2. 配置系统集成
 
 ```makefile
 # 从外部文件加载配置
@@ -9182,7 +9182,7 @@ migrate:
     @migrate -url "$(DB_CONFIG)" up
 ```
 
-##### 模板引擎实现
+##### 3. 模板引擎实现
 
 ```makefile
 define HTML_TEMPLATE
@@ -9200,7 +9200,7 @@ render = $(subst $$CONTENT,$1,$(value HTML_TEMPLATE))
 
 #### 8.9.5. 特殊技巧与陷阱
 
-##### 多层引用处理
+##### 1. 多层引用处理
 
 ```makefile
 # 访问嵌套定义
@@ -9209,7 +9209,7 @@ VAR2 = Hello
 result := $(value VAR1)  # 返回 "$(VAR2)" 而非 "Hello"
 ```
 
-##### 函数名获取
+##### 2. 函数名获取
 
 ```makefile
 # 获取函数定义文本
@@ -9221,7 +9221,7 @@ source := $(call func_source,reverse)
 # 返回: "$(2) $(1)"
 ```
 
-##### 敏感数据保护
+##### 3. 敏感数据保护
 
 ```makefile
 # 安全日志记录（不暴露实际值）
@@ -9231,7 +9231,7 @@ debug:
     $(call secure_log,API_KEY)
 ```
 
-##### 避免意外展开
+##### 4. 避免意外展开
 
 ```makefile
 # 危险：直接暴露密码
@@ -9285,7 +9285,7 @@ safe = @connect --user=admin --pass=$$(value PASSWORD)
 
 #### 8.9.7. 综合应用案例
 
-##### 动态构建系统
+##### 1. 动态构建系统
 
 ```makefile
 # 架构感知构建
@@ -9299,7 +9299,7 @@ $(foreach arch,$(ARCHS),\
     $(eval $(call ARCH_RULE,$(arch))))
 ```
 
-##### 配置模板系统
+##### 2. 配置模板系统
 
 ```makefile
 # config.template.mk
@@ -9315,7 +9315,7 @@ install_config:
         echo "$(var) = $(value $(var))" >> config.mk;)
 ```
 
-##### 跨Makefile变量检查
+##### 3. 跨Makefile变量检查
 
 ```makefile
 # 检查外部Makefile变量定义
@@ -9375,7 +9375,7 @@ TEMPLATE = NEW_VAR := expanded $$(VAR)
 #   NEW_VAR := expanded original
 ```
 
-##### 转义规则表
+#### 8.10.3. 转义规则表
 
 | 场景 | 写法 | 第一次展开结果 | 第二次展开结果 |
 |------|------|---------------|---------------|
@@ -9383,9 +9383,9 @@ TEMPLATE = NEW_VAR := expanded $$(VAR)
 | 延迟展开 | `$$(VAR)` | `$(VAR)` | 变量值 |
 | 字面`$` | `$$$` | `$$` | `$` |
 
-#### 8.10.3. 专业级示例解析
+##### 1. 专业级示例解析
 
-##### 示例：动态目标生成
+##### 2. 示例：动态目标生成
 
 ```makefile
 # 定义程序列表
@@ -9448,10 +9448,10 @@ clean:
 ARCHS := x86 arm64
 define ARCH_RULE
 build/$(1)/%.o: %.c
-	$$(CC) $$(CFLAGS_$(1)) -c $$< -o $$@
+    $$(CC) $$(CFLAGS_$(1)) -c $$< -o $$@
 
 build/$(1)/app: $$(addprefix build/$(1)/,$$(OBJS))
-	$$(CC) $$(LDFLAGS_$(1)) $$^ -o $$@
+    $$(CC) $$(LDFLAGS_$(1)) $$^ -o $$@
 endef
 
 # 生成多架构规则
@@ -9465,7 +9465,7 @@ $(foreach arch,$(ARCHS),\
 SOURCES := $(wildcard *.c)
 define DEPEND_RULE
 $(1:.c=.d): $(1)
-	$$(CC) -MM -MT $$(@:.d=.o) $$< > $$@
+    $$(CC) -MM -MT $$(@:.d=.o) $$< > $$@
 endef
 
 # 为每个源文件生成依赖规则
@@ -9489,9 +9489,9 @@ $(foreach plugin,$(PLUGINS),\
     $(eval $(call PLUGIN_TEMPLATE,$(plugin))))
 ```
 
-#### 8.10.五、特殊技巧与陷阱
+#### 8.10.5. 特殊技巧与陷阱
 
-##### 正确转义技巧
+##### 1. 正确转义技巧
 
 ```makefile
 # 错误：缺少转义
@@ -9512,7 +9512,7 @@ debug_eval = $(info Eval content: $(value $1)) \
 $(call debug_eval,MY_TEMPLATE)
 ```
 
-##### 避免变量污染
+##### 2. 避免变量污染
 
 ```makefile
 # 使用唯一前缀防止冲突
@@ -9521,7 +9521,7 @@ __TMP_$(1)_VAR = value
 endef
 ```
 
-##### 条件eval
+##### 3. 条件eval
 
 ```makefile
 # 带条件的代码生成
@@ -9531,7 +9531,7 @@ conditional_eval = $(if $(filter $1,$2),\
 
 #### 8.10.6. 最佳实践指南
 
-1. **模块化模板**：
+##### 1. **模块化模板**
 
    ```makefile
    # 分离模板定义
@@ -9539,7 +9539,7 @@ conditional_eval = $(if $(filter $1,$2),\
    $(eval $(call DYNAMIC_RULE,param))
    ```
 
-2. **严格命名规范**：
+##### 2. **严格命名规范**
 
    ```makefile
    # 模板前缀+大写命名
@@ -9548,7 +9548,7 @@ conditional_eval = $(if $(filter $1,$2),\
    endef
    ```
 
-3. **防御性转义**：
+##### 3. **防御性转义**
 
    ```makefile
    # 自动转义函数
@@ -9556,7 +9556,7 @@ conditional_eval = $(if $(filter $1,$2),\
    $(eval $(call safe_expand,TEMPLATE))
    ```
 
-4. **文档化模板**：
+##### 4. **文档化模板**
 
    ```makefile
    ## DYNAMIC_RULE(target, deps)
@@ -9566,7 +9566,7 @@ conditional_eval = $(if $(filter $1,$2),\
    endef
    ```
 
-5. **性能优化**：
+##### 5. **性能优化**
 
    ```makefile
    # 预展开静态部分
@@ -9576,7 +9576,7 @@ conditional_eval = $(if $(filter $1,$2),\
 
 #### 8.10.7. 复杂系统示例
 
-##### 跨平台包管理系统
+##### 1. 跨平台包管理系统
 
 ```makefile
 # 包定义
@@ -9589,7 +9589,7 @@ $1_URL = https://unix-pkgs/$1.tar.gz
 endif
 
 download-$1:
-	wget $$($1_URL) -O pkg/$1
+    wget $$($1_URL) -O pkg/$1
 endef
 
 # 生成包规则
@@ -9597,14 +9597,14 @@ $(foreach pkg,$(PACKAGES),\
     $(eval $(call PACKAGE_RULE,$(pkg))))
 ```
 
-##### CI/CD流水线生成
+##### 2. CI/CD流水线生成
 
 ```makefile
 STAGES := build test deploy
 define CI_STAGE
 .$1:
-	@echo "Starting stage $1"
-	$$(call $1_CMD)
+    @echo "Starting stage $1"
+    $$(call $1_CMD)
 
 ci: .$1
 endef
@@ -9614,14 +9614,14 @@ $(foreach stage,$(STAGES),\
     $(eval $(call CI_STAGE,$(stage))))
 ```
 
-##### 多配置构建系统
+##### 3. 多配置构建系统
 
 ```makefile
 CONFIGS := debug release profiling
 define CONFIG_RULE
 build/$(1)/%: CFLAGS += $(CFLAGS_$(1))
 build/$(1)/app: $$(OBJS:%=build/$(1)/%)
-	$$(CC) $$(LDFLAGS) $$^ -o $$@
+    $$(CC) $$(LDFLAGS) $$^ -o $$@
 endef
 
 $(foreach cfg,$(CONFIGS),\
@@ -9733,7 +9733,7 @@ endif
 
 #### 8.11.4. 特殊技巧与陷阱
 
-##### 自动化变量检测
+##### 1. 自动化变量检测
 
 ```makefile
 # 检测是否在规则上下文中
@@ -9745,7 +9745,7 @@ in_rule = $(filter automatic,$(origin $@))
         $(error This target must be built via rule))
 ```
 
-##### 默认值安全设置
+##### 2. 默认值安全设置
 
 ```makefile
 # 仅当变量未定义时设置默认值
@@ -9755,7 +9755,7 @@ safe_default = $(if $(filter undefined,$(origin $1)),\
 $(call safe_default,OUTPUT_DIR,build)
 ```
 
-##### 来源追踪调试
+##### 3. 来源追踪调试
 
 ```makefile
 # 变量来源报告工具
@@ -9765,7 +9765,7 @@ debug_vars:
     $(foreach v,VAR1 VAR2,$(call report_var,$v))
 ```
 
-##### 多来源组合处理
+##### 4. 多来源组合处理
 
 ```makefile
 # 接受环境/命令行/文件定义，拒绝默认值
@@ -9831,7 +9831,7 @@ endif
 
 #### 8.11.6. 综合应用案例
 
-##### 跨平台工具链设置
+##### 1. 跨平台工具链设置
 
 ```makefile
 # 检测CC来源
@@ -9850,7 +9850,7 @@ else ifeq "$(CC_ORIGIN)" "environment"
 endif
 ```
 
-##### 安全密钥管理
+##### 2. 安全密钥管理
 
 ```makefile
 # 密钥来源检查
@@ -9866,7 +9866,7 @@ use_key:
     @echo "Using secure key"
 ```
 
-##### 智能构建配置
+##### 3. 智能构建配置
 
 ```makefile
 # 配置优先级: 命令行 > 环境 > 文件 > 默认
@@ -9894,7 +9894,7 @@ ACTIVE_CONFIG := $(resolve_config)
 
 ### 8.12. `flavor` 函数(The flavor Function)
 
-#### 1. 核心功能解析
+#### 8.12.1. 核心功能解析
 
 `flavor` 函数是 Makefile 的**变量类型检测工具**：
 
@@ -9911,7 +9911,7 @@ $(flavor VARIABLE_NAME)
 
 ---
 
-#### 2. 返回值详解：变量类型
+#### 8.12.2. 返回值详解：变量类型
 
 | 返回值 | 含义 | 定义方式 | 求值时机 | 典型用例 |
 |--------|------|----------|----------|----------|
@@ -9919,7 +9919,7 @@ $(flavor VARIABLE_NAME)
 | `recursive` | 递归展开变量 | `VAR = value` | 每次使用时展开 | 包含其他变量引用的复杂表达式 |
 | `simple` | 立即展开变量 | `VAR := value` | 定义时立即展开 | 性能关键路径的常量值 |
 
-#### 3. 关键应用场景与示例
+#### 8.12.3. 关键应用场景与示例
 
 ##### 场景1：性能优化决策
 
@@ -9980,9 +9980,9 @@ debug:
 
 ---
 
-#### 4. 特殊技巧与陷阱
+#### 8.12.4. 特殊技巧与陷阱
 
-##### 类型转换检测
+##### 1. 类型转换检测
 
 ```makefile
 # 检测变量是否被"简单化"
@@ -9996,7 +9996,7 @@ VAR_SIMP := $(VAR_REC)
 $(call was_simplified, VAR_SIMP)  # 返回 "yes"
 ```
 
-##### 自动化缓存
+##### 2. 自动化缓存
 
 ```makefile
 # 为递归变量添加缓存层
@@ -10011,7 +10011,7 @@ endef
 $(eval $(call cache_recursive, COMPLEX_VAR))
 ```
 
-##### 类型安全函数
+##### 3. 类型安全函数
 
 ```makefile
 # 确保参数为简单变量
@@ -10021,7 +10021,7 @@ require_simple = $(if $(filter simple,$(flavor $1)),,\
 safe_func = $(call require_simple, $1) ...
 ```
 
-##### 性能关键区优化
+##### 4. 性能关键区优化
 
 ```makefile
 # 在循环前转换递归变量
@@ -10036,9 +10036,9 @@ $(foreach item, $(CACHED_LIST), ...)
 
 ---
 
-#### 5. 最佳实践指南
+#### 8.12.5. 最佳实践指南
 
-1. **性能敏感区强制简单变量**：
+##### 1. **性能敏感区强制简单变量**
 
    ```makefile
    # 在大型循环前转换
@@ -10049,7 +10049,7 @@ $(foreach item, $(CACHED_LIST), ...)
    endif
    ```
 
-2. **关键配置验证**：
+##### 2. **关键配置验证**
 
    ```makefile
    # 确保配置是立即展开的
@@ -10058,7 +10058,7 @@ $(foreach item, $(CACHED_LIST), ...)
    $(call validate_config, SECRET_KEY)
    ```
 
-3. **智能默认值设置**：
+##### 3. **智能默认值设置**
 
    ```makefile
    # 根据使用场景设置最佳类型
@@ -10069,7 +10069,7 @@ $(foreach item, $(CACHED_LIST), ...)
    endif
    ```
 
-4. **构建日志增强**：
+##### 4. **构建日志增强**
 
    ```makefile
    # 记录变量类型信息
@@ -10077,7 +10077,7 @@ $(foreach item, $(CACHED_LIST), ...)
         $(file >> build.log, $v: flavor=$(flavor $v) value=$($v)))
    ```
 
-5. **跨Makefile兼容**：
+##### 5. **跨Makefile兼容**
 
    ```makefile
    # 处理外部Makefile变量
@@ -10089,9 +10089,9 @@ $(foreach item, $(CACHED_LIST), ...)
 
 ---
 
-#### 6. 综合应用案例
+#### 8.12.6. 综合应用案例
 
-##### 高级变量分析器
+##### 1. 高级变量分析器
 
 ```makefile
 define var_profile
@@ -10106,7 +10106,7 @@ analyze:
     $(foreach v, $(VARS), $(call var_profile, $v))
 ```
 
-##### 安全配置加载系统
+##### 2. 安全配置加载系统
 
 ```makefile
 # 加载配置但防止递归展开
@@ -10117,7 +10117,7 @@ load_config = $(if $(filter simple,$(flavor $1)),\
 $(call load_config, API_ENDPOINT, https://api.example.com)
 ```
 
-##### 智能构建缓存
+##### 3. 智能构建缓存
 
 ```makefile
 # 根据变量类型选择缓存策略
@@ -10164,7 +10164,7 @@ before_critical:
 
 #### 8.13.2. 关键特性与执行时机
 
-1. **展开时机规则**：
+##### 1. **展开时机规则**
 
    ```mermaid
    graph TD
@@ -10174,7 +10174,7 @@ before_critical:
        B -->|变量定义中| E[变量展开时]
    ```
 
-2. **错误传播机制**：
+##### 2. **错误传播机制**
 
    ```makefile
    # 嵌套错误示例
@@ -10253,7 +10253,7 @@ preflight:
 
 #### 8.13.4. 特殊技巧与陷阱
 
-##### 错误定位增强
+##### 1. 错误定位增强
 
 ```makefile
 # 带位置信息的错误
@@ -10263,7 +10263,7 @@ location_error = $(error [$0:$1] $2)
 VAR ?= $(call location_error,$(lastword $(MAKEFILE_LIST)),VAR undefined)
 ```
 
-##### 条件错误抑制
+##### 2. 条件错误抑制
 
 ```makefile
 # 仅在生产环境报错
@@ -10272,7 +10272,7 @@ prod_error = $(if $(filter production,$(ENV)),$(error $1),$(warning $1))
 $(call prod_error,Unsafe configuration detected)
 ```
 
-##### 日志分级系统
+##### 3. 日志分级系统
 
 ```makefile
 # 日志级别控制
@@ -10286,7 +10286,7 @@ log_info = $(if $(filter INFO WARN ERROR,$(LOG_LEVEL)),$(info $1))
 $(call log_info,Starting build at $(shell date))
 ```
 
-##### 错误恢复模式
+##### 4. 错误恢复模式
 
 ```makefile
 # 安全执行模板
@@ -10298,7 +10298,7 @@ build: $(call safe_exec,TARGET_NAME)
 
 #### 8.13.5. 最佳实践指南
 
-1. **错误消息规范**：
+##### 1. **错误消息规范**
 
    ```makefile
    # 标准格式：[组件] 错误描述 (错误码)
@@ -10309,7 +10309,7 @@ build: $(call safe_exec,TARGET_NAME)
    $(call app_error,Invalid configuration,CFG001)
    ```
 
-2. **警告抑制机制**：
+##### 2. **警告抑制机制**
 
    ```makefile
    # 命令行控制警告
@@ -10320,14 +10320,14 @@ build: $(call safe_exec,TARGET_NAME)
    endif
    ```
 
-3. **信息日志增强**：
+##### 3. **信息日志增强**
 
    ```makefile
    # 带时间戳的信息
    timestamp_info = $(info [$(shell date +%F_%T)] $1)
    ```
 
-4. **错误处理框架**：
+##### 4. **错误处理框架**
 
    ```makefile
    # 错误代码系统
@@ -10340,7 +10340,7 @@ build: $(call safe_exec,TARGET_NAME)
    endef
    ```
 
-5. **文档集成**：
+##### 5. **文档集成**
 
    ```makefile
    # 错误码文档生成
@@ -10350,7 +10350,7 @@ build: $(call safe_exec,TARGET_NAME)
 
 #### 8.13.6. 综合应用系统
 
-##### 智能构建检查器
+##### 1. 智能构建检查器
 
 ```makefile
 # 配置验证系统
@@ -10366,7 +10366,7 @@ $(foreach cfg,DB_URL API_KEY BUILD_MODE,\
     $(eval $(call validate_config,$(cfg))))
 ```
 
-##### 多阶段构建跟踪器
+##### 2. 多阶段构建跟踪器
 
 ```makefile
 # 阶段管理
@@ -10388,7 +10388,7 @@ all:
     $(MAKE) test
 ```
 
-##### 安全部署防护
+##### 3. 安全部署防护
 
 ```makefile
 # 生产部署检查
@@ -11367,7 +11367,7 @@ make -j 2 build package  # 并行构建
 
 #### **9.3.3. 参数详解与示例**
 
-##### 9.3.3.1 模拟构建 (`-n/--dry-run`)
+##### 1 模拟构建 (`-n/--dry-run`)
 
 **功能**：预览构建过程
 
@@ -11401,7 +11401,7 @@ gcc -o app main.o utils.o
       $(MAKE) -C subdir
   ```
 
-##### 9.3.3.2 标记为最新 (`-t/--touch`)
+##### 2 标记为最新 (`-t/--touch`)
 
 **功能**：伪造构建时间
 
@@ -11418,7 +11418,7 @@ make -t main.o
 - Make 内部更新时间戳（不调用系统 `touch` 命令）
 - 伪目标（`.PHONY`）不会被更新，除非包含 `+` 或 `$(MAKE)`
 
-##### 9.3.3.3 检查更新状态 (`-q/--question`)
+##### 3 检查更新状态 (`-q/--question`)
 
 **脚本应用**：
 
@@ -11432,7 +11432,7 @@ if ! make -q; then
 fi
 ```
 
-##### 9.3.3.4 假设文件修改 (`-W/--what-if`)
+##### 4 假设文件修改 (`-W/--what-if`)
 
 **组合用法**：
 
@@ -11720,13 +11720,13 @@ make
 
 #### **9.4.4. 关键技术解析**
 
-##### `-t/--touch` 原理
+##### 1. `-t/--touch` 原理
 
 - 直接修改文件系统时间戳（不调用 `touch` 命令）
 - 伪目标（`.PHONY`）不受影响
 - 时间戳设置为当前系统时间
 
-##### `-o/--assume-old` 原理
+##### 2. `-o/--assume-old` 原理
 
 | **行为**             | **未使用 `-o`**               | **使用 `-o header.h`**       |
 |----------------------|------------------------------|-----------------------------|
@@ -11738,33 +11738,34 @@ make
 
 #### **9.4.5. 使用注意事项**
 
-1. **兼容性保证**：
-   - 只添加新声明/宏，不修改现有结构
-   - 不删除任何已有接口
-   - 示例安全修改：
+##### 1. **兼容性保证**
 
-     ```c
-     // api.h - 安全修改示例
-     #define NEW_FEATURE_ENABLED  // 新增宏（未使用）
-     void new_function();         // 新增函数声明
-     ```
+- 只添加新声明/宏，不修改现有结构
+- 不删除任何已有接口
+- 示例安全修改：
 
-2. **危险修改示例**（必须重新编译）：
+```c
+// api.h - 安全修改示例
+#define NEW_FEATURE_ENABLED  // 新增宏（未使用）
+void new_function();         // 新增函数声明
+```
 
-   ```c
-   // 改变结构体大小
-   struct Data {
-     int id;
-   + char name[20];  // 会改变内存布局
-   };
-   ```
+##### 2. **危险修改示例**（必须重新编译）
 
-3. **多文件处理**：
+```c
+// 改变结构体大小
+struct Data {
+    int id;
++ char name[20];  // 会改变内存布局
+};
+```
 
-   ```bash
-   # 忽略多个头文件的影响
-   make -o config.h -o version.h && make -t
-   ```
+##### 3. **多文件处理**
+
+```bash
+# 忽略多个头文件的影响
+make -o config.h -o version.h && make -t
+```
 
 ---
 
@@ -11831,7 +11832,7 @@ git config filter.make_force.clean 'make -t'
 
 #### **9.4.8. 总结与最佳实践**
 
-##### 9.4.8.1. **黄金法则**
+##### 1. **黄金法则**
 
 ```mermaid
 graph TD
@@ -11840,7 +11841,7 @@ B -->|否| C[使用时间戳欺骗或标记旧文件法]
 B -->|是| D[必须重新编译所有依赖]
 ```
 
-##### 9.4.8.2. **操作选择树**
+##### 2. **操作选择树**
 
 - **预知修改** → 时间戳欺骗法
 
@@ -11854,7 +11855,7 @@ B -->|是| D[必须重新编译所有依赖]
   make -o header.h && make -t
   ```
 
-##### 9.4.8.3. **企业级建议**
+##### 3. **企业级建议**
 
 - **关键项目**：建立头文件修改审查流程
 - **大型项目**：隔离稳定头文件
@@ -11913,7 +11914,7 @@ B --> C[实际构建行为]
 
 #### **9.5.3. 核心语法与示例**
 
-##### 基础覆盖
+##### 1. 基础覆盖
 
 ```bash
 # Makefile 内容
@@ -11923,7 +11924,7 @@ CFLAGS = -g
 make CFLAGS='-O2 -Wall'
 ```
 
-##### 防覆盖机制
+##### 2. 防覆盖机制
 
 ```makefile
 # Makefile 内容
@@ -11933,7 +11934,7 @@ override CFLAGS = -g  # 防止命令行覆盖
 make CFLAGS='-O2'  # 仍使用 -g
 ```
 
-##### 多变量覆盖
+##### 3. 多变量覆盖
 
 ```bash
 # 同时覆盖多个变量
@@ -12026,35 +12027,35 @@ make  # 始终包含安全标志
 
 #### **9.5.7. 高级技巧**
 
-1. **组合覆盖**：
+##### 1. **组合覆盖**
 
-   ```bash
-   # 覆盖+追加
-   make CFLAGS='-O2' EXTRA_CFLAGS='-Wall -Wextra'
-   ```
+```bash
+# 覆盖+追加
+make CFLAGS='-O2' EXTRA_CFLAGS='-Wall -Wextra'
+```
 
-2. **环境变量集成**：
+##### 2. **环境变量集成**
 
-   ```bash
-   # 从环境变量继承
-   export OPT_LEVEL=3
-   make CFLAGS='-O$(OPT_LEVEL)'
-   ```
+```bash
+# 从环境变量继承
+export OPT_LEVEL=3
+make CFLAGS='-O$(OPT_LEVEL)'
+```
 
-3. **条件覆盖防御**：
+##### 3. **条件覆盖防御**
 
-   ```makefile
-   ifndef BUILD_TYPE
-     BUILD_TYPE := release  # 默认值
-   endif
-   ```
+```makefile
+ifndef BUILD_TYPE
+    BUILD_TYPE := release  # 默认值
+endif
+```
 
-4. **递归 Make 覆盖**：
+##### 4. **递归 Make 覆盖**
 
-   ```bash
-   # 传递到子 Make
-   make -C subdir CC=clang CFLAGS='-O2'
-   ```
+```bash
+# 传递到子 Make
+make -C subdir CC=clang CFLAGS='-O2'
+```
 
 ---
 
@@ -12088,52 +12089,52 @@ sequenceDiagram
 
 #### **9.5.10. 企业级最佳实践**
 
-1. **项目标准**：
+##### 1. **项目标准**
 
-   ```makefile
-   # Makefile 头部
-   override SAFE_FLAGS := -D_FORTIFY_SOURCE=2
-   ?= BUILD_TYPE = release  # 允许覆盖
-   ```
+```makefile
+# Makefile 头部
+override SAFE_FLAGS := -D_FORTIFY_SOURCE=2
+?= BUILD_TYPE = release  # 允许覆盖
+```
 
-2. **文档化覆盖点**：
+##### 2. **文档化覆盖点**
 
-   ```makefile
-   ## 可覆盖变量:
-   ##   CC: C编译器 (默认: gcc)
-   ##   OPT_LEVEL: 优化级别 (0-3, 默认: 2)
-   ##   ENABLE_ASAN: 启用地址检测 (默认: 0)
-   CC ?= gcc
-   OPT_LEVEL ?= 2
-   ```
+```makefile
+## 可覆盖变量:
+##   CC: C编译器 (默认: gcc)
+##   OPT_LEVEL: 优化级别 (0-3, 默认: 2)
+##   ENABLE_ASAN: 启用地址检测 (默认: 0)
+CC ?= gcc
+OPT_LEVEL ?= 2
+```
 
-3. **CI/CD 集成**：
+##### 3. **CI/CD 集成**
 
-   ```yaml
-   # GitLab CI 示例
-   build:release:
-     script:
-       - make CC=clang OPT_LEVEL=3
+```yaml
+# GitLab CI 示例
+build:release:
+    script:
+    - make CC=clang OPT_LEVEL=3
 
-   build:debug:
-     script:
-       - make BUILD_TYPE=debug ENABLE_ASAN=1
-   ```
+build:debug:
+    script:
+    - make BUILD_TYPE=debug ENABLE_ASAN=1
+```
 
-4. **安全审计**：
+##### 4. **安全审计**
 
-   ```bash
-   # 检查危险覆盖
-   if grep -q 'make.*LD=' history.log; then
-     alert "可疑链接器覆盖!"
-   fi
-   ```
+```bash
+# 检查危险覆盖
+if grep -q 'make.*LD=' history.log; then
+    alert "可疑链接器覆盖!"
+fi
+```
 
 ---
 
 #### **9.5.11. 总结与使用指南**
 
-1. **覆盖选择树**：
+##### 1. **覆盖选择树**
 
    ```mermaid
    graph TD
@@ -12145,12 +12146,12 @@ sequenceDiagram
    E -->|否| G[直接覆盖]
    ```
 
-2. **黄金法则**：
+##### 2. **黄金法则**
 
-   - 编译选项 → 优先覆盖 `CFLAGS/CXXFLAGS`
-   - 工具链变更 → 覆盖 `CC/CXX/AR`
-   - 安全相关 → 使用 `override`
-   - 用户配置 → 使用 `?=` 条件赋值
+- 编译选项 → 优先覆盖 `CFLAGS/CXXFLAGS`
+- 工具链变更 → 覆盖 `CC/CXX/AR`
+- 安全相关 → 使用 `override`
+- 用户配置 → 使用 `?=` 条件赋值
 
 > **性能提示**：避免在递归 Make 中频繁覆盖，改用环境变量：
 >
@@ -12278,7 +12279,7 @@ sequenceDiagram
 
 #### **9.6.5. 高级应用技巧**
 
-##### 自动化错误处理
+##### 1. 自动化错误处理
 
 ```bash
 # 构建并收集错误
@@ -12291,7 +12292,7 @@ if ! make -k; then
 fi
 ```
 
-##### CI/CD 集成
+##### 2. CI/CD 集成
 
 ```yaml
 # GitLab CI 配置示例
@@ -12317,7 +12318,7 @@ analyze-errors:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
 ```
 
-##### Makefile 内部控制
+##### 3. Makefile 内部控制
 
 ```makefile
 # 有条件启用 -k
@@ -12346,92 +12347,96 @@ test-all: test-module1 test-module2 test-module3
 
 #### **9.6.7. 企业级最佳实践**
 
-1. **开发流程集成**：
+##### **1. 开发流程集成**
 
-   ```bash
-   # 预提交检查脚本
-   #!/bin/bash
-   make clean
-   if ! make -k; then
-     echo "编译错误! 请修复以下文件:"
-     make -k 2>&1 | grep -E 'error:|Error:' | sort | uniq
-     exit 1
-   fi
-   ```
+```bash
+# 预提交检查脚本
+#!/bin/bash
+make clean
+if ! make -k; then
+    echo "编译错误! 请修复以下文件:"
+    make -k 2>&1 | grep -E 'error:|Error:' | sort | uniq
+    exit 1
+fi
+```
 
-2. **IDE 配置**：
-   - VSCode: `"make.buildArgs": ["-k"]`
-   - CLion: 在构建配置中添加 `-k`
-   - Eclipse CDT: 勾选 "Continue build after errors"
+##### **2. IDE 配置**
 
-3. **监控与报警**：
+- VSCode: `"make.buildArgs": ["-k"]`
+- CLion: 在构建配置中添加 `-k`
+- Eclipse CDT: 勾选 "Continue build after errors"
 
-   ```bash
-   # 错误趋势分析
-   make -k 2> errors.log
-   ERROR_COUNT=$(grep -c 'Error' errors.log)
-   curl -X POST https://monitor/api/errors \
-        -d "project=${PWD##*/}&count=$ERROR_COUNT"
-   ```
+##### **3. 监控与报警**
+
+```bash
+# 错误趋势分析
+make -k 2> errors.log
+ERROR_COUNT=$(grep -c 'Error' errors.log)
+curl -X POST https://monitor/api/errors \
+    -d "project=${PWD##*/}&count=$ERROR_COUNT"
+```
 
 ---
 
 #### **9.6.8. 注意事项与限制**
 
-1. **依赖问题**：
-   - 错误的目标不会被更新
-   - 依赖该目标的其他目标可能无法正确构建
+##### **1. 依赖问题**
 
-2. **副作用风险**：
+- 错误的目标不会被更新
+- 依赖该目标的其他目标可能无法正确构建
 
-   ```makefile
-   # 危险示例：可能破坏数据库
-   import-data:
-       ./clear-db.sh  # 先清理
-       ./import.sh    # 后导入（若失败...）
-   ```
+##### **2. 副作用风险**
 
-   **解决方案**：
+```makefile
+# 危险示例：可能破坏数据库
+import-data:
+    ./clear-db.sh  # 先清理
+    ./import.sh    # 后导入（若失败...）
+```
 
-   ```makefile
-   .PHONY: import-data
-   import-data:
-       # 原子操作
-       ./atomic-import.sh || (echo "导入失败"; exit 1)
-   ```
+**解决方案**：
 
-3. **不可跳过错误**：
-   - 缺失文件或规则错误仍会终止
-   - 递归 Make 中的顶层错误会终止
+```makefile
+.PHONY: import-data
+import-data:
+    # 原子操作
+    ./atomic-import.sh || (echo "导入失败"; exit 1)
+```
+
+##### **3. 不可跳过错误**
+
+- 缺失文件或规则错误仍会终止
+- 递归 Make 中的顶层错误会终止
 
 ---
 
 #### **9.6.9. 总结与使用指南**
 
-1. **适用场景决策树**：
+##### **1. 适用场景决策树**
 
-   ```mermaid
-   graph TD
-   A[开始构建] --> B{需要完整错误报告？}
-   B -->|是| C[使用 make -k]
-   B -->|否| D[标准make]
-   C --> E{大型项目？}
-   E -->|是| F[组合 -j 和 -k]
-   E -->|否| G[直接使用]
-   ```
+```mermaid
+graph TD
+A[开始构建] --> B{需要完整错误报告？}
+B -->|是| C[使用 make -k]
+B -->|否| D[标准make]
+C --> E{大型项目？}
+E -->|是| F[组合 -j 和 -k]
+E -->|否| G[直接使用]
+```
 
-2. **黄金法则**：
-   - 开发调试阶段：始终使用 `make -k`
-   - CI/CD 流水线：MR/PR 检查使用 `-k`，正式构建用标准模式
-   - 生产构建：禁用 `-k` 确保完全正确
+##### **2. 黄金法则**
 
-3. **性能数据**：
+- 开发调试阶段：始终使用 `make -k`
+- CI/CD 流水线：MR/PR 检查使用 `-k`，正式构建用标准模式
+- 生产构建：禁用 `-k` 确保完全正确
 
-   | **项目规模**   | **标准构建** | **-k 构建** | **错误修复周期** |
-   |---------------|------------|------------|----------------|
-   | 100 文件(0错误) | 12s        | 12s        | -              |
-   | 100 文件(5错误) | 3s         | 15s        | 5次 vs 1次     |
-   | 10,000 文件(20错误) | 2min     | 8min       | 多次 vs 1次    |
+##### **3. 性能数据**
+
+| **项目规模**   | **标准构建** | **-k 构建** | **错误修复周期** |
+|---------------|------------|------------|----------------|
+| 100 文件(0错误) | 12s        | 12s        | -              |
+| 100 文件(5错误) | 3s         | 15s        | 5次 vs 1次     |
+| 10,000 文件(20错误) | 2min     | 8min       | 多次 vs 1次    |
 
 >
 > **专家提示**：结合 `-k` 和错误分析工具：
@@ -12547,7 +12552,7 @@ rm -rf $MAKE_TMPDIR
 
 #### **9.7.5. 企业级最佳实践**
 
-##### 安全配置
+##### 1. 安全配置
 
 ```bash
 # 创建专用临时目录（POSIX）
@@ -12557,7 +12562,7 @@ sudo install -d -o $USER -g $USER -m 700 /secure_make_temp
 export MAKE_TMPDIR=/secure_make_temp
 ```
 
-##### Docker 集成
+##### 2. Docker 集成
 
 ```Dockerfile
 FROM alpine:latest
@@ -12572,7 +12577,7 @@ WORKDIR /app
 RUN make
 ```
 
-##### 监控脚本
+##### 3. 监控脚本
 
 ```bash
 #!/bin/bash
@@ -12619,7 +12624,7 @@ graph TB
     E[Worker 3] --> B
 ```
 
-**配置步骤**：
+##### **1. 配置步骤**
 
 1. 设置网络共享存储：
 
@@ -12646,28 +12651,28 @@ graph TB
 
 #### **9.7.8. 性能优化技巧**
 
-1. **RAM 磁盘加速**：
+##### **1. RAM 磁盘加速**
 
-   ```bash
-   # POSIX
-   mkdir /tmp/make_ram
-   sudo mount -t tmpfs -o size=1G make_ram /tmp/make_ram
-   export MAKE_TMPDIR=/tmp/make_ram
-   ```
+```bash
+# POSIX
+mkdir /tmp/make_ram
+sudo mount -t tmpfs -o size=1G make_ram /tmp/make_ram
+export MAKE_TMPDIR=/tmp/make_ram
+```
 
-2. **SSD 优化**：
+##### **2. SSD 优化**
 
-   ```bash
-   # 使用 SSD 专用分区
-   export MAKE_TMPDIR=/opt/ssd/make_temp
-   ```
+```bash
+# 使用 SSD 专用分区
+export MAKE_TMPDIR=/opt/ssd/make_temp
+```
 
-3. **定期清理**：
+##### **3. 定期清理**
 
-   ```cron
-   # /etc/cron.daily/make_temp_clean
-   0 3 * * * find /make_temp -type f -mtime +7 -delete
-   ```
+```cron
+# /etc/cron.daily/make_temp_clean
+0 3 * * * find /make_temp -type f -mtime +7 -delete
+```
 
 ---
 
@@ -12812,14 +12817,14 @@ none   : 无同步
 
 #### **9.8.7. 特殊用法示例**
 
-##### 复杂调试
+##### 1. 复杂调试
 
 ```bash
 # 分析重建原因 + 查看变量
 make --debug=w -p | grep "needs rebuilding"
 ```
 
-##### 安全构建
+##### 2. 安全构建
 
 ```bash
 # 内存临时文件 + 并行构建
@@ -12828,7 +12833,7 @@ make -j8 -Otarget
 rm -rf $MAKE_TMPDIR
 ```
 
-##### CI/CD 优化
+##### 3. CI/CD 优化
 
 ```bash
 # 多阶段构建
@@ -12836,7 +12841,7 @@ make -q || make -j4  # 仅需更新时构建
 make -s install      # 静默安装
 ```
 
-##### 大型项目构建
+##### 4. 大型项目构建
 
 ```bash
 # 分布式构建
@@ -12869,45 +12874,45 @@ make --shuffle=seed=42 \
 
 #### **9.8.9. 企业级最佳实践**
 
-1. **版本控制集成**：
+##### **1. 版本控制集成**
 
-   ```bash
-   # .gitlab-ci.yml
-   build:
-     script:
-       - make -j$(nproc) --output-sync=target
-     artifacts:
-       paths:
-         - build/
-   ```
+```bash
+# .gitlab-ci.yml
+build:
+    script:
+    - make -j$(nproc) --output-sync=target
+    artifacts:
+    paths:
+        - build/
+```
 
-2. **安全审计配置**：
+##### **2. 安全审计配置**
 
-   ```bash
-   # 高危操作检测
-   if [[ "$MAKEFLAGS" =~ "-i" ]]; then
-     auditd -log "Ignored errors in make"
-   fi
-   ```
+```bash
+# 高危操作检测
+if [[ "$MAKEFLAGS" =~ "-i" ]]; then
+    auditd -log "Ignored errors in make"
+fi
+```
 
-3. **性能监控**：
+##### **3. 性能监控**
 
-   ```bash
-   # 记录构建指标
-   /usr/bin/time -v make -j8 2> build_metrics.log
-   ```
+```bash
+# 记录构建指标
+/usr/bin/time -v make -j8 2> build_metrics.log
+```
 
-4. **容器化构建**：
+##### **4. 容器化构建**
 
-   ```Dockerfile
-   FROM alpine
-   RUN apk add make
-   ENV MAKE_TMPDIR=/tmp/make_temp
-   RUN mkdir -p ${MAKE_TMPDIR}
-   COPY . /app
-   WORKDIR /app
-   RUN make -j$(nproc)
-   ```
+```Dockerfile
+FROM alpine
+RUN apk add make
+ENV MAKE_TMPDIR=/tmp/make_temp
+RUN mkdir -p ${MAKE_TMPDIR}
+COPY . /app
+WORKDIR /app
+RUN make -j$(nproc)
+```
 
 ---
 
@@ -12950,35 +12955,35 @@ make --shuffle=seed=42 \
 
 #### **9.8.11. 总结与使用策略**
 
-1. **开发阶段**：
+##### **1. 开发阶段**
 
-   ```bash
-   make -j$(nproc) -k --output-sync=target
-   ```
+```bash
+make -j$(nproc) -k --output-sync=target
+```
 
-   - `-j` 加速构建
-   - `-k` 收集所有错误
-   - `--output-sync` 保持输出可读
+- `-j` 加速构建
+- `-k` 收集所有错误
+- `--output-sync` 保持输出可读
 
-2. **生产构建**：
+##### **2. 生产构建**
 
-   ```bash
-   make -j4 -s BUILD=release
-   ```
+```bash
+make -j4 -s BUILD=release
+```
 
-   - 限制并行数避免过载
-   - 静默模式减少日志
-   - 明确指定构建类型
+- 限制并行数避免过载
+- 静默模式减少日志
+- 明确指定构建类型
 
-3. **CI/CD 流水线**：
+##### **3. CI/CD 流水线**
 
-   ```bash
-   make -q || make -j8  # 条件构建
-   make test            # 运行测试
-   make -s install      # 静默安装
-   ```
+```bash
+make -q || make -j8  # 条件构建
+make test            # 运行测试
+make -s install      # 静默安装
+```
 
-4. **调试场景**：
+##### **4. 调试场景**
 
    ```bash
    make -n -p --debug=v  # 分析构建流程
@@ -13173,40 +13178,40 @@ CFLAGS += -Wall -O2
 
 #### **10.1.6. 高级技巧**
 
-1. **规则优先级控制**：
+##### **1. 规则优先级控制**
 
-   ```makefile
-   # 提高 Pascal 规则优先级
-   %.o: %.p
-        $(PC) -c $< -o $@
+```makefile
+# 提高 Pascal 规则优先级
+%.o: %.p
+    $(PC) -c $< -o $@
 
-   # 降低默认 C 规则优先级（最后定义优先）
-   include $(lastword $(wildcard *.mk))
-   ```
+# 降低默认 C 规则优先级（最后定义优先）
+include $(lastword $(wildcard *.mk))
+```
 
-2. **诊断隐含规则**：
+##### **2. 诊断隐含规则**
 
-   ```bash
-   # 查看所有隐含规则
-   make -p -f /dev/null
+```bash
+# 查看所有隐含规则
+make -p -f /dev/null
 
-   # 查看特定目标适用规则
-   make -d main.o | grep 'Considering target'
-   ```
+# 查看特定目标适用规则
+make -d main.o | grep 'Considering target'
+```
 
-3. **多步隐含链**：
+##### **3. 多步隐含链**
 
-   ```makefile
-   # 从 .y 到可执行
-   program: parser
+```makefile
+# 从 .y 到可执行
+program: parser
 
-   # 自定义 Lex/Yacc 规则
-   %.c: %.y
-        bison -o $@ $<
+# 自定义 Lex/Yacc 规则
+%.c: %.y
+    bison -o $@ $<
 
-   %.o: %.c
-        $(CC) -c $< -o $@
-   ```
+%.o: %.c
+    $(CC) -c $< -o $@
+```
 
 ---
 
@@ -13338,7 +13343,7 @@ sequenceDiagram
 
 ### 10.2. 内置隐含规则(Catalogue of Built-In Rules)
 
-#### **1. 核心概念**
+#### **10.2.1. 核心概念**
 
 - **隐含规则**：Make 内置的自动化构建逻辑，基于文件后缀推导构建过程
 - **触发条件**：
@@ -13351,9 +13356,9 @@ sequenceDiagram
 
 ---
 
-#### **2. 编译类规则**
+#### **10.2.2. 编译类规则**
 
-##### C 程序
+##### 1. C 程序
 
 ```makefile
 %.o: %.c
@@ -13366,7 +13371,7 @@ sequenceDiagram
 - `CFLAGS`: C 编译选项
 - `CPPFLAGS`: 预处理选项
 
-##### C++ 程序
+##### 2. C++ 程序
 
 ```makefile
 %.o: %.cc  # 或 %.cpp, %.C
@@ -13375,14 +13380,14 @@ sequenceDiagram
 
 **建议**：优先使用 `.cc` 或 `.cpp` 后缀（兼容大小写不敏感系统）
 
-##### Pascal 程序
+##### 3. Pascal 程序
 
 ```makefile
 %.o: %.p
     $(PC) $(PFLAGS) -c -o $@ $<
 ```
 
-##### Fortran/Ratfor 程序
+##### 4. Fortran/Ratfor 程序
 
 | **源文件** | **规则**                            |
 |------------|-------------------------------------|
@@ -13392,9 +13397,9 @@ sequenceDiagram
 
 ---
 
-#### **3. 链接与可执行规则**
+#### **10.2.3. 链接与可执行规则**
 
-##### 单文件链接
+##### 1. 单文件链接
 
 ```makefile
 %: %.o
@@ -13412,7 +13417,7 @@ app: foo.o bar.o
 #   cc foo.o bar.o -o app
 ```
 
-##### 多文件处理
+##### 2. 多文件处理
 
 ```makefile
 x: y.o z.o
@@ -13427,23 +13432,23 @@ x: y.o z.o
 
 ---
 
-#### **4. 预处理与转换规则**
+#### **10.2.4. 预处理与转换规则**
 
-##### Fortran 预处理
+##### 1. Fortran 预处理
 
 ```makefile
 %.f: %.F  # 或 %.r
     $(FC) $(CPPFLAGS) $(FFLAGS) -F -o $@ $<
 ```
 
-##### Yacc 语法分析
+##### 2. Yacc 语法分析
 
 ```makefile
 %.c: %.y
     $(YACC) $(YFLAGS) -o $@ $<
 ```
 
-##### Lex 词法分析
+##### 3. Lex 词法分析
 
 ```makefile
 %.c: %.l  # C 输出
@@ -13455,9 +13460,9 @@ x: y.o z.o
 
 ---
 
-#### **5. 文档处理规则**
+#### **10.2.5. 文档处理规则**
 
-##### TeX/LaTeX
+##### 1. TeX/LaTeX
 
 ```makefile
 %.dvi: %.tex
@@ -13467,7 +13472,7 @@ x: y.o z.o
     $(WEAVE) $< -o $@
 ```
 
-##### Texinfo
+##### 2. Texinfo
 
 ```makefile
 %.dvi: %.texinfo  # 或 %.texi, %.txinfo
@@ -13479,9 +13484,9 @@ x: y.o z.o
 
 ---
 
-#### **6. 源码控制系统**
+#### **10.2.6. 源码控制系统**
 
-##### RCS (版本控制)
+##### 1. RCS (版本控制)
 
 ```makefile
 %: %,v  # 或 RCS/%,v
@@ -13493,7 +13498,7 @@ x: y.o z.o
 - 仅当目标不存在时提取
 - 不检查版本新旧（终端规则）
 
-##### SCCS (旧式版本控制)
+##### 2. SCCS (旧式版本控制)
 
 ```makefile
 %: s.%  # 或 SCCS/s.%
@@ -13504,9 +13509,9 @@ x: y.o z.o
 
 ---
 
-#### **7. 核心变量参考**
+#### **10.2.7. 核心变量参考**
 
-##### 编译器变量
+##### 1. 编译器变量
 
 | **变量** | **默认值** | **作用**               |
 |----------|------------|------------------------|
@@ -13518,7 +13523,7 @@ x: y.o z.o
 | `LEX`    | `lex`      | Lex 词法分析器        |
 | `YACC`   | `yacc`     | Yacc 语法分析器       |
 
-##### 标志变量
+##### 2. 标志变量
 
 | **变量**     | **作用**                     |
 |--------------|------------------------------|
@@ -13531,7 +13536,7 @@ x: y.o z.o
 | `YFLAGS`     | Yacc 选项                    |
 | `LFLAGS`     | Lex 选项                     |
 
-##### 高级控制变量
+##### 3. 高级控制变量
 
 ```makefile
 # 编译过程控制
@@ -13543,9 +13548,9 @@ OUTPUT_OPTION = -o $@  # 或空（某些系统不支持）
 
 ---
 
-#### **8. 实用示例场景**
+#### **10.2.8. 实用示例场景**
 
-##### 多语言混合项目
+##### 1. 多语言混合项目
 
 ```makefile
 # Makefile
@@ -13557,7 +13562,7 @@ calc.po: calc.p
     $(PC) $(PFLAGS) -c $< -o $@
 ```
 
-##### 跨平台构建
+##### 2. 跨平台构建
 
 ```makefile
 # 检测系统选择编译器
@@ -13569,7 +13574,7 @@ else
 endif
 ```
 
-##### 自定义预处理
+##### 3. 自定义预处理
 
 ```makefile
 # 添加 Markdown 支持
@@ -13582,15 +13587,15 @@ docs: manual.html api.html
 
 ---
 
-#### **9. 调试与诊断**
+#### **10.2.9. 调试与诊断**
 
-##### 查看所有隐含规则
+##### 1. 查看所有隐含规则
 
 ```bash
 make -p -f /dev/null > rules.db
 ```
 
-##### 分析特定目标
+##### 2. 分析特定目标
 
 ```bash
 # 查看 main.o 的构建决策
@@ -13603,7 +13608,7 @@ make -n -d main.o | grep -E 'Considering|Chosen'
 #   Chosen rule: cc -c main.c -o main.o
 ```
 
-##### 临时禁用
+##### 3. 临时禁用
 
 ```bash
 # 禁用所有内置规则
@@ -13615,54 +13620,54 @@ make -r
 
 ---
 
-#### **10. 企业级最佳实践**
+#### **10.2.10. 企业级最佳实践**
 
-1. **后缀管理**：
+##### **1. 后缀管理**
 
-   ```makefile
-   # 添加新后缀
-   .SUFFIXES: .md .html
+```makefile
+# 添加新后缀
+.SUFFIXES: .md .html
 
-   # 重置后缀列表
-   .SUFFIXES:  # 清空
-   .SUFFIXES: .c .o .cpp .cc  # 自定义
-   ```
+# 重置后缀列表
+.SUFFIXES:  # 清空
+.SUFFIXES: .c .o .cpp .cc  # 自定义
+```
 
-2. **性能优化**：
+##### **2. 性能优化**
 
-   ```makefile
-   # 减少规则搜索
-   MAKEFLAGS += --no-builtin-rules
+```makefile
+# 减少规则搜索
+MAKEFLAGS += --no-builtin-rules
 
-   # 显式定义高频规则
-   %.o: %.c
-        $(CC) $(CFLAGS) -c $< -o $@
-   ```
+# 显式定义高频规则
+%.o: %.c
+    $(CC) $(CFLAGS) -c $< -o $@
+```
 
-3. **安全构建**：
+##### **3. 安全构建**
 
-   ```makefile
-   # 防止中间文件删除
-   .PRECIOUS: %.o %.d
+```makefile
+# 防止中间文件删除
+.PRECIOUS: %.o %.d
 
-   # 关键文件保护
-   .SECONDARY: keys.bin
-   ```
+# 关键文件保护
+.SECONDARY: keys.bin
+```
 
-4. **容器化构建**：
+##### **4. 容器构建**
 
-   ```Dockerfile
-   FROM alpine
-   RUN apk add make gcc fortran
-   ENV FC=gfortran CC=gcc
-   COPY . /app
-   WORKDIR /app
-   RUN make
-   ```
+```Dockerfile
+FROM alpine
+RUN apk add make gcc fortran
+ENV FC=gfortran CC=gcc
+COPY . /app
+WORKDIR /app
+RUN make
+```
 
 ---
 
-#### **隐含规则决策树**
+##### **5. 隐含规则决策树**
 
 ```mermaid
 graph TD
@@ -13681,7 +13686,7 @@ graph TD
 
 ---
 
-#### **总结与速查表**
+##### **6. 总结与速查表**
 
 ```plaintext
 ┌──────────────────────┬───────────────────────────────┐
@@ -13951,33 +13956,33 @@ endif
 
 #### **10.3.8. 注意事项**
 
-1. **变量继承**：
+##### 1. **变量继承**
 
-   ```makefile
-   # 递归 Make 中显式传递
-   subsystem:
-       $(MAKE) CC="$(CC)" CFLAGS="$(CFLAGS)"
-   ```
+```makefile
+# 递归 Make 中显式传递
+subsystem:
+    $(MAKE) CC="$(CC)" CFLAGS="$(CFLAGS)"
+```
 
-2. **参数冲突**：
+##### 2. **参数冲突**
 
-   ```makefile
-   # 错误：空格导致参数分割
-   CFLAGS = -D NAME="value with space" # 错误!
+```makefile
+# 错误：空格导致参数分割
+CFLAGS = -D NAME="value with space" # 错误!
 
-   # 正确：使用单引号
-   CFLAGS = -D'NAME="value with space"'
-   ```
+# 正确：使用单引号
+CFLAGS = -D'NAME="value with space"'
+```
 
-3. **默认值保护**：
+##### 3. **默认值保护**
 
-   ```makefile
-   # 条件设置（未定义时设置）
-   CFLAGS ?= -O2
+```makefile
+# 条件设置（未定义时设置）
+CFLAGS ?= -O2
 
-   # 追加而非覆盖
-   CFLAGS += -Wall
-   ```
+# 追加而非覆盖
+CFLAGS += -Wall
+```
 
 ---
 
@@ -14012,39 +14017,39 @@ endif
 
 #### **10.3.10. 总结与使用策略**
 
-1. **开发环境**：
+##### 1. **开发环境**
 
-   ```makefile
-   # 启用调试和警告
-   CFLAGS = -g -Wall -Wextra
-   CXXFLAGS = -std=c++17 -fsanitize=address
-   ```
+```makefile
+# 启用调试和警告
+CFLAGS = -g -Wall -Wextra
+CXXFLAGS = -std=c++17 -fsanitize=address
+```
 
-2. **生产环境**：
+##### 2. **生产环境**
 
-   ```makefile
-   # 优化和安全
-   CFLAGS = -O3 -DNDEBUG -fstack-protector
-   LDFLAGS = -Wl,-O1,--sort-common,--as-needed
-   ```
+```makefile
+# 优化和安全
+CFLAGS = -O3 -DNDEBUG -fstack-protector
+LDFLAGS = -Wl,-O1,--sort-common,--as-needed
+```
 
-3. **交叉编译**：
+##### 3. **交叉编译**
 
-   ```bash
-   make CC=arm-linux-gnueabihf-gcc \
-        AR=arm-linux-gnueabihf-ar \
-        STRIP=arm-linux-gnueabihf-strip
-   ```
+```bash
+make CC=arm-linux-gnueabihf-gcc \
+    AR=arm-linux-gnueabihf-ar \
+    STRIP=arm-linux-gnueabihf-strip
+```
 
-4. **诊断构建**：
+##### 4. **诊断构建**
 
-   ```bash
-   # 查看最终变量值
-   make -p | grep -E '^CC |^CFLAGS'
+```bash
+# 查看最终变量值
+make -p | grep -E '^CC |^CFLAGS'
 
-   # 分析隐含规则使用
-   make --trace
-   ```
+# 分析隐含规则使用
+make --trace
+```
 
 本指南全面覆盖了 Make 隐含变量的配置技巧和最佳实践，掌握这些知识可以：
 
@@ -14138,63 +14143,70 @@ project/
 
 #### 10.4.5. 关键现象说明
 
-1. **隐含规则链激活**
-   Make 自动识别处理路径：`parser.y → parser.c → parser.o → parser`
+##### 1. **隐含规则链激活**
 
-2. **中间文件处理**
-   - `parser.o` 被自动删除（中间文件默认行为）
-   - `parser.c` 被保留（因 `.SECONDARY` 标记）
+Make 自动识别处理路径：`parser.y → parser.c → parser.o → parser`
 
-3. **无 Makefile 规则时**
-   即使未明确定义规则，Make 仍能通过隐含规则链完成构建
+##### 2. **中间文件处理**
+
+- `parser.o` 被自动删除（中间文件默认行为）
+- `parser.c` 被保留（因 `.SECONDARY` 标记）
+
+##### 3. **无 Makefile 规则时**
+
+即使未明确定义规则，Make 仍能通过隐含规则链完成构建
 
 ---
 
 #### 10.4.6. 重要规则与限制
 
-1. **防循环机制**
-   同一隐含规则不能在链中重复出现（防止 `foo → foo.o → foo.o.o` 的死循环）
+##### 1. **防循环机制**
 
-2. **优化规则优先**
-   当存在直接优化规则时（如 `.c → 可执行文件`），优先使用单步规则而非规则链：
+同一隐含规则不能在链中重复出现（防止 `foo → foo.o → foo.o.o` 的死循环）
 
-   ```makefile
-   # 实际执行（非规则链）：
-   cc -o program program.c
-   ```
+##### 2. **优化规则优先**
 
-3. **中间文件重建条件**
-   仅当满足以下任一条件时重建中间文件：
-   - 依赖文件比目标新（如 `parser.y` 比 `parser.c` 新）
-   - 目标文件不存在
+当存在直接优化规则时（如 `.c → 可执行文件`），优先使用单步规则而非规则链：
+
+```makefile
+# 实际执行（非规则链）：
+cc -o program program.c
+```
+
+##### 3. **中间文件重建条件**
+
+仅当满足以下任一条件时重建中间文件：
+
+- 依赖文件比目标新（如 `parser.y` 比 `parser.c` 新）
+- 目标文件不存在
 
 ---
 
 #### 10.4.7. 最佳实践建议
 
-1. **保留关键中间文件**
+##### 1. **保留关键中间文件**
 
-   ```makefile
-   # 保留所有 .c 中间文件
-   .SECONDARY: %.c
-   ```
+```makefile
+# 保留所有 .c 中间文件
+.SECONDARY: %.c
+```
 
-2. **强制清理中间文件**
+##### 2. **强制清理中间文件**
 
-   ```makefile
+```makefile
 
-   clean:
-       rm -f *.o *.c
-   .PHONY: clean
-   ```
+clean:
+    rm -f *.o *.c
+.PHONY: clean
+```
 
-3. **避免过度依赖中间文件**
+##### 3. **避免过度依赖中间文件**
 
-   对频繁修改的文件使用 `.NOTINTERMEDIATE` 提升性能：
+对频繁修改的文件使用 `.NOTINTERMEDIATE` 提升性能：
 
-   ```makefile
-   .NOTINTERMEDIATE: common.o
-   ```
+```makefile
+.NOTINTERMEDIATE: common.o
+```
 
 > **提示**：通过 `make -d` 可查看详细的规则链决策过程和文件删除日志
 
@@ -14359,30 +14371,30 @@ cc -c src/main.c -o build/main.o
 
 #### 10.5.7. 最佳实践
 
-1. **目录处理**：
+##### 1. **目录处理**
 
-   ```makefile
-   $(OBJDIR)/%.o: $(SRCDIR)/%.c
-        $(CC) -c $< -o $@
-   ```
+```makefile
+$(OBJDIR)/%.o: $(SRCDIR)/%.c
+    $(CC) -c $< -o $@
+```
 
-2. **防止误用万用规则**：
+##### 2. **防止误用万用规则**
 
-   ```makefile
-   # 声明终局规则
-   % :: RCS/%,v
-        $(CO) $<
+```makefile
+# 声明终局规则
+% :: RCS/%,v
+    $(CO) $<
 
-   # 添加哑规则
-   %.y :  # 阻止对.y文件的万用规则推导
-   ```
+# 添加哑规则
+%.y :  # 阻止对.y文件的万用规则推导
+```
 
-3. **自动化变量使用**：
+##### 3. **自动化变量使用**
 
-   ```makefile
-   deploy/%: build/%
-        scp $(<D)/$(<F) user@server:/path/$(@F)
-   ```
+```makefile
+deploy/%: build/%
+    scp $(<D)/$(<F) user@server:/path/$(@F)
+```
 
 ---
 
@@ -14554,37 +14566,37 @@ make prod.config
 
 #### 10.6.6. 最佳实践建议
 
-1. **调试用途**：
+##### 1. **调试用途**
 
-   ```makefile
-   %::
-       @echo "警告：使用缺省规则创建 $@"
-       touch $@
-   ```
+```makefile
+%::
+    @echo "警告：使用缺省规则创建 $@"
+    touch $@
+```
 
-2. **生产环境防护**：
+##### 2. **生产环境防护**
 
-   ```makefile
-   .DEFAULT:
-       @echo "错误：未定义的目标 '$@'"
-       @exit 1
-   ```
+```makefile
+.DEFAULT:
+    @echo "错误：未定义的目标 '$@'"
+    @exit 1
+```
 
-3. **选择性启用**：
+##### 3. **选择性启用**
 
-   ```makefile
-   ifeq ($(DEBUG),1)
-   %::
-       touch $@
-   endif
-   ```
+```makefile
+ifeq ($(DEBUG),1)
+%::
+    touch $@
+endif
+```
 
-4. **与空命令结合**：
+##### 4. **与空命令结合**
 
-   ```makefile
-   # 忽略特定目标
-   placeholder: ;
-   ```
+```makefile
+# 忽略特定目标
+placeholder: ;
+```
 
 缺省规则是 Makefile 的强大后备机制，合理使用可提高构建系统的健壮性，特别适合原型开发阶段。但在生产环境中应谨慎使用，避免掩盖真正的构建问题。
 
@@ -14624,25 +14636,27 @@ make prod.config
 
 #### 10.7.3. 关键限制与陷阱
 
-1. **不能有显式依赖**：
+##### 1. **不能有显式依赖**
 
-   ```makefile
-   # 错误！变成普通规则而非后缀规则
-   .c.o: common.h
-       $(CC) -c $< -o $@
-   ```
+```makefile
+# 错误！变成普通规则而非后缀规则
+.c.o: common.h
+    $(CC) -c $< -o $@
+```
 
-   - 此规则实际目标名为 `.c.o`（奇怪文件名）
-   - 正确做法：使用模式规则 `%.o: %.c common.h`
+- 此规则实际目标名为 `.c.o`（奇怪文件名）
+- 正确做法：使用模式规则 `%.o: %.c common.h`
 
-2. **空命令无效**：
-   - 空后缀规则不取消已有规则（模式规则空命令可取消规则）
+##### 2. **空命令无效**
 
-3. **后缀识别机制**：
-   - 目标后缀必须在已知后缀列表中
-   - 自动识别规则类型：
-     - 目标含一个已知后缀 → 单后缀规则
-     - 目标含两个已知后缀 → 双后缀规则
+- 空后缀规则不取消已有规则（模式规则空命令可取消规则）
+
+##### 3. **后缀识别机制**
+
+- 目标后缀必须在已知后缀列表中
+- 自动识别规则类型：
+  - 目标含一个已知后缀 → 单后缀规则
+  - 目标含两个已知后缀 → 双后缀规则
 
 ---
 
@@ -14729,31 +14743,31 @@ make -r  # 或 --no-builtin-rules
 
 #### 10.7.7. 迁移建议
 
-1. **替换所有后缀规则为模式规则**：
+##### 1. **替换所有后缀规则为模式规则**
 
-   ```makefile
-   # Before
-   .c.o:
-       $(CC) -c $< -o $@
+```makefile
+# Before
+.c.o:
+    $(CC) -c $< -o $@
 
-   # After
-   %.o: %.c
-       $(CC) -c $< -o $@
-   ```
+# After
+%.o: %.c
+    $(CC) -c $< -o $@
+```
 
-2. **清理后缀列表**：
+##### 2. **清理后缀列表**
 
-   ```makefile
-   .SUFFIXES:  # 清空后缀列表
-   ```
+```makefile
+.SUFFIXES:  # 清空后缀列表
+```
 
-3. **使用模式规则特性**：
+##### 3. **使用模式规则特性**
 
-   ```makefile
-   # 添加头文件依赖
-   %.o: %.c common.h
-       $(CC) -c $< -o $@
-   ```
+```makefile
+# 添加头文件依赖
+%.o: %.c common.h
+    $(CC) -c $< -o $@
+```
 
 >
 > 在维护旧项目时，了解后缀规则工作机制是必要的，但新项目应完全使用模式规则以获得更好的可读性和灵活性。后缀规则作为历史遗留特性，终将被模式规则完全取代。
@@ -14931,26 +14945,26 @@ def generate_dependencies(stem, rule):
 
 #### 10.8.10. 调试技巧
 
-1. **查看决策过程**：
+##### 1. **查看决策过程**
 
-   ```bash
-   make -d  # 显示详细的规则搜索过程
-   ```
+```bash
+make -d  # 显示详细的规则搜索过程
+```
 
-2. **关键检查点**：
+##### 2. **关键检查点**
 
-   - 茎计算是否正确
-   - 依赖生成是否符合预期
-   - 终局规则是否阻止了必要搜索
+- 茎计算是否正确
+- 依赖生成是否符合预期
+- 终局规则是否阻止了必要搜索
 
-3. **常见问题**：
+##### 3. **常见问题**
 
-   ```makefile
-   # 错误：规则因目录处理失败
-   # 修复：明确指定目录
-   build/%.o: src/%.c
-        $(CC) -c $< -o $@
-   ```
+```makefile
+# 错误：规则因目录处理失败
+# 修复：明确指定目录
+build/%.o: src/%.c
+     $(CC) -c $< -o $@
+```
 
 理解此算法有助于诊断复杂的构建问题，特别是在处理多级隐含规则链时。掌握茎计算和依赖生成逻辑是调试的关键。
 
