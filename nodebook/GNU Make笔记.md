@@ -5642,16 +5642,16 @@ endef
 
 #### 6.8.7. 最佳实践
 
-1. **命名规范**：
+##### 1. **命名规范**
 
-   ```makefile
-   # 全大写+下划线区分单词
-   define DEPLOY_TO_STAGING
-   # ...
-   endef
-   ```
+```makefile
+# 全大写+下划线区分单词
+define DEPLOY_TO_STAGING
+# ...
+endef
+```
 
-2. **复杂逻辑注释**：
+##### 2. **复杂逻辑注释**
 
    ```makefile
    define PROCESS_DATA
@@ -5664,24 +5664,24 @@ endef
    endef
    ```
 
-3. **避免 Tab 开头问题**：
+##### 3. **避免 Tab 开头问题**
 
-   ```makefile
-   define SAFE_COMMANDS
-   # 使用空格缩进而非 Tab
-    echo "This line won't be executed as command"
-   endef
-   ```
+```makefile
+define SAFE_COMMANDS
+# 使用空格缩进而非 Tab
+echo "This line won't be executed as command"
+endef
+```
 
-4. **性能敏感场景**：
+##### 4. **性能敏感场景**
 
-   ```makefile
-   # 直接展开式避免重复执行
-   define CONFIG_DATA :=
-   key1=value1
-   key2=value2
-   endef
-   ```
+```makefile
+# 直接展开式避免重复执行
+define CONFIG_DATA :=
+key1=value1
+key2=value2
+endef
+```
 
 >
 > **关键原则**：对于超过 2 行的复杂内容或需要重用的命令序列，优先使用 `define` 而非单行变量定义，可显著提升 Makefile 的可读性和可维护性。
@@ -7143,36 +7143,36 @@ objs := $(addprefix obj/,$(patsubst %.c,%.o,$(files)))
 
 #### 8.1.5. 常见错误及解决方案
 
-1. **逗号未转义**：
+##### 1. **逗号未转义**
 
-   ```makefile
-   # 错误：被解释为参数分隔符
-   $(error Found , in text)
+```makefile
+# 错误：被解释为参数分隔符
+$(error Found , in text)
 
-   # 正确：使用变量转义
-   $(error Found $(comma) in text)
-   ```
+# 正确：使用变量转义
+$(error Found $(comma) in text)
+```
 
-2. **前导空格丢失**：
+##### 2. **前导空格丢失**
 
-   ```makefile
-   # 错误：make自动去除前导空格
-   text :=   Leading spaces
+```makefile
+# 错误：make自动去除前导空格
+text :=   Leading spaces
 
-   # 正确：使用变量保护
-   spaces := $(empty) $(empty) $(empty)
-   text := $(spaces)Leading spaces
-   ```
+# 正确：使用变量保护
+spaces := $(empty) $(empty) $(empty)
+text := $(spaces)Leading spaces
+```
 
-3. **括号不匹配**：
+##### 3. **括号不匹配**
 
-   ```makefile
-   # 错误：括号不匹配导致解析失败
-   $(subst a,b,(unclosed)
+```makefile
+# 错误：括号不匹配导致解析失败
+$(subst a,b,(unclosed)
 
-   # 正确：使用变量或成对括号
-   $(subst a,b,$(left_paren)text$(right_paren))
-   ```
+# 正确：使用变量或成对括号
+$(subst a,b,$(left_paren)text$(right_paren))
+```
 
 ---
 
@@ -7218,34 +7218,34 @@ lines := $(call safe_split,$(csv_data))
 
 #### 8.1.7. 最佳实践总结
 
-1. **统一括号风格**：
+##### 1. **统一括号风格**
 
-   - 全程使用圆括号 `$( )`
-   - 避免混用 `$( )` 和 `${ }`
+- 全程使用圆括号 `$( )`
+- 避免混用 `$( )` 和 `${ }`
 
-2. **特殊字符处理**：
+##### 2. **特殊字符处理**
 
-   ```makefile
-   # 文件开头定义特殊字符变量
-   comma := ,
-   empty :=
-   space := $(empty) $(empty)
-   ```
+```makefile
+# 文件开头定义特殊字符变量
+comma := ,
+empty :=
+space := $(empty) $(empty)
+```
 
-3. **复杂参数预处理**：
+##### 3. **复杂参数预处理**
 
-   - 对含特殊字符的参数先转义再传递
+- 对含特殊字符的参数先转义再传递
 
-4. **函数嵌套原则**：
+##### 4. **函数嵌套原则**
 
-   - 内层函数完全展开后再执行外层函数
-   - 限制嵌套深度（不超过3层）
+- 内层函数完全展开后再执行外层函数
+- 限制嵌套深度（不超过3层）
 
-5. **调试技巧**：
+##### 5. **调试技巧**
 
-   ```makefile
-   $(info Processing: [$(subst $(space),_,$(var))])
-   ```
+```makefile
+$(info Processing: [$(subst $(space),_,$(var))])
+```
 
 >
 > **核心要点**：所有参数在函数执行前会被完全展开，特殊字符需通过变量中转处理，保持括号风格一致可避免解析错误。
@@ -7274,7 +7274,7 @@ lines := $(call safe_split,$(csv_data))
 
 #### 8.2.2. 函数详解与示例
 
-##### 8.2.2.1. `subst` - 文本替换
+##### 1. `subst` - 文本替换
 
 ```makefile
 # 将 ee 替换为 EE
@@ -7287,7 +7287,7 @@ paths := $(subst :, ,$(VPATH))
 # 结果: "src ../headers"
 ```
 
-##### 8.2.2.2. `patsubst` - 模式替换
+##### 2. `patsubst` - 模式替换
 
 ```makefile
 # 通配符替换
@@ -7303,7 +7303,7 @@ processed := $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(files)))
 # 结果: "file1.o file2.o"
 ```
 
-##### 8.2.2.3. `strip` - 空格处理
+##### 3. `strip` - 空格处理
 
 ```makefile
 # 清理多余空格
@@ -7317,7 +7317,7 @@ ifneq ($(strip $(var)),)
 endif
 ```
 
-##### 8.2.2.4. `findstring` - 子串检测
+##### 4. `findstring` - 子串检测
 
 ```makefile
 # 检测编译器标志
@@ -7331,7 +7331,7 @@ found := $(findstring model,CPU model: Intel)
 # 结果: "model"
 ```
 
-##### 8.2.2.5. `filter` / `filter-out` - 模式过滤
+##### 5. `filter` / `filter-out` - 模式过滤
 
 ```makefile
 # 保留C/ASM文件
@@ -7345,7 +7345,7 @@ prod := $(filter-out test_%,$(all_files))
 # 结果: "app.c lib.c"
 ```
 
-##### 8.2.2.6. `sort` - 排序去重
+##### 6. `sort` - 排序去重
 
 ```makefile
 # 清理重复项
@@ -7359,7 +7359,7 @@ deduped := $(sort $(nodes))
 # 结果: "node1 node2 node3" (排序是副作用)
 ```
 
-##### 8.2.2.7. 单词操作函数组
+##### 7. 单词操作函数组
 
 ```makefile
 text := one two three four
@@ -7754,43 +7754,43 @@ project_sources := $(shell find src lib -name '*.c')
 
 #### 8.3.5. 最佳实践指南
 
-1. **路径处理规范**
+##### 1. **路径处理规范**
 
-   ```makefile
-   # 始终使用abspath处理输入路径
-   INPUT_DIR := $(abspath $(INPUT_DIR))
-   ```
+```makefile
+# 始终使用abspath处理输入路径
+INPUT_DIR := $(abspath $(INPUT_DIR))
+```
 
-2. **防御性文件名处理**
+##### 2. **防御性文件名处理**
 
-   ```makefile
-   # 移除尾部斜杠
-   clean_dir = $(patsubst %/,%,$(1))
-   SOURCES := $(wildcard $(call clean_dir,$(SRC_DIR))/*.c)
-   ```
+```makefile
+# 移除尾部斜杠
+clean_dir = $(patsubst %/,%,$(1))
+SOURCES := $(wildcard $(call clean_dir,$(SRC_DIR))/*.c)
+```
 
-3. **高效文件操作**
+##### 3. **高效文件操作**
 
-   ```makefile
-   # 避免多次通配
-   ALL_OBJS := $(patsubst %.c,%.o,$(wildcard *.c))
-   ```
+```makefile
+# 避免多次通配
+ALL_OBJS := $(patsubst %.c,%.o,$(wildcard *.c))
+```
 
-4. **路径连接工具**
+##### 4. **路径连接工具**
 
-   ```makefile
-   # 安全路径连接函数
-   path_join = $(strip $(patsubst //,/,$(1)/$(2)))
-   INCLUDE_DIR := $(call path_join,$(ROOT),include)
-   ```
+```makefile
+# 安全路径连接函数
+path_join = $(strip $(patsubst //,/,$(1)/$(2)))
+INCLUDE_DIR := $(call path_join,$(ROOT),include)
+```
 
-5. **版本化构建**
+##### 5. **版本化构建**
 
-   ```makefile
-   # 自动版本嵌入
-   BUILD_INFO := $(addprefix build_,$(shell date +%Y%m%d))
-   OUTPUT := $(addsuffix -$(BUILD_INFO),$(TARGET))
-   ```
+```makefile
+# 自动版本嵌入
+BUILD_INFO := $(addprefix build_,$(shell date +%Y%m%d))
+OUTPUT := $(addsuffix -$(BUILD_INFO),$(TARGET))
+```
 
 >
 > **终极提示**：文件名函数在解析阶段执行，对于大型文件系统操作，优先使用 `$(shell find)` 替代多次 `wildcard`，注意处理含空格文件名需特殊技巧。
@@ -7801,20 +7801,20 @@ project_sources := $(shell find src lib -name '*.c')
 
 #### 8.4.1. 条件函数核心特性
 
-1. **延迟展开机制**：
+##### 1. **延迟展开机制**
 
-   - 仅展开必要的参数
-   - 未使用的分支不会被执行
-   - 支持副作用操作（如 `shell` 调用）
+- 仅展开必要的参数
+- 未使用的分支不会被执行
+- 支持副作用操作（如 `shell` 调用）
 
-2. **与条件指令对比**：
+##### 2. **与条件指令对比**
 
-   | 特性         | 条件函数 (`if`, `or` 等)       | 条件指令 (`ifeq`, `ifdef` 等) |
-   |--------------|-------------------------------|-------------------------------|
-   | 执行阶段     | 变量展开阶段                  | Makefile 解析阶段            |
-   | 作用范围     | 可在任意变量赋值中使用        | 控制 Makefile 文本块         |
-   | 参数展开     | 条件性部分展开                | 全部参数预先展开             |
-   | 数值比较     | 支持 (`intcmp`)               | 仅支持字符串比较             |
+| 特性         | 条件函数 (`if`, `or` 等)       | 条件指令 (`ifeq`, `ifdef` 等) |
+|--------------|-------------------------------|-------------------------------|
+| 执行阶段     | 变量展开阶段                  | Makefile 解析阶段            |
+| 作用范围     | 可在任意变量赋值中使用        | 控制 Makefile 文本块         |
+| 参数展开     | 条件性部分展开                | 全部参数预先展开             |
+| 数值比较     | 支持 (`intcmp`)               | 仅支持字符串比较             |
 
 ---
 
@@ -7965,7 +7965,7 @@ VALID_VALUE := $(call safe_int,$(USER_INPUT))
 
 #### 8.4.4. 典型错误与解决方案
 
-**错误1：未处理的空值**
+##### **错误1：未处理的空值**
 
 ```makefile
 # 错误：可能返回空
@@ -7975,7 +7975,7 @@ PORT := $(or $(CONFIG_PORT),)
 PORT := $(or $(CONFIG_PORT),8080)
 ```
 
-**错误2：副作用位置错误**
+##### **错误2：副作用位置错误**
 
 ```makefile
 # 错误：副作用总被执行
@@ -7985,7 +7985,7 @@ SIDE_EFFECT := $(shell date) $(if $(DEBUG),Debug,Release)
 CONFIG := $(if $(DEBUG),$(shell setup_debug),$(shell setup_release))
 ```
 
-**错误3：字符串当数字**
+##### **错误3：字符串当数字**
 
 ```makefile
 # 错误：字符串比较 "10" < "2"
@@ -7997,7 +7997,7 @@ NUM2 := 2
 RESULT := $(intcmp $(NUM1),$(NUM2),less,equal,more)  # 返回 "more"
 ```
 
-**错误4：忽略空格影响**
+##### **错误4：忽略空格影响**
 
 ```makefile
 # 错误：空格导致条件失败
@@ -8012,48 +8012,48 @@ $(if $(strip $(COND)),Truthy,Falsy)  # 返回 "Truthy"
 
 #### 8.4.5. 最佳实践指南
 
-1. **防御性条件处理**：
+##### 1. **防御性条件处理**
 
-   ```makefile
-   # 始终strip字符串条件
-   VALID := $(if $(strip $(VAR)),yes,no)
-   ```
+```makefile
+# 始终strip字符串条件
+VALID := $(if $(strip $(VAR)),yes,no)
+```
 
-2. **数值比较安全**：
+##### 2. **数值比较安全**
 
-   ```makefile
-   # 转换非数字为0
-   safe_cmp = $(intcmp \
-       $(if $(filter-out 0 1 2 3 4 5 6 7 8 9,$(1)),0,$(1)),\
-       $(if $(filter-out 0 1 2 3 4 5 6 7 8 9,$(2)),0,$(2)),\
-       $(3),$(4),$(5))
-   ```
+```makefile
+# 转换非数字为0
+safe_cmp = $(intcmp \
+    $(if $(filter-out 0 1 2 3 4 5 6 7 8 9,$(1)),0,$(1)),\
+    $(if $(filter-out 0 1 2 3 4 5 6 7 8 9,$(2)),0,$(2)),\
+    $(3),$(4),$(5))
+```
 
-3. **副作用隔离**：
+##### 3. **副作用隔离**
 
-   ```makefile
-   # 将副作用封装在条件分支内
-   SETUP := $(if $(DEBUG),\
-       $(eval DEBUG_FLAGS := -g),\
-       $(eval OPT_FLAGS := -O3))
-   ```
+```makefile
+# 将副作用封装在条件分支内
+SETUP := $(if $(DEBUG),\
+    $(eval DEBUG_FLAGS := -g),\
+    $(eval OPT_FLAGS := -O3))
+```
 
-4. **复杂条件分解**：
+##### 4. **复杂条件分解**
 
-   ```makefile
-   # 分步计算复杂条件
-   COND1 := $(or $(A),$(B))
-   COND2 := $(and $(C),$(D))
-   RESULT := $(if $(and $(COND1),$(COND2)),Success,Fail)
-   ```
+```makefile
+# 分步计算复杂条件
+COND1 := $(or $(A),$(B))
+COND2 := $(and $(C),$(D))
+RESULT := $(if $(and $(COND1),$(COND2)),Success,Fail)
+```
 
-5. **性能敏感操作**：
+##### 5. **性能敏感操作**
 
-   ```makefile
-   # 避免重复执行高开销命令
-   CACHE := $(shell heavy_command)
-   VALUE := $(if $(filter x,$(CACHE)),X-result,Y-result)
-   ```
+```makefile
+# 避免重复执行高开销命令
+CACHE := $(shell heavy_command)
+VALUE := $(if $(filter x,$(CACHE)),X-result,Y-result)
+```
 
 >
 > **终极技巧**：在需要动态决策但无法使用条件指令的场合（如变量赋值内部、函数参数中），条件函数是唯一选择。合理利用短路特性可显著提升复杂Makefile的性能。
@@ -8240,45 +8240,45 @@ range = $(call range_iter,1 $1 "")
 
 #### 8.5.6. 最佳实践指南
 
-1. **命名规范**：
+##### 1. **命名规范**
 
-   ```makefile
-   # 临时变量添加双下划线前缀
-   $(let __tmp1 __tmp2,$data, ...)
-   ```
+```makefile
+# 临时变量添加双下划线前缀
+$(let __tmp1 __tmp2,$data, ...)
+```
 
-2. **作用域最小化**：
+##### 2. **作用域最小化**
 
-   ```makefile
-   # 仅在需要时使用let
-   PROCESSED := $(let a b,$(RAW), ...)  # 优于全局修改
-   ```
+```makefile
+# 仅在需要时使用let
+PROCESSED := $(let a b,$(RAW), ...)  # 优于全局修改
+```
 
-3. **解包安全校验**：
+##### 3. **解包安全校验**
 
-   ```makefile
-   safe_unpack = $(if $(filter 3,$(words $1)),\
-        $(let a b c,$1,$c-$b-$a),\
-        $(error Invalid input))
-   ```
+```makefile
+safe_unpack = $(if $(filter 3,$(words $1)),\
+    $(let a b c,$1,$c-$b-$a),\
+    $(error Invalid input))
+```
 
-4. **递归深度控制**：
+##### 4. **递归深度控制**
 
-   ```makefile
-   # 添加递归计数器
-   reverse = $(let depth first rest,$(words $1) $1,\
-        $(if $(intcmp $depth,50,>),\
-            $(error Recursion too deep),\
-            $(let f r,$rest,$(if $r,$(call reverse,$r))$f)))
-   ```
+```makefile
+# 添加递归计数器
+reverse = $(let depth first rest,$(words $1) $1,\
+    $(if $(intcmp $depth,50,>),\
+        $(error Recursion too deep),\
+        $(let f r,$rest,$(if $r,$(call reverse,$r))$f)))
+```
 
-5. **复杂逻辑封装**：
+##### 5. **复杂逻辑封装**
 
-   ```makefile
-   # 模块化设计
-   include math.mk  # 包含let实现的数学函数
-   result := $(call min,$(values))
-   ```
+```makefile
+# 模块化设计
+include math.mk  # 包含let实现的数学函数
+result := $(call min,$(values))
+```
 
 >
 > **核心价值**：`let` 函数解决了 Makefile 缺乏局部作用域的核心痛点，特别适用于递归算法和数据处理。合理使用可显著提升代码模块化，但需注意控制递归深度避免性能问题。
@@ -8441,7 +8441,7 @@ $(foreach lang,$(LANGUAGES),\
 
 #### 8.6.5. 常见错误与解决方案
 
-**错误1：错误使用立即展开变量**
+##### **错误1：错误使用立即展开变量**
 
 ```makefile
 # 错误：只展开一次
@@ -8452,7 +8452,7 @@ files := $(foreach dir,$(dirs),$(find_c))  # 所有目录结果相同
 find_c = $(wildcard $(dir)/*.c)  # 使用 =
 ```
 
-**错误2：未处理空格**
+##### **错误2：未处理空格**
 
 ```makefile
 # 错误：含空格文件名被拆分
@@ -8469,7 +8469,7 @@ $(call $3,$(__item))
 endef
 ```
 
-**错误3：循环变量污染**
+##### **错误3：循环变量污染**
 
 ```makefile
 # 错误：外部变量被覆盖
@@ -8481,7 +8481,7 @@ result := $(foreach dir,$(subdirs),build/$(dir))
 result := $(foreach __dir,$(subdirs),build/$(__dir))
 ```
 
-**错误4：忽略空列表**
+##### **错误4：忽略空列表**
 
 ```makefile
 # 错误：空列表导致异常
@@ -8497,50 +8497,50 @@ safe_foreach = $(if $1,$(foreach $@,$1,$2),)
 
 #### 8.6.6. 最佳实践指南
 
-1. **命名规范**：
+##### 1. **命名规范**
 
-   ```makefile
-   # 循环变量添加双下划线前缀
-   $(foreach __item,$(LIST),...)
-   ```
+```makefile
+# 循环变量添加双下划线前缀
+$(foreach __item,$(LIST),...)
+```
 
-2. **复杂逻辑封装**：
+##### 2. **复杂逻辑封装**
 
-   ```makefile
-   # 定义安全的foreach宏
-   define safe_foreach
-   $(if $(strip $2),\
-        $(foreach $1,$2,$3),\
-        $4)  # 可选的空列表处理
-   endef
-   ```
+```makefile
+# 定义安全的foreach宏
+define safe_foreach
+$(if $(strip $2),\
+    $(foreach $1,$2,$3),\
+    $4)  # 可选的空列表处理
+endef
+```
 
-3. **性能优化**：
+##### 3. **性能优化**
 
-   ```makefile
-   # 预展开静态列表
-   CACHE_LIST := $(shell expensive_command)
-   PROCESSED := $(foreach i,$(CACHE_LIST),...)
-   ```
+```makefile
+# 预展开静态列表
+CACHE_LIST := $(shell expensive_command)
+PROCESSED := $(foreach i,$(CACHE_LIST),...)
+```
 
-4. **大列表处理**：
+##### 4. **大列表处理**
 
-   ```makefile
-   # 分块处理避免内存问题
-   CHUNK_SIZE := 50
-   chunks := $(shell seq 1 $(CHUNK_SIZE) $(words $(BIG_LIST)))
-   result := $(foreach chunk,$(chunks),\
-        $(call process_chunk,$(wordlist $chunk,$(chunk+$(CHUNK_SIZE)),$(BIG_LIST))))
-   ```
+```makefile
+# 分块处理避免内存问题
+CHUNK_SIZE := 50
+chunks := $(shell seq 1 $(CHUNK_SIZE) $(words $(BIG_LIST)))
+result := $(foreach chunk,$(chunks),\
+    $(call process_chunk,$(wordlist $chunk,$(chunk+$(CHUNK_SIZE)),$(BIG_LIST))))
+```
 
-5. **调试技巧**：
+##### 5. **调试技巧**
 
-   ```makefile
-   # 调试输出循环变量
-   $(foreach file,$(FILES),\
-        $(info Processing $(file)) \
-        $(process $(file)))
-   ```
+```makefile
+# 调试输出循环变量
+$(foreach file,$(FILES),\
+    $(info Processing $(file)) \
+    $(process $(file)))
+```
 
 >
 > **终极提示**：`foreach` 是 Makefile 中最强大的流控制函数，特别适合动态生成构建规则。对于超过 1000 项的大列表，建议分块处理以避免内存问题，优先使用内置函数替代复杂 shell 命令提升性能。
@@ -8679,57 +8679,57 @@ $(file > $(TMP_FILE), $(DATA))
 
 #### 8.7.5. 最佳实践指南
 
-1. **临时文件管理**：
+##### 1. **临时文件管理**
 
-   ```makefile
-   # 自动清理模板
-   define with_tempfile
-   $(eval TMP := tmp.$$$$.txt) \
-   $(file > $(TMP), $1) \
-   $(call $2,$(TMP)) \
-   $(shell rm -f $(TMP))
-   endef
-   ```
+```makefile
+# 自动清理模板
+define with_tempfile
+$(eval TMP := tmp.$$$$.txt) \
+$(file > $(TMP), $1) \
+$(call $2,$(TMP)) \
+$(shell rm -f $(TMP))
+endef
+```
 
-2. **安全路径处理**：
+##### 2. **安全路径处理**
 
-   ```makefile
-   # 防止路径遍历攻击
-   safe_path = $(if $(filter ..%,$(subst /, ,$1)),\
-       $(error Invalid path),$1)
-   $(file > $(call safe_path,$OUTPUT), $DATA)
-   ```
+```makefile
+# 防止路径遍历攻击
+safe_path = $(if $(filter ..%,$(subst /, ,$1)),\
+    $(error Invalid path),$1)
+$(file > $(call safe_path,$OUTPUT), $DATA)
+```
 
-3. **错误处理增强**：
+##### 3. **错误处理增强**
 
-   ```makefile
-   # 带重试的写入
-   define safe_write
-   @tries=0; \
-   while [ $$tries -lt 3 ]; do \
-       $(file $1,$2,$3) && break; \
-       tries=$$((tries+1)); \
-       sleep 1; \
-   done; \
-   [ $$tries -lt 3 ] || exit 1
-   endef
-   ```
+```makefile
+# 带重试的写入
+define safe_write
+@tries=0; \
+while [ $$tries -lt 3 ]; do \
+    $(file $1,$2,$3) && break; \
+    tries=$$((tries+1)); \
+    sleep 1; \
+done; \
+[ $$tries -lt 3 ] || exit 1
+endef
+```
 
-4. **跨平台换行符**：
+##### 4. **跨平台换行符**
 
-   ```makefile
-   # 统一为LF换行
-   unify_newlines = $(subst \r\n,\n,$(subst \r,\n,$1))
-   $(file > output.txt, $(call unify_newlines,$(CONTENT)))
-   ```
+```makefile
+# 统一为LF换行
+unify_newlines = $(subst \r\n,\n,$(subst \r,\n,$1))
+$(file > output.txt, $(call unify_newlines,$(CONTENT)))
+```
 
-5. **敏感数据保护**：
+##### 5. **敏感数据保护**
 
-   ```makefile
-   # 自动权限设置
-   write_secure = $(file > $1, $2); \
-        chmod 600 $1
-   ```
+```makefile
+# 自动权限设置
+write_secure = $(file > $1, $2); \
+    chmod 600 $1
+```
 
 ---
 
@@ -8929,7 +8929,7 @@ result := $(call outer,A,B)
 
 #### 8.8.5. 常见错误与解决方案
 
-**错误1：多余空格**
+##### **错误1：多余空格**
 
 ```makefile
 # 错误：空格导致参数错误
@@ -8939,7 +8939,7 @@ $(call reverse, apple, orange)  # 实际传递3个参数
 $(call reverse,apple,orange)
 ```
 
-**错误2：立即展开变量**
+##### **错误2：立即展开变量**
 
 ```makefile
 # 错误：立即展开导致参数固化
@@ -8950,7 +8950,7 @@ $(call func,param)         # 无法接收新参数
 func = $(strip $(1))       # 使用 =
 ```
 
-**错误3：与内置函数同名**
+##### **错误3：与内置函数同名**
 
 ```makefile
 # 危险：覆盖内置函数
@@ -8960,7 +8960,7 @@ foreach = $(info Custom foreach)
 my_foreach = ...
 ```
 
-**错误4：未处理空参数**
+##### **错误4：未处理空参数**
 
 ```makefile
 # 错误：空参数导致异常
@@ -8976,48 +8976,48 @@ safe_div = $(if $(filter-out 0,$(2)),\
 
 #### 8.8.6. 最佳实践指南
 
-1. **命名规范**：
+##### 1. **命名规范**
 
-   ```makefile
-   # 自定义函数添加前缀
-   mylib_reverse = ...
-   ```
+```makefile
+# 自定义函数添加前缀
+mylib_reverse = ...
+```
 
-2. **参数校验**：
+##### 2. **参数校验**
 
-   ```makefile
-   # 检查参数数量
-   check_args = $(if $(filter $1,$(words $2)),,\
-        $(error Expected $1 args, got $(words $2)))
-   safe_func = $(call check_args,2,$(PARAMS)) ...
-   ```
+```makefile
+# 检查参数数量
+check_args = $(if $(filter $1,$(words $2)),,\
+    $(error Expected $1 args, got $(words $2)))
+safe_func = $(call check_args,2,$(PARAMS)) ...
+```
 
-3. **文档注释**：
+##### 3. **文档注释**
 
-   ```makefile
-   ## reverse(arg1, arg2)
-   ##   Returns: arg2 arg1
-   reverse = $(2) $(1)
-   ```
+```makefile
+## reverse(arg1, arg2)
+##   Returns: arg2 arg1
+reverse = $(2) $(1)
+```
 
-4. **性能优化**：
+##### 4. **性能优化**
 
-   ```makefile
-   # 缓存复杂计算结果
-   complex_calc = $(if $(filter $1,$(CACHE_KEY)),\
-        $(value CACHE_$1),\
-        $(eval CACHE_$1 := $(shell heavy_cmd $1))$(value CACHE_$1))
-   ```
+```makefile
+# 缓存复杂计算结果
+complex_calc = $(if $(filter $1,$(CACHE_KEY)),\
+    $(value CACHE_$1),\
+    $(eval CACHE_$1 := $(shell heavy_cmd $1))$(value CACHE_$1))
+```
 
-5. **调试支持**：
+##### 5. **调试支持**
 
-   ```makefile
-   # 带调试信息的调用
-   debug_call = $(info Calling $1($2)) \
-        $(eval RES := $(call $1,$2)) \
-        $(info Result: $(RES)) \
-        $(RES)
-   ```
+```makefile
+# 带调试信息的调用
+debug_call = $(info Calling $1($2)) \
+    $(eval RES := $(call $1,$2)) \
+    $(info Result: $(RES)) \
+    $(RES)
+```
 
 ---
 
@@ -9247,41 +9247,41 @@ safe = @connect --user=admin --pass=$$(value PASSWORD)
 
 #### 8.9.6. 最佳实践指南
 
-1. **命名规范**：
+##### 1. **命名规范**
 
-   ```makefile
-   # 需value访问的变量添加_V后缀
-   DB_URL_V = postgres://$(USER):$(PASS)@localhost/db
-   ```
+```makefile
+# 需value访问的变量添加_V后缀
+DB_URL_V = postgres://$(USER):$(PASS)@localhost/db
+```
 
-2. **防御性编程**：
+##### 2. **防御性编程**
 
-   ```makefile
-   # 检查变量是否存在
-   safe_value = $(if $(filter undefined,$(origin $1)),,$(value $1))
-   ```
+```makefile
+# 检查变量是否存在
+safe_value = $(if $(filter undefined,$(origin $1)),,$(value $1))
+```
 
-3. **文档注释**：
+##### 3. **文档注释**
 
-   ```makefile
-   ## SECRET_CMD (需用value访问)
-   ##   包含敏感信息的命令模板
-   SECRET_CMD = echo "$$API_KEY"
-   ```
+```makefile
+## SECRET_CMD (需用value访问)
+##   包含敏感信息的命令模板
+SECRET_CMD = echo "$$API_KEY"
+```
 
-4. **与eval配合**：
+##### 4. **与eval配合**
 
-   ```makefile
-   # 安全eval模式
-   safe_eval = $(eval $(value $1))
-   ```
+```makefile
+# 安全eval模式
+safe_eval = $(eval $(value $1))
+```
 
-5. **调试支持**：
+##### 5. **调试支持**
 
-   ```makefile
-   # 变量诊断工具
-   inspect_var = $(info Variable $1: [$(value $1)])
-   ```
+```makefile
+# 变量诊断工具
+inspect_var = $(info Variable $1: [$(value $1)])
+```
 
 ---
 
@@ -9504,7 +9504,7 @@ TEMPLATE = target: $$(VAR)          # 延迟展开
 TEMPLATE = target: $$$$(DOLLAR_SIGN) # 输出单个$
 ```
 
-##### 调试eval内容
+##### 2. 调试eval内容
 
 ```makefile
 # 调试输出生成的内容
@@ -9514,7 +9514,7 @@ debug_eval = $(info Eval content: $(value $1)) \
 $(call debug_eval,MY_TEMPLATE)
 ```
 
-##### 2. 避免变量污染
+##### 3. 避免变量污染
 
 ```makefile
 # 使用唯一前缀防止冲突
@@ -9523,7 +9523,7 @@ __TMP_$(1)_VAR = value
 endef
 ```
 
-##### 3. 条件eval
+##### 4. 条件eval
 
 ```makefile
 # 带条件的代码生成
@@ -9783,51 +9783,51 @@ endif
 
 #### 8.11.5. 最佳实践指南
 
-1. **关键变量来源验证**：
+##### 1. **关键变量来源验证**
 
-   ```makefile
-   # 确保敏感变量来自安全源
-   validate_source = $(if $(filter file override,$(origin $1)),,\
-        $(error $1 must be defined in Makefile))
-   $(call validate_source,ENCRYPTION_KEY)
-   ```
+```makefile
+# 确保敏感变量来自安全源
+validate_source = $(if $(filter file override,$(origin $1)),,\
+    $(error $1 must be defined in Makefile))
+$(call validate_source,ENCRYPTION_KEY)
+```
 
-2. **环境变量集成**：
+##### 2. **环境变量集成**
 
-   ```makefile
-   # 智能集成环境变量
-   INTEGRATE_PATH = $(if $(findstring environment,$(origin PATH)),\
-        $(PATH):$(CUSTOM_BIN),\
-        $(CUSTOM_BIN))
-   ```
+```makefile
+# 智能集成环境变量
+INTEGRATE_PATH = $(if $(findstring environment,$(origin PATH)),\
+    $(PATH):$(CUSTOM_BIN),\
+    $(CUSTOM_BIN))
+```
 
-3. **命令行参数处理**：
+##### 3. **命令行参数处理**
 
-   ```makefile
-   # 优先使用命令行参数
-   ifeq "$(origin CONFIG)" "command line"
-        USE_CONFIG = $(CONFIG)
-   else
-        USE_CONFIG = default.cfg
-   endif
-   ```
+```makefile
+# 优先使用命令行参数
+ifeq "$(origin CONFIG)" "command line"
+    USE_CONFIG = $(CONFIG)
+else
+    USE_CONFIG = default.cfg
+endif
+```
 
-4. **安全覆盖机制**：
+##### 4. **安全覆盖机制**
 
-   ```makefile
-   # 可覆盖的默认值
-   ifeq "$(origin OPT_LEVEL)" "undefined"
-        override OPT_LEVEL = -O2
-   endif
-   ```
+```makefile
+# 可覆盖的默认值
+ifeq "$(origin OPT_LEVEL)" "undefined"
+    override OPT_LEVEL = -O2
+endif
+```
 
-5. **构建审计日志**：
+##### 5. **构建审计日志**
 
-   ```makefile
-   # 记录关键变量来源
-   $(foreach v,CC CFLAGS TARGET,\
-        $(file >> build.log, $v: origin=$(origin $v) value=$($v)))
-   ```
+```makefile
+# 记录关键变量来源
+$(foreach v,CC CFLAGS TARGET,\
+    $(file >> build.log, $v: origin=$(origin $v) value=$($v)))
+```
 
 ---
 
@@ -10042,52 +10042,52 @@ $(foreach item, $(CACHED_LIST), ...)
 
 ##### 1. **性能敏感区强制简单变量**
 
-   ```makefile
-   # 在大型循环前转换
-   ifeq ($(flavor DATA), recursive)
-       CACHED_DATA := $(DATA)
-   else
-       CACHED_DATA = $(DATA)
-   endif
-   ```
+```makefile
+# 在大型循环前转换
+ifeq ($(flavor DATA), recursive)
+    CACHED_DATA := $(DATA)
+else
+    CACHED_DATA = $(DATA)
+endif
+```
 
 ##### 2. **关键配置验证**
 
-   ```makefile
-   # 确保配置是立即展开的
-   validate_config = $(if $(filter simple,$(flavor $1)),,\
-           $(error $1 must be simple-expanded for safety))
-   $(call validate_config, SECRET_KEY)
-   ```
+```makefile
+# 确保配置是立即展开的
+validate_config = $(if $(filter simple,$(flavor $1)),,\
+        $(error $1 must be simple-expanded for safety))
+$(call validate_config, SECRET_KEY)
+```
 
 ##### 3. **智能默认值设置**
 
-   ```makefile
-   # 根据使用场景设置最佳类型
-   ifdef PERF_CRITICAL
-        OPTIONS := $(DEFAULT_OPTS)
-   else
-        OPTIONS = $(DEFAULT_OPTS)
-   endif
-   ```
+```makefile
+# 根据使用场景设置最佳类型
+ifdef PERF_CRITICAL
+    OPTIONS := $(DEFAULT_OPTS)
+else
+    OPTIONS = $(DEFAULT_OPTS)
+endif
+```
 
 ##### 4. **构建日志增强**
 
-   ```makefile
-   # 记录变量类型信息
-   $(foreach v, VAR1 VAR2 VAR3,\
-        $(file >> build.log, $v: flavor=$(flavor $v) value=$($v)))
-   ```
+```makefile
+# 记录变量类型信息
+$(foreach v, VAR1 VAR2 VAR3,\
+    $(file >> build.log, $v: flavor=$(flavor $v) value=$($v)))
+```
 
 ##### 5. **跨Makefile兼容**
 
-   ```makefile
-   # 处理外部Makefile变量
-   include external.mk
-   ifeq ($(flavor EXTERNAL_VAR), recursive)
-        override EXTERNAL_VAR := $(EXTERNAL_VAR)
-   endif
-   ```
+```makefile
+# 处理外部Makefile变量
+include external.mk
+ifeq ($(flavor EXTERNAL_VAR), recursive)
+    override EXTERNAL_VAR := $(EXTERNAL_VAR)
+endif
+```
 
 ---
 
@@ -10168,25 +10168,25 @@ before_critical:
 
 ##### 1. **展开时机规则**
 
-   ```mermaid
-   graph TD
-       A[Makefile 解析阶段] --> B{控制函数位置}
-       B -->|全局作用域| C[立即执行]
-       B -->|规则内部| D[命令执行时]
-       B -->|变量定义中| E[变量展开时]
-   ```
+```mermaid
+graph TD
+    A[Makefile 解析阶段] --> B{控制函数位置}
+    B -->|全局作用域| C[立即执行]
+    B -->|规则内部| D[命令执行时]
+    B -->|变量定义中| E[变量展开时]
+```
 
 ##### 2. **错误传播机制**
 
-   ```makefile
-   # 嵌套错误示例
-   validate = $(if $1,,$(error $2))
-   check_all = $(call validate,$(VAR1),Missing VAR1) \
-               $(call validate,$(VAR2),Missing VAR2)
+```makefile
+# 嵌套错误示例
+validate = $(if $1,,$(error $2))
+check_all = $(call validate,$(VAR1),Missing VAR1) \
+            $(call validate,$(VAR2),Missing VAR2)
 
-   # 错误会从深层函数冒泡
-   $(call check_all)  # 任一条件失败即终止
-   ```
+# 错误会从深层函数冒泡
+$(call check_all)  # 任一条件失败即终止
+```
 
 #### 8.13.3. 专业级使用示例
 
@@ -10302,53 +10302,53 @@ build: $(call safe_exec,TARGET_NAME)
 
 ##### 1. **错误消息规范**
 
-   ```makefile
-   # 标准格式：[组件] 错误描述 (错误码)
-   define app_error
-   $(error [APP] $1 (ERR_$2))
-   endef
+```makefile
+# 标准格式：[组件] 错误描述 (错误码)
+define app_error
+$(error [APP] $1 (ERR_$2))
+endef
 
-   $(call app_error,Invalid configuration,CFG001)
-   ```
+$(call app_error,Invalid configuration,CFG001)
+```
 
 ##### 2. **警告抑制机制**
 
-   ```makefile
-   # 命令行控制警告
-   ifeq ($(SUPPRESS_WARNINGS),1)
-       override warning =
-   else
-       override warning = $(warning $1)
-   endif
-   ```
+```makefile
+# 命令行控制警告
+ifeq ($(SUPPRESS_WARNINGS),1)
+    override warning =
+else
+    override warning = $(warning $1)
+endif
+```
 
 ##### 3. **信息日志增强**
 
-   ```makefile
-   # 带时间戳的信息
-   timestamp_info = $(info [$(shell date +%F_%T)] $1)
-   ```
+```makefile
+# 带时间戳的信息
+timestamp_info = $(info [$(shell date +%F_%T)] $1)
+```
 
 ##### 4. **错误处理框架**
 
-   ```makefile
-   # 错误代码系统
-   define throw
-   $(error $1 (CODE:$2))
-   endef
+```makefile
+# 错误代码系统
+define throw
+$(error $1 (CODE:$2))
+endef
 
-   define catch
-   $(if $(filter $2,$(errorcode)),$3,$4)
-   endef
-   ```
+define catch
+$(if $(filter $2,$(errorcode)),$3,$4)
+endef
+```
 
 ##### 5. **文档集成**
 
-   ```makefile
-   # 错误码文档生成
-   ERROR_CODES := CFG001 CFG002
-   doc_errors = $(foreach code,$(ERROR_CODES),$(info $code: $($(code)_DOC)))
-   ```
+```makefile
+# 错误码文档生成
+ERROR_CODES := CFG001 CFG002
+doc_errors = $(foreach code,$(ERROR_CODES),$(info $code: $($(code)_DOC)))
+```
 
 #### 8.13.6. 综合应用系统
 
