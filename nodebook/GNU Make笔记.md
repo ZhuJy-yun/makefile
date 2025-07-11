@@ -4444,6 +4444,7 @@ app.log: ;
 ### 6.1. 变量引用(Basics of Variable References)
 
 #### 6.1.1. 变量引用基础
+
 - **标准格式**：`$(VAR_NAME)` 或 `${VAR_NAME}`
 
   ```makefile
@@ -4510,6 +4511,7 @@ OBJS = $(DEPS:.c=.o)  # 替换后缀 main.o lib.o
   - `$@`：当前目标名
   - `$<`：第一个依赖文件
   - `$^`：所有依赖文件
+
   ```makefile
   %.o: %.c
       gcc -c $< -o $@  # gcc -c file.c -o file.o
@@ -4576,11 +4578,13 @@ OBJS = $(DEPS:.c=.o)  # 替换后缀 main.o lib.o
 #### 6.1.7. 特殊场景处理
 
 - **文件名含`$`**：双写`$$`
+
   ```makefile
   special_file = data$$file.txt  # 实际文件 data$file.txt
   ```
 
 - **动态生成命令**
+
   ```makefile
   # 使用Shell命令结果赋值
   BUILD_DATE = $(shell date +%F)
@@ -4818,7 +4822,9 @@ bar := $(foo:.o=.c)   # bar = "a.c b.c ac.c"（ac.o → ac.c）
 foo := a.o b.o ac.o
 bar := $(foo:%.o=%.c)  # bar = "a.c b.c ac.c"
 ```
+
 等价于：
+
 ```makefile
 bar := $(patsubst %.o,%.c,$(foo))
 ```
@@ -5128,6 +5134,7 @@ GIT_HASH := $(shell git rev-parse --short HEAD)
 
 >
 > **区别**：
+>
 > - `!=` 创建递归展开变量
 > - `$(shell)` 创建直接展开变量
 >
@@ -5213,6 +5220,7 @@ test:
 
 >
 > **关键原则**：根据变量用途选择赋值方式：
+>
 > - 配置参数 → `:=`
 > - 动态内容 → `=` 或 `!=`
 > - 默认值 → `?=`
@@ -5277,6 +5285,7 @@ test:
 ```makefile
 override CFLAGS = -Wall -O2
 ```
+
 - **作用**：防止命令行参数覆盖 Makefile 中的变量定义
 - **优先级**：`override` > 命令行 > Makefile 普通定义
 
@@ -5286,6 +5295,7 @@ override CFLAGS = -Wall -O2
 # 命令行尝试覆盖
 make CFLAGS="-O0"
 ```
+
 ```makefile
 # Makefile 内容
 override CFLAGS = -Wall -O2  # 最终生效值: -Wall -O2
@@ -5352,6 +5362,7 @@ override CFLAGS += -DDEBUG
 
 >
 > **关键原则**：
+>
 > - 需要动态引用的变量 → 递归展开 + `+=`
 > - 独立配置项 → 直接展开 + 显式赋值
 > - 关键安全设置 → `override` 保护
@@ -5512,11 +5523,13 @@ endef
 ### 6.8. 多行变量定义(Defining Multi-Line Variables)
 
 #### 6.8.1. 基本语法结构
+
 ```makefile
 define <变量名>
 <多行内容>
 endef
 ```
+
 ```makefile
 # 示例：定义命令包
 define RUN_TESTS
@@ -5531,6 +5544,7 @@ endef
 1. **自动换行处理**：
    - 行尾换行符不包含在值中
    - 需要尾随换行符时添加空行
+
    ```makefile
    define NEWLINE
 
@@ -5540,6 +5554,7 @@ endef
 2. **变量类型**：
    - 默认递归展开式 (等效于 `=` 赋值)
    - 可显式指定类型
+
    ```makefile
    define CMD :=  # 直接展开式
    git pull origin $(BRANCH)
@@ -5547,6 +5562,7 @@ endef
    ```
 
 3. **嵌套支持**：
+
    ```makefile
    define OUTER
    define INNER
@@ -5591,16 +5607,18 @@ endef
 #### 6.8.6. 高级用法技巧
 
 1. **动态生成 Makefile 内容**：
+
    ```makefile
    define MODULE_TEMPLATE
    $(1)_OBJS = $$(addsuffix .o, $(1))
    build_$(1): $$($(1)_OBJS)
-   	$$(LD) -o $$@ $$^
+    $$(LD) -o $$@ $$^
    endef
    $(eval $(call MODULE_TEMPLATE,server))
    ```
 
 2. **带参数的宏**：
+
    ```makefile
    define BUILD_IMAGE
    docker build -t $(1) \
@@ -5608,10 +5626,11 @@ endef
        -f Dockerfile.$(1) .
    endef
    release:
-   	$(call BUILD_IMAGE,prod,v1.2.3)
+    $(call BUILD_IMAGE,prod,v1.2.3)
    ```
 
 3. **组合函数**：
+
    ```makefile
    define GET_VERSION
    $(shell git describe --tags)
@@ -5671,6 +5690,7 @@ endef
 ### 6.9. 变量取消定义(Undefining Variables)
 
 #### 6.9.1. 基本用法与效果
+
 ```makefile
 # 定义变量
 FOO := value
@@ -5689,6 +5709,7 @@ test:
 - **本质区别**：影响 `origin` 和 `flavor` 函数的返回值
 
 #### 6.9.2. 关键差异：`origin` 函数
+
 ```makefile
 VAR1 = value
 VAR2 := value
@@ -6159,6 +6180,7 @@ main.o: main.c  # 此处无法访问 secret_123！
 
 >
 > ⚠️ 执行 `make deploy` 时：
+>
 > - `build` 和 `main.o` **不会继承** `API_KEY=secret_123`
 > - 避免密钥意外泄露到编译过程
 >
@@ -6257,9 +6279,11 @@ $(info 当前默认目标: $(.DEFAULT_GOAL))
 记录 make **自身重启次数**（非递归调用）
 
 **关键特性**：
+
 - 仅在 make 重启时设置（如 makefile 修改后自动重载）
 - **只读变量**：禁止修改或导出
 - **区别递归**：与 `MAKELEVEL`（递归深度计数器）互补
+
   ```mermaid
   graph LR
   A[make启动] --> B[MAKELEVEL=0]
@@ -6280,6 +6304,7 @@ $(info 当前默认目标: $(.DEFAULT_GOAL))
 | `MAKE_TERMERR` | stderr 是否输出到终端 |
 
 **技术细节**：
+
 - 值 = 终端设备名（如 `/dev/tty1`）或 `true`（未知设备）
 - **自动导出**：会被传递到子 make
 - **典型用途**：
@@ -6357,6 +6382,7 @@ program: a.o b.o
 	$(CC) $^ -o $@
 program: .EXTRA_PREREQS = $(CC)  # 添加编译器依赖
 ```
+
 - **核心优势**：
 
   - 不污染 `$^`, `$?` 等自动变量
@@ -6364,6 +6390,7 @@ program: .EXTRA_PREREQS = $(CC)  # 添加编译器依赖
   - 自动避免循环依赖
 
 **典型用途**：
+
 - 工具链变更时触发重建
 - 添加隐藏的环境检查
 
@@ -6414,6 +6441,7 @@ program: .EXTRA_PREREQS = $(CC)  # 添加编译器依赖
 #### 7.1.1. 条件语句核心作用
 
 根据变量值动态改变构建行为，实现：
+
 - 不同编译器使用不同编译选项
 - 跨平台兼容性处理
 - 调试/发布版本差异化构建
@@ -6856,6 +6884,7 @@ rm -f *.o app
 ```makefile
 ifneq (,$(findstring t,$(firstword -$(MAKEFLAGS))))
 ```
+
 1. **`MAKEFLAGS` 变量**：
 
    - 存储所有单字母命令行选项（如 `-t`, `-n`）
@@ -7818,6 +7847,7 @@ LOG := $(if $(ENABLE_LOG),$(shell mkdir -p logs),)
 ##### 8.4.2.2. `$(or cond1[, cond2[, ...]])`
 
 **短路特性**：
+
 - 从左到右依次展开
 - 遇到首个非空条件立即返回
 - 后续条件不展开
@@ -8764,6 +8794,7 @@ generate_makefile:
 #### 8.8.1. 核心功能解析
 
 `call` 函数是 Makefile 的**函数定义与调用机制**，允许创建参数化自定义函数：
+
 ```makefile
 $(call VARIABLE, PARAM1, PARAM2, ...)
 ```
@@ -8989,7 +9020,7 @@ safe_div = $(if $(filter-out 0,$(2)),\
 
 #### 8.8.7. 综合应用案例
 
-##### 动态构建系统
+##### 动态构建规则系统
 
 ```makefile
 # 定义目标生成器
@@ -9039,6 +9070,7 @@ $(call log,"Starting build")
 #### 8.9.1. 核心功能解析
 
 `value` 函数提供**原始变量值访问**能力：
+
 ```makefile
 $(value VARIABLE_NAME)
 ```
@@ -9864,6 +9896,7 @@ ACTIVE_CONFIG := $(resolve_config)
 #### 1. 核心功能解析
 
 `flavor` 函数是 Makefile 的**变量类型检测工具**：
+
 ```makefile
 $(flavor VARIABLE_NAME)
 ```
@@ -9949,6 +9982,7 @@ debug:
 #### 4. 特殊技巧与陷阱
 
 ##### 类型转换检测
+
 ```makefile
 # 检测变量是否被"简单化"
 was_simplified = $(if $(filter simple,$(flavor $1)),\
@@ -10501,6 +10535,7 @@ A：功能相同，但 `!=` 是 POSIX 新标准，且强制简单展开（类似
 
 **Q3：如何避免性能问题？**
 A：遵守两条原则：
+
 1. 在 `:=` 定义的变量中使用 `$(shell)`
 2. 避免在递归变量（`=`）中调用
 
@@ -10513,6 +10548,7 @@ A：遵守两条原则：
 > ```bash
 > printf "line1\nline2\r\nline3\n" > foo.txt
 > ```
+>
 > 执行 `make` 后将输出：`line1 line2 line3`
 >
 
@@ -10575,9 +10611,10 @@ FACT := $(guile (define (f n) (if (= n 0) 1 (* n (f (- n 1)))) (f 5))
 all:
     @echo "5! = $(FACT)"
 ```
+
 **输出**：
 
-```
+```bash
 5! = 120
 ```
 
