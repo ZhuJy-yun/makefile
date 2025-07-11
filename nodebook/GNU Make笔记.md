@@ -6,7 +6,7 @@
 
 ---
 
-### 1.1. 概术(Overview of make)
+### 1.1. 概述(Overview of make)
 
 makefile：一个工程中的源文件不计其数，并且按类型、功能、模块分别放在若干个目录中，makefile **定义一系列的规则**，哪些文件需要先编译，哪些文件需要后编译，哪些文件需要重新编译，甚至于进行更复杂的功能操作，因为 makefile 就像一个 Shell 脚本一样，其中也可以执行操作系统的命令。
 
@@ -1336,7 +1336,7 @@ graph TD
    # 目录必须先于文件存在，但目录本身由规则生成
    log/2023/app.log: log/2023/ | app
        ./app > $@
-   
+
    log/%/:  # 目录创建规则
        mkdir -p $@
    ```
@@ -2641,7 +2641,7 @@ server: server.c
   # 普通多目标规则：所有目标共享相同依赖
   foo.o bar.o: common.h
       $(CC) -c $< -o $@
-  
+
   # 静态模式规则：每个目标有独立推导的依赖
   objects = foo.o bar.o
   $(objects): %.o: %.c
@@ -4539,7 +4539,7 @@ OBJS = $(DEPS:.c=.o)  # 替换后缀 main.o lib.o
   ```makefile
   # Make变量（使用$( )）
   MAKE_VAR = value
-  
+
   # Shell变量（在命令中使用$ ）
   test:
       @shell_var="hello"; \
@@ -5549,7 +5549,7 @@ endef
 
    ```makefile
    define NEWLINE
-   
+
    endef
    ```
 
@@ -6263,7 +6263,7 @@ $(info 当前默认目标: $(.DEFAULT_GOAL))
   ```makefile
   all: ; @echo "Building ALL"
   release: ; @echo "RELEASE mode"
-  
+
   .DEFAULT_GOAL := release
   ```
 
@@ -10697,7 +10697,7 @@ install:
   ```makefile
   # 避免在规则中多次调用
   COMPLEX_RESULT := $(guile ...)  # 提前计算
-  
+
   all: $(COMPLEX_RESULT)
   ```
 
@@ -11304,7 +11304,7 @@ make -j 2 build package  # 并行构建
   ifneq (,$(filter debug,$(MAKECMDGOALS)))
     CFLAGS += -DDEBUG -g
   endif
-  
+
   debug: program
   release: program
   ```
@@ -11397,7 +11397,7 @@ gcc -o app main.o utils.o
   # 以 "+" 开头的命令
   clean:
       +rm -f *.o app
-  
+
   # 包含 $(MAKE) 的命令
   build:
       $(MAKE) -C subdir
@@ -15635,7 +15635,7 @@ make libmath.a           # 使用规则2：生成整个库
     $ make libmath.a(sin.o)
     gcc -Wall -O2 -c sin.c -o sin.o
     ar cr libmath.a sin.o
-    
+
     # 构建整个库
     $ make libmath.a
     gcc -Wall -O2 -c sin.c -o sin.o
