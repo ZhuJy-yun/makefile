@@ -2,11 +2,13 @@
 
 ---
 
-## 1. make 概述 (Overview of make)
+## 1. Overview of make
+
+make 概述 
 
 ---
 
-### 1.1. 概述(Overview of make)
+### 1.1. Overview of make
 
 makefile：一个工程中的源文件不计其数，并且按类型、功能、模块分别放在若干个目录中，makefile **定义一系列的规则**，哪些文件需要先编译，哪些文件需要后编译，哪些文件需要重新编译，甚至于进行更复杂的功能操作，因为 makefile 就像一个 Shell 脚本一样，其中也可以执行操作系统的命令。
 
@@ -24,7 +26,7 @@ makefile：一个工程中的源文件不计其数，并且按类型、功能、
 
 ---
 
-### 1.2. 准备知识(How to Read This Manual)
+### 1.2. How to Read This Manual
 
 make的讨论之前，首先需要明确一些基本概念：
 
@@ -51,7 +53,7 @@ A --> L(Linking<br>生成可执行文件)
   - **静态库**：是多个.o文件的集合。Linux中静态库文件的后缀为“.a”，Windows中则是“.lib”。静态库中的各个成员（.o文件）没有特殊的存在格式，仅仅是一个.o文件的集合。使用"`ar`"工具维护和管理静态库。
   - **动态库**：也是多个.o文件的集合，但是这些.o文件时有编译器按照一种特殊的方式生成（Linux中，共享库文件格式通常为“ELF”格式。共享库已经具备了可执行条件）。模块中各个成员的地址（变量引用和函数调用）都是相对地址。使用此共享库的程序在运行时，共享库被动态加载到内存并和主程序在内存中进行连接。多个可执行程序可共享库文件的代码段（多个程序可以共享的使用库中的某一个模块，共享代码，不共享数据）(Windows(.dll)，Linux(.so))
 
-## 2. Makefile 简介(An Introduction to Makefiles)
+## 2. An Introduction to Makefiles
 
 **make在执行时，需要一个名为 makefile 的文件来告知 make 的执行内容。通常，makefile 会指示 make 如何编译和链接程序。**
 
@@ -65,7 +67,7 @@ A --> L(Linking<br>生成可执行文件)
 
 ---
 
-### 2.1. make规则的构成要素(What a Rule Looks Like)
+### 2.1. What a Rule Looks Like
 
 ![1750994724559](image/GNUMake笔记/1750994724559.png)
 
@@ -97,7 +99,7 @@ E -- No --> F[跳过]
 
 ---
 
-### 2.2. 一个简单的 Makefile(A Simple Makefile)
+### 2.2. A Simple Makefile
 
 c文件
 
@@ -135,7 +137,7 @@ clean:
 
 ---
 
-### 2.3. make 是如何工作的(How make Processes a Makefile)
+### 2.3. How make Processes a Makefile
 
 `make` 是一个自动化构建工具，它通过解析 `Makefile` 文件来确定项目中文件的依赖关系，并仅重新构建已更改的部分。以下是其工作原理的详细说明：
 
@@ -276,7 +278,7 @@ clean:
 
 ---
 
-### 2.4. makefile中使用变量(Variables Make Makefiles Simpler)
+### 2.4. Variables Make Makefiles Simpler
 
 变量使Makefile变的更简单。
 
@@ -298,7 +300,7 @@ clean:
 
 ---
 
-### 2.5. 让make自动推导(Letting make Deduce the Recipes)
+### 2.5. Letting make Deduce the Recipes
 
 在使用make编译.c源文件时，编译.c源文件规则的命令可以不用明确给出。这是因为make本身存在一个默认的规则，能够自动完成对.c文件的编译并生成对应的.o文件。
 它执行命令“cc -c”来编译.c源文件。make会自动为这个.o文件寻找合适的依赖文件（对应的.c文件。对应是指：文件名除后缀外，其余都相同的两个文件）。
@@ -319,7 +321,7 @@ clean:
 
 ---
 
-### 2.6. 另类风格的makefile(Another Style of Makefile)
+### 2.6. Another Style of Makefile
 
 所有的.o目标文件都可以使用隐含规则由make自动重建，我们可以根据这一点书写更加简洁的Makefile。书写可能存在多个目标规则，
 规则中多个目标同时依赖于对应的头文件，而且同一个文件可能同时存在多个规则中。
@@ -332,7 +334,7 @@ clean:
 
 ---
 
-### 2.7. 清除工作目录过程文件(Rules for Cleaning the Directory)
+### 2.7. Rules for Cleaning the Directory
 
 ```makefile
 .PHONY:clean
@@ -343,11 +345,11 @@ clean:
 1. 通过`.PHONY`特殊目标将`clean`目标声明为伪目标。避免当磁盘上存在一个名为`clean`文件时，目标`clean`所在规则的命令无法执行。
 2. 在命令行之前使用`-`，意思是忽略命令`rm`的执行错误。
 
-## 3. Makefile 总述(Writing Makefiles)
+## 3. Writing Makefiles
 
 ---
 
-### 3.1. Makefile的内容(What Makefiles Contain)
+### 3.1. What Makefiles Contain
 
 在一个完整的Makefile 中，包含了 5个东西：**显式规则**、**隐含规则**、**变量定义**、**指示符**和**注释**
 
@@ -360,7 +362,7 @@ clean:
   - **定义一个多行变量**。参考 6.8 多行定义一节。
 - **注释**：以`#`字符后的内容被作为是注释内容。
 
-#### 3.1.1. 添加`$`表示精确控制换行时的空格(Splitting Without Adding Whitespace)
+#### 3.1.1. Splitting Without Adding Whitespace
 
 如果你想把一行长串字符分行后，在中间不加空格，需要用$符号
 
@@ -386,7 +388,7 @@ class0701:
 
 ---
 
-### 3.2 makefile文件的命名(What Name to Give Your Makefile)
+### 3.2 What Name to Give Your Makefile
 
 1. 对于GNU的make来说有三种命名：`makefile`、`Makefile`、`GNUmakefile`
 2. 可以用 `-f` 或者 `-file`来指定要执行的makefile
@@ -395,7 +397,7 @@ class0701:
 
 ---
 
-### 3.3 包含其它makefile文件(Including Other Makefile)
+### 3.3 Including Other Makefile
 
 1. `include`指示符告诉 make 暂停读取当前的 Makefile，而转去读取`include`指定的一个或者多个文件，完成以后再继续当前Makefile 的读取。其形式如下：
 
@@ -427,7 +429,7 @@ class0701:
 
 ---
 
-### 3.4. 变量 MAKEFILES(The Variable MAKEFILES)
+### 3.4. The Variable MAKEFILES
 
 在 Makefile 中，`MAKEFILES` 是一个特殊的环境变量，用于在 **make 启动前自动包含其他 Makefile**。理解它的关键点如下：
 
@@ -535,7 +537,7 @@ make -f common.mk -f Makefile
 
 ---
 
-### 3.5. makefile文件的重建(How Makefiles Are Remade)
+### 3.5. How Makefiles Are Remade
 
 #### 3.5.1. 核心概念解析：Makefile 的重建机制
 
@@ -549,30 +551,31 @@ make -f common.mk -f Makefile
 
 ```mermaid
 graph TD
-    A[开始执行 make] --> B[读取所有 Makefile]
-    B --> C[将每个 Makefile 视为目标]
-    C --> D{检查是否需要<br>更新 Makefile?}
-    D -->|是| E[执行更新命令]
-    D -->|否| F[继续正常构建]
-    E --> G[更新后标记为&quot;需要重载&quot;]
-    G --> H{任何 Makefile<br>被更新?}
-    H -->|是| I[清除当前状态]
-    I --> B[重新读取所有 Makefile]
-    H -->|否| F[继续正常构建]
-    F --> J[执行实际构建任务]
+A["开始执行 make"] --> B["读取所有 Makefile"]
+B --> C["将每个 Makefile 视为目标"]
+C --> D["检查是否需要<br>更新 Makefile?"]
+D -->|是| E["执行更新命令"]
+D -->|否| F["继续正常构建"]
+E --> G["更新后标记为&quot;需要重载&quot;"]
+G --> H["任何 Makefile<br>被更新?"]
+H -->|是| I["清除当前状态"]
+I --> B
+H -->|否| F
+F --> J["执行实际构建任务"]
 ```
 
 #### 3.5.3. 关键机制解释
 
 1. **Makefile 作为构建目标**
+   
    - Makefile 可以像普通文件一样有构建规则
    - 示例：从模板生成 Makefile
-
+   
      ```makefile
      Makefile: Makefile.template
          sed 's/__VERSION__/1.0/' $< > $@
      ```
-
+   
 2. **自动重载机制**
    - 如果任何 Makefile 在初始读取后被更新：
      - make 会**清除当前状态**
@@ -669,7 +672,7 @@ make -f mfile -n mfile target
 
 ---
 
-### 3.6. 重载另外一个makefile(Overriding Part of Another Makefile)
+### 3.6. Overriding Part of Another Makefile
 
 #### 🔍 3.6.1. 问题本质
 
@@ -713,10 +716,10 @@ force: ;
 
 ```mermaid
 graph TD
-    A[用户请求目标X] --> B{目标X是否在<br>Makefile-A中定义？}
-    B -->|是| C[执行Makefile-A中的规则]
-    B -->|否| D[触发模式规则 %:force]
-    D --> E[执行委托命令：make -f Makefile-B X]
+    A["用户请求目标X"] --> B{"目标X是否在<br>Makefile-A中定义？"}
+    B -->|是| C["执行Makefile-A中的规则"]
+    B -->|否| D["触发模式规则 %:force"]
+    D --> E["执行委托命令：make -f Makefile-B X"]
 ```
 
 #### ✅ 3.6.4. 同名目标处理示例
@@ -805,16 +808,16 @@ $ make build
 
 ---
 
-### 3.7. make如何解析makefile文件(How make Reads a Makefile)
+### 3.7. How make Reads a Makefile
 
 #### 📌 3.7.1. make 执行的完整流程
 
 ```mermaid
 graph LR
-    A[开始] --> B[第一阶段：读取与解析]
-    B --> C[建立依赖关系图]
-    C --> D[第二阶段：执行构建]
-    D --> E[结束]
+    A["开始"] --> B["第一阶段：读取与解析"]
+    B --> C["建立依赖关系图"]
+    C --> D["第二阶段：执行构建"]
+    D --> E["结束"]
 ```
 
 #### 🔍 3.7.2. 阶段详解
@@ -968,7 +971,7 @@ endif
 
 ---
 
-### 3.8. 如何解析 Makefile(How Makefiles Are Parsed)
+### 3.8. How Makefiles Are Parsed
 
 GNU make是一行一行解析makefiles的，解析的流程：
 
@@ -985,7 +988,7 @@ make 的执行过程如下：
 
 ---
 
-### 3.9. 二次扩展(Secondary Expansion)
+### 3.9. Secondary Expansion
 
 #### 📌 3.9.1. 核心概念：什么是二次展开？
 
@@ -1171,11 +1174,11 @@ app: $$(if $$(DEBUG),$$(DEBUG_LIBS),$$(RELEASE_LIBS))
 
 > **使用建议**：在简单项目中避免过度使用，但在管理复杂构建系统（如内核编译）时，这是强大的元编程工具。掌握它能写出更动态、更灵活的 Makefile。不需要掌握，知道即可，知道什么是二次展开，看到会知道，做简单的修改。
 
-## 4. Makefile的规则(Writing Rules)
+## 4. Writing Rules
 
 ---
 
-### 4.1. 语法规则(Rule Syntax)
+### 4.1. Rule Syntax
 
 > **核心作用**：定义文件之间的**依赖关系**和**构建规则**，实现自动化编译。
 
@@ -1277,7 +1280,7 @@ clean:
 
 ---
 
-### 4.2. 依赖的类型(Types of Prerequisites)
+### 4.2. Types of Prerequisites
 
 **核心定义**：
 > 一种特殊依赖类型（语法：`target: normal-deps | order-only-deps`），仅在目标**不存在时**参与构建；当目标已存在时，即使 order-only 依赖更新，**也不会触发目标重建**。
@@ -1299,10 +1302,10 @@ clean:
 
 ```mermaid
 graph TD
-    A[目标存在？] -->|否| B[执行命令]
-    A -->|是| C{检查依赖}
+    A["目标存在？"] -->|否| B["执行命令"]
+    A -->|是| C{"检查依赖"}
     C -->|常规依赖更新| B
-    C -->|仅order-only更新| D[跳过命令]
+    C -->|仅order-only更新| D["跳过命令"]
 ```
 
 ---
@@ -1336,7 +1339,7 @@ graph TD
    # 目录必须先于文件存在，但目录本身由规则生成
    log/2023/app.log: log/2023/ | app
        ./app > $@
-
+   
    log/%/:  # 目录创建规则
        mkdir -p $@
    ```
@@ -1426,11 +1429,11 @@ app: main.c .buildhash  # 常规依赖
 
 ```mermaid
 graph TD
-    A[添加新依赖] --> B{是否影响输出行为？}
+    A["添加新依赖"] --> B{"是否影响输出行为？"}
     B -->|是| C[必须常规依赖]
-    B -->|否| D{是否可审计？}
+    B -->|否| D{"是否可审计？"}
     D -->|否| C
-    D -->|是| E{变更是否100%无害？}
+    D -->|是| E{"变更是否100%无害？"}
     E -->|否| C
     E -->|是| F[谨慎使用 order-only]
     F --> G[添加版本检查]
@@ -1472,7 +1475,7 @@ echo "# - Config files" >> Makefile
 
 ---
 
-### 4.3. 文件名使用通配符(Using Wildcard Characters in File Names)
+### 4.3. Using Wildcard Characters in File Names
 
 **核心原则**：
 > 通配符 (`*`, `?`, `[...]`) 在 Makefile 中有严格的使用限制，错误使用会导致构建失败或意外行为。
@@ -1729,7 +1732,7 @@ graph TD
 
 ---
 
-### 4.4. 目录搜索机制(Searching Directories for Prerequisites)
+### 4.4. Searching Directories for Prerequisites
 
 **核心目的**：实现源码与二进制文件分离管理，避免硬编码路径
 
@@ -1961,7 +1964,7 @@ VPATH = src$(PATH_SEP)lib
 
 ---
 
-### 4.5. 伪目标(Phony Targets)
+### 4.5. Phony Targets
 
 #### **4.5.1. 核心作用**
 
@@ -2079,7 +2082,7 @@ help:
 
 ---
 
-### 4.6. 空目标文件 (Rules without Recipes or Prerequisites)
+### 4.6. Rules without Recipes or Prerequisites
 
 #### 4.6.1. 伪目标 (Phony Target)
 
@@ -2209,7 +2212,7 @@ monitor: FORCE
 
 ---
 
-### 4.7. 特殊目标(Special Built-in Target Names)
+### 4.7. Special Built-in Target Names
 
 - **`.PHONY`**：特殊目标 .PHONY 的先决条件被认为是假目标。当需要考虑这样的目标时，make 将无条件地运行其配方，无论是否存在具有该名称的文件或其上次修改时间。
 - **`.SUFFIXES`**：特殊目标 .SUFFIXES 的先决条件是用于检查后缀规则的后缀列表。
@@ -2230,7 +2233,7 @@ monitor: FORCE
 
 ---
 
-### 4.8. 多目标规则(Multiple Targets in a Rule)
+### 4.8. Multiple Targets in a Rule
 
 #### 4.8.1. 多目标规则的本质
 
@@ -2418,7 +2421,7 @@ report.pdf report_docx &:: template.conf
 
 ---
 
-### 4.9. 多规则目标(Multiple Rules for One Target)
+### 4.9. Multiple Rules for One Target
 
 #### 4.9.1 核心概念解析
 
@@ -2627,7 +2630,7 @@ server: server.c
 
 ---
 
-### 4.10. 静态模式规则(Static Pattern Rules)
+### 4.10. Static Pattern Rules
 
 #### **4.10.1. 核心概念与价值**
 
@@ -2641,7 +2644,7 @@ server: server.c
   # 普通多目标规则：所有目标共享相同依赖
   foo.o bar.o: common.h
       $(CC) -c $< -o $@
-
+  
   # 静态模式规则：每个目标有独立推导的依赖
   objects = foo.o bar.o
   $(objects): %.o: %.c
@@ -2768,7 +2771,7 @@ $(objects): %.o: %.c  # 复用通用规则
 
 ---
 
-### 4.11. 双冒号规则(Double-Colon Rules)
+### 4.11. Double-Colon Rules
 
 #### **4.11.1. 核心定义**
 
@@ -2862,7 +2865,7 @@ newprog :: bar.c
 
 ---
 
-### 4.12. Makefile 自动依赖生(Generating Prerequisites Automatically)
+### 4.12. Generating Prerequisites Automatically
 
 #### **4.12.1. 核心目标**
 
@@ -2964,13 +2967,13 @@ app: $(sources:.c=.o)
 > - 现代构建工具（如 CMake）已内置此功能，但理解底层机制有助于调试复杂项目。
 >
 
-## 5. 命令规则(Writing Recipes in Rules)
+## 5. Writing Recipes in Rules
 
 逐条执行，默认用 `/bin/bash`
 
 ---
 
-### 5.1. Recipe 语法(Recipe Syntax)
+### 5.1. Recipe Syntax
 
 #### 5.1.1. Recipe 基本概念
 
@@ -3133,7 +3136,7 @@ Single: line1 \ line2
 
 ---
 
-### 5.2. 命令显示控制 (Recipe Echoing)
+### 5.2. Recipe Echoing
 
 在 Makefile 中，"回显"指的是 **make 在执行命令前将该命令本身显示在终端的行为**。这不是命令的输出结果，而是命令本身的显示。
 
@@ -3240,7 +3243,7 @@ gcc -o program main.c
 > 提示：虽然文档使用"回显"这个术语，但在实际使用中可理解为"命令预览"或"命令显示"。重点是掌握 @、-n 和 -s 的使用场景。
 ---
 
-### 5.3. 命令执行 (Recipe Execution)
+### 5.3. Recipe Execution
 
 #### 5.3.1. 核心执行机制
 
@@ -3445,7 +3448,7 @@ graph TD
 
 > 提示：在 Linux 环境下，始终通过 `man make` 查看最新实现细节，不同版本可能有差异
 
-### 5.4. 并发执行命令(Parallel Execution)
+### 5.4. Parallel Execution
 
 #### 5.4.1. 并发执行核心机制
 
@@ -3692,7 +3695,7 @@ step3: intermediate2
 
 ---
 
-### 5.5. 命令执行的错误(Errors in Recipes)
+### 5.5. Errors in Recipes
 
 #### 5.5.1. 错误处理机制核心总结
 
@@ -3881,7 +3884,7 @@ make       # 重新构建
 
 > 关键原则：**核心构建命令不应忽略错误**，非关键辅助操作可安全忽略错误。始终优先考虑 `.DELETE_ON_ERROR` 和 `-k` 组合使用。
 
-### 5.6. 中断make的执行(Interrupting or Killing make)
+### 5.6. Interrupting or Killing make
 
 #### 5.6.1. 中断处理机制
 
@@ -3933,7 +3936,7 @@ output.txt: input.dat
 > 提示：在大多数情况下，不需要特殊处理中断。`make` 的默认删除行为是安全且推荐的，可以防止后续构建出现问题。
 ---
 
-### 5.7. make的递归执行(Recursive Use of make)
+### 5.7. Recursive Use of make
 
 #### 5.7.1. 基本递归调用方法
 
@@ -4111,7 +4114,7 @@ build:
 
 ---
 
-### 5.8. 定义命令包 (Defining Canned Recipes)
+### 5.8.Defining Canned Recipes
 
 #### 5.8.1. 什么是命令包？
 
@@ -4279,7 +4282,7 @@ all: dist/
 > 4. 包含多个步骤的构建流程
 >
 
-### 5.9. 空命令 (Using Empty Recipes)
+### 5.9. Using Empty Recipes
 
 #### 5.9.1. 什么是空命令？
 
@@ -4381,7 +4384,7 @@ placeholder:
 
 ---
 
-## 6. Makefile中的变量(How to Use Variables)
+## 6. How to Use Variables
 
 1. **变量本质**
     - **作用**：类似宏（Macro），代表一个文本字符串（值）。
@@ -4443,7 +4446,7 @@ placeholder:
 
 ---
 
-### 6.1. 变量引用(Basics of Variable References)
+### 6.1. Basics of Variable References
 
 #### 6.1.1. 变量引用基础
 
@@ -4539,7 +4542,7 @@ OBJS = $(DEPS:.c=.o)  # 替换后缀 main.o lib.o
   ```makefile
   # Make变量（使用$( )）
   MAKE_VAR = value
-
+  
   # Shell变量（在命令中使用$ ）
   test:
       @shell_var="hello"; \
@@ -4598,7 +4601,7 @@ OBJS = $(DEPS:.c=.o)  # 替换后缀 main.o lib.o
 > 通过规范使用变量引用格式，可避免 90% 的 Makefile 语法错误。关键原则：**普通变量始终用`$( )`，自动化变量用简写，Shell变量用`$$`转义**。
 >
 
-### 6.2. 两种变量定义(The Two Flavors of Variables)
+### 6.2. The Two Flavors of Variables
 
 #### 6.2.1. 两种核心变量类型对比
 
@@ -4788,7 +4791,7 @@ test:
 
 ---
 
-### 6.3. 变量高级用(Advanced Features for Reference to Variables)
+### 6.3. Advanced Features for Reference to Variables
 
 #### 6.3.1. 变量替换引用（Substitution References）
 
@@ -4981,7 +4984,7 @@ endef
 > **核心建议**：优先保证可读性，仅在必要时使用高级特性，并为复杂逻辑添加详细注释
 >
 
-### 6.4. 变量取值方式(How Variables Get Their Values)
+### 6.4. How Variables Get Their Values
 
 #### 6.4.1. 命令行覆盖 (最高优先级)
 
@@ -5080,7 +5083,7 @@ $(MAKEFLAGS)       # 传递命令行参数
 
 ---
 
-### 6.5. 变量设置(Setting Variables)
+### 6.5. Setting Variables
 
 #### 6.5.1. 变量赋值基础语法
 
@@ -5231,7 +5234,7 @@ test:
 
 ---
 
-### 6.6. 变量追加与覆盖(Appending More Text to Variables)
+### 6.6. Appending More Text to Variables
 
 #### 6.6.1. 变量追加操作 (`+=`)
 
@@ -5373,7 +5376,7 @@ override CFLAGS += -DDEBUG
 
 ---
 
-### 6.7. `override` 关键字(The override Directive)
+### 6.7. The override Directive
 
 #### 6.7.1. 核心作用：防止命令行覆盖
 
@@ -5522,7 +5525,7 @@ endef
 
 ---
 
-### 6.8. 多行变量定义(Defining Multi-Line Variables)
+### 6.8. Defining Multi-Line Variables
 
 #### 6.8.1. 基本语法结构
 
@@ -5549,7 +5552,7 @@ endef
 
    ```makefile
    define NEWLINE
-
+   
    endef
    ```
 
@@ -5689,7 +5692,7 @@ endef
 
 ---
 
-### 6.9. 变量取消定义(Undefining Variables)
+### 6.9. Undefining Variables
 
 #### 6.9.1. 基本用法与效果
 
@@ -5854,7 +5857,7 @@ undefine VAR
 
 ---
 
-### 6.10. 统环境变量(Variables from the Environment)
+### 6.10. Variables from the Environment
 
 #### 6.10.1. 核心行为规则
 
@@ -6010,7 +6013,7 @@ generate:
 >
 ---
 
-### 6.11. 目标专属变量(Target-specific Variable Values)
+### 6.11. Target-specific Variable Values
 
 #### 📌 6.11.1. 核心概念
 
@@ -6073,7 +6076,7 @@ app: main.o utils.o
 
 ---
 
-### 6.12. 模式专属变量(Pattern-specific Variable Values)
+### 6.12. Pattern-specific Variable Values
 
 #### 📌 6.12.1. 核心概念
 
@@ -6126,7 +6129,7 @@ vendor/%.o: CFLAGS = -w          # 第三方库：禁用所有警告
 
 ---
 
-### 6.13. 抑制继承/私有变量(Suppressing Inheritance)
+### 6.13. Suppressing Inheritance
 
 #### 📌 6.13.1. 核心概念
 
@@ -6211,7 +6214,7 @@ main.o: main.c  # 此处无法访问 secret_123！
 
 ---
 
-### 6.14. 特殊变量(Other Special Variables)
+### 6.14. Other Special Variables
 
 #### 6.14.1. `MAKEFILE_LIST` - 文件追踪器
 
@@ -6263,7 +6266,7 @@ $(info 当前默认目标: $(.DEFAULT_GOAL))
   ```makefile
   all: ; @echo "Building ALL"
   release: ; @echo "RELEASE mode"
-
+  
   .DEFAULT_GOAL := release
   ```
 
@@ -6435,11 +6438,11 @@ program: .EXTRA_PREREQS = $(CC)  # 添加编译器依赖
 
 掌握这些特殊变量，可大幅提升构建系统的健壮性和跨平台能力！
 
-## 7. Makefile的条件执行(Conditional Parts of Makefiles)
+## 7. Conditional Parts of Makefiles
 
 条件语句可以根据一个变量的值来控制make执行或者忽略Makefile的特定部分。条件语句可以是两个不同变量、或者变量和常量值的比较。要注意的是：条件语句只能用于控制make实际执行的makefile文件部分，它不能控制规则的shell命令执行过程。Makefile 中使用条件控制可以做到处理的灵活性和高效性。
 
-### 7.1 条件语句示例(Example of a Conditional)
+### 7.1 Example of a Conditional
 
 #### 7.1.1. 条件语句核心作用
 
@@ -6624,7 +6627,7 @@ clang -g -O0 main.c -o app -framework CoreFoundation
 > 最佳实践：复杂条件逻辑应在Makefile开头集中处理，保持规则部分简洁明了
 >
 
-### 7.2. 判断语法(Syntax of Conditionals)
+### 7.2. Syntax of Conditionals
 
 #### 7.2.1. 条件判断基本结构
 
@@ -6878,7 +6881,7 @@ rm -f *.o app
 > 关键记忆点：条件判断是文本级处理，发生在 Makefile 解析阶段，最终执行的只有符合条件的文本块。
 >
 
-### 7.3. 标志检测条件语句(Conditionals that Test Flags)
+### 7.3. Conditionals that Test Flags
 
 #### 7.3.1. 核心机制解析
 
@@ -7036,11 +7039,11 @@ endif
 > **关键记忆点**：标志检测发生在 Makefile 解析阶段，通过 `MAKEFLAGS` + `findstring` 实现动态行为调整。
 >
 
-## 8. 内嵌函数 (Functions for Transforming Text)
+## 8. Functions for Transforming Text
 
 ---
 
-### 8.1. 函数调用(Function Call Syntax)
+### 8.1. Function Call Syntax
 
 #### 8.1.1. 函数调用基本语法
 
@@ -7253,7 +7256,7 @@ $(info Processing: [$(subst $(space),_,$(var))])
 
 ---
 
-### 8.2. 文本处理函数(Functions for String Substitution and Analysis)
+### 8.2. Functions for String Substitution and Analysis
 
 #### 8.2.1. 核心函数速查表
 
@@ -7516,7 +7519,7 @@ objects := $(filtered:.c=.o)
 
 ---
 
-### 8.3. 文件名处理函数(Functions for File Names)
+### 8.3. Functions for File Names
 
 #### 8.3.1. 核心函数速查表
 
@@ -7797,7 +7800,7 @@ OUTPUT := $(addsuffix -$(BUILD_INFO),$(TARGET))
 >
 ---
 
-### 8.4. 条件函数(Functions for Conditionals)
+### 8.4. Functions for Conditionals
 
 #### 8.4.1. 条件函数核心特性
 
@@ -8061,7 +8064,7 @@ VALUE := $(if $(filter x,$(CACHE)),X-result,Y-result)
 
 ---
 
-### 8.5. `let` 函数(The let Function)
+### 8.5. The let Function
 
 #### 8.5.1. 核心功能解析
 
@@ -8286,7 +8289,7 @@ result := $(call min,$(values))
 
 ---
 
-### 8.6. `foreach` 函数(The foreach Function)
+### 8.6. The foreach Function
 
 #### 8.6.1. 核心机制解析
 
@@ -8548,7 +8551,7 @@ $(foreach file,$(FILES),\
 
 ---
 
-### 8.7. `file` 函数(The file Function)
+### 8.7. The file Function
 
 #### 8.7.1. 核心功能解析
 
@@ -8792,7 +8795,7 @@ generate_makefile:
 
 ---
 
-### 8.8. `call` 函数(The call Function)
+### 8.8. The call Function
 
 #### 8.8.1. 核心功能解析
 
@@ -9068,7 +9071,7 @@ $(call log,"Starting build")
 
 ---
 
-### 8.9. `value` 函数(The value Function)
+### 8.9. The value Function
 
 #### 8.9.1. 核心功能解析
 
@@ -9335,7 +9338,7 @@ $(call external_var,other/Makefile,IMPORTANT_VAR)
 
 ---
 
-### 8.10. `eval` 函数(The eval Function)
+### 8.10. The eval Function
 
 #### 8.10.1. 核心机制剖析
 
@@ -9642,7 +9645,7 @@ $(foreach cfg,$(CONFIGS),\
 
 ---
 
-### 8.11. `origin` 函数(The origin Function)
+### 8.11. The origin Function
 
 #### 8.11.1. 核心功能解析
 
@@ -9894,7 +9897,7 @@ ACTIVE_CONFIG := $(resolve_config)
 >
 > **关键警示**：在复杂的包含层级中（多个 Makefile），`origin` 反映的是最终生效的来源，而非原始定义位置。
 
-### 8.12. `flavor` 函数(The flavor Function)
+### 8.12. The flavor Function
 
 #### 8.12.1. 核心功能解析
 
@@ -10154,7 +10157,7 @@ before_critical:
 
 ---
 
-### 8.13. 控制函数详(Functions That Control Make)
+### 8.13. Functions That Control Make
 
 #### 8.13.1. 核心函数对比
 
@@ -10419,7 +10422,7 @@ deploy_prod:
 
 ---
 
-### 8.14. `shell` 函数(The shell Function)
+### 8.14. The shell Function
 
 #### **8.14.1. 核心功能**
 
@@ -10557,7 +10560,7 @@ A：遵守两条原则：
 
 ---
 
-### 8.14. `guile` 函数(The guile Function)
+### 8.14. The guile Function
 
 ---
 
@@ -10697,7 +10700,7 @@ install:
   ```makefile
   # 避免在规则中多次调用
   COMPLEX_RESULT := $(guile ...)  # 提前计算
-
+  
   all: $(COMPLEX_RESULT)
   ```
 
@@ -10728,7 +10731,7 @@ install:
 
 ---
 
-## 9. 执行make(How to Run make)
+## 9. How to Run make
 
 1. **基础运行方式**
 
@@ -10890,7 +10893,7 @@ install:
 
 ---
 
-### 9.1. 指定 Makefile 文件(Arguments to Specify the Makefile)
+### 9.1. Arguments to Specify the Makefile
 
 #### **9.1.1. 核心概念**
 
@@ -11101,7 +11104,7 @@ make -f objs/Makefile
 
 ---
 
-### 9.2. 标指定机制(Arguments to Specify the Goals)
+### 9.2. Arguments to Specify the Goals
 
 #### **9.2.1. 核心概念**
 
@@ -11304,7 +11307,7 @@ make -j 2 build package  # 并行构建
   ifneq (,$(filter debug,$(MAKECMDGOALS)))
     CFLAGS += -DDEBUG -g
   endif
-
+  
   debug: program
   release: program
   ```
@@ -11347,7 +11350,7 @@ make -j 2 build package  # 并行构建
 
 ---
 
-### 9.3. 替代执行(Instead of Executing Recipes)
+### 9.3. Instead of Executing Recipes
 
 #### **9.3.1. 核心概念**
 
@@ -11397,7 +11400,7 @@ gcc -o app main.o utils.o
   # 以 "+" 开头的命令
   clean:
       +rm -f *.o app
-
+  
   # 包含 $(MAKE) 的命令
   build:
       $(MAKE) -C subdir
@@ -11622,7 +11625,7 @@ make -W .config -n
 
 ---
 
-### 9.4. 避免特定文件重新编译(Avoiding Recompilation of Some Files)
+### 9.4. Avoiding Recompilation of Some Files
 
 #### **9.4.1. 问题背景**
 
@@ -11890,7 +11893,7 @@ B -->|是| D[必须重新编译所有依赖]
 
 ---
 
-### 9.5. 变量覆盖(Overriding Variables)
+### 9.5. Overriding Variables
 
 #### **9.5.1. 核心概念**
 
@@ -12174,7 +12177,7 @@ fi
 
 ---
 
-### 9.6. 持续编译测试(Testing the Compilation of a Program)
+### 9.6. Testing the Compilation of a Program
 
 #### **9.6.1. 核心概念与问题背景**
 
@@ -12188,7 +12191,7 @@ fi
 
   ```mermaid
   graph LR
-  A[编译错误] --> B{是否使用 -k？}
+  A["编译错误"] --> B{"是否使用 -k？"}
   B -->|否| C[立即停止]
   B -->|是| D[记录错误并继续]
   D --> E[继续构建其他目标]
@@ -12462,7 +12465,7 @@ E -->|否| G[直接使用]
 
 ---
 
-### 9.7. 临时文件管理(Temporary Files)
+### 9.7. Temporary Files
 
 #### **9.7.1. 核心机制**
 
@@ -12721,7 +12724,7 @@ export MAKE_TMPDIR=/opt/ssd/make_temp
 
 ---
 
-### 9.8. 其他选项(Summary of Options)
+### 9.8. Summary of Options
 
 #### **9.8.1. 构建控制选项**
 
@@ -12994,7 +12997,7 @@ make -s install      # 静默安装
 
 本参考手册覆盖了 GNU Make 所有核心命令行选项，结合功能分类、实用示例和场景化建议，可作为日常开发和工程实践的权威参考资料。
 
-## 10. make的隐含规则(Using Implicit Rules)
+## 10. Using Implicit Rules
 
 - 核心概念：Makefile 的**隐含规则**
 
@@ -13037,7 +13040,7 @@ make -s install      # 静默安装
 
 ---
 
-### 10.1. 隐含规则(Using Imlicit Rules)
+### 10.1. Using Imlicit Rules
 
 #### **10.1.1. 核心概念**
 
@@ -13343,7 +13346,7 @@ sequenceDiagram
 
 ---
 
-### 10.2. 内置隐含规则(Catalogue of Built-In Rules)
+### 10.2. Catalogue of Built-In Rules
 
 #### **10.2.1. 核心概念**
 
@@ -13735,7 +13738,7 @@ graph TD
 
 ---
 
-### 10.3. 隐含变量(Variables Used by Implicit Rules)
+### 10.3. Variables Used by Implicit Rules
 
 #### **10.3.1. 核心概念**
 
@@ -14063,7 +14066,7 @@ make --trace
 
 ---
 
-### 10.4. 隐含规则链(Chains of Implicit Rules)
+### 10.4. Chains of Implicit Rules
 
 #### 10.4.1. 核心概念
 
@@ -14216,7 +14219,7 @@ clean:
 
 ---
 
-### 10.5. 模式规则(Defining and Redefining Pattern Rules)
+### 10.5. Defining and Redefining Pattern Rules
 
 1. **模式规则**：通过 `%` 通配符定义通用规则，匹配文件名模式
    - 目标格式：`前缀%后缀`（如 `%.o`）
@@ -14417,7 +14420,7 @@ deploy/%: build/%
 
 ---
 
-### 10.6. 缺省规则(Defining Last-Resort Default Rules)
+### 10.6. Defining Last-Resort Default Rules
 
 缺省规则是当 make 找不到任何显式规则或隐含规则来构建目标时，作为最后手段使用的规则。它适用于两种情况：
 
@@ -14604,7 +14607,7 @@ placeholder: ;
 
 ---
 
-### 10.7. 后缀规则(Old-Fashioned Suffix Rules)
+### 10.7. Old-Fashioned Suffix Rules
 
 #### 10.7.1. 双后缀规则 (Double-Suffix)
 
@@ -14777,7 +14780,7 @@ make -r  # 或 --no-builtin-rules
 
 ---
 
-### 10.8. 隐含规则搜索算法(Implicit Rule Search Algorithm)
+### 10.8. Implicit Rule Search Algorithm
 
 #### 10.8.1. 目标分解
 
@@ -14807,7 +14810,7 @@ for rule in all_pattern_rules:
 
 ```mermaid
 graph TD
-    A[匹配规则列表] --> B{存在非万用规则<br>或 T 是隐含依赖？}
+    A[匹配规则列表] --> B{"存在非万用规则<br>或 T 是隐含依赖？"}
     B -->|是| C[移除非终局万用规则]
     B -->|否| D[保留所有规则]
     C --> E[移除无命令规则]
@@ -14972,13 +14975,13 @@ build/%.o: src/%.c
 
 ---
 
-## 11. 静态库文件(Using make to Update Archive File)
+## 11. Using make to Update Archive File
 
 静态库文件也称为"文档文件"，它是一些.o 文件的集合。在 Linux（Unix）中使用工具“ar”对它进行维护管理。它所包含的成员（member）是若干.o文件。
 
 ---
 
-### 11.1 库成员作为目标(Archive Members as Targets)
+### 11.1 Archive Members as Targets
 
 #### **11.1.1. 核心概念**
 
@@ -15161,7 +15164,7 @@ foolib(hack.o): hack.o
 
 > 通过合理利用库成员目标和隐含规则，可显著提升 Makefile 的简洁性和构建效率。
 
-### 11.2. 静态库成员目标的隐含规则与符号表更新(Implicit Rule for Archive Member Targets)
+### 11.2. Implicit Rule for Archive Member Targets
 
 #### **11.2.1. 静态库成员目标的隐含规则**
 
@@ -15332,7 +15335,7 @@ ar r libmath.a sin.o  # 只更新 sin.o
 
 > 最佳实践：始终在库目标规则中显式声明所有成员依赖，并合理处理符号表更新逻辑。
 
-### 11.3. 并行构建静态库的安全注意事项(Dangers When Using Archives)
+### 11.3. Dangers When Using Archives
 
 当使用 `make -j N` 进行**并行构建**时：
 
@@ -15484,7 +15487,7 @@ libmath.a: sin.o cos.o tan.o
 
 ---
 
-### 11.4. 静态库的后缀规则与模式规则(Suffix Rules for Archive Files)
+### 11.4. Suffix Rules for Archive Files
 
 #### **11.4.1. 静态库的后缀规则（已过时）**
 
@@ -15635,7 +15638,7 @@ make libmath.a           # 使用规则2：生成整个库
     $ make libmath.a(sin.o)
     gcc -Wall -O2 -c sin.c -o sin.o
     ar cr libmath.a sin.o
-
+    
     # 构建整个库
     $ make libmath.a
     gcc -Wall -O2 -c sin.c -o sin.o
@@ -15681,11 +15684,11 @@ C --> D[清理临时.o]
 
 ---
 
-## 12. Makefile的约定(Makefile Conventions)
+## 12. Makefile Conventions
 
 ---
 
-### 12.1. 编写规范与最佳实践(General Conventions for Makefiles)
+### 12.1. General Conventions for Makefiles
 
 #### 12.1.1. SHELL 变量设置
 
@@ -15888,7 +15891,7 @@ make -j 4  # 未声明依赖时可能同时修改 common.h
 
 ---
 
-### 12.2. 实用程序(Utilities in Makefiles)
+### 12.2. Utilities in Makefiles
 
 #### 12.2.1. Shell 环境规范
 
@@ -16117,7 +16120,7 @@ libutil.a: util.o
 
 ---
 
-### 12.3. 命令变量(Variables for Specifying Commands)
+### 12.3. Variables for Specifying Commands
 
 #### 12.3.1. 工具变量定义规范
 
@@ -16346,7 +16349,7 @@ make CC=arm-linux-gnueabihf-gcc
 
 ---
 
-### 12.4. 分阶段安装规范(DESTDIR: Support for Staged Installs)
+### 12.4. DESTDIR: Support for Staged Installs
 
 #### 12.4.1. DESTDIR 核心概念
 
@@ -16564,7 +16567,7 @@ test-install: install
 >
 ---
 
-### 12.5. 安装目录变量规范(Variables for Installation Directories)
+### 12.5. Variables for Installation Directories
 
 #### 12.5.1. 核心目录变量结构
 
@@ -16797,7 +16800,7 @@ install-man:
 
 ---
 
-### 12.6. 标准用户目标规范(Standard Targets for Users)
+### 12.6. Standard Targets for Users
 
 #### 12.6.1. 核心目标规范
 
@@ -17059,7 +17062,7 @@ check: all
 
 ---
 
-### 12.7. 安装命令规范(Install Command Categories)
+### 12.7. Install Command Categories
 
 #### 12.7.1. 命令分类核心概念
 
@@ -17276,7 +17279,7 @@ install-service:
 
 ---
 
-## 13. 特性总结(Features of GNU make)
+## 13. Features of GNU make
 
 ### 13.1. GNU make 核心优势
 
@@ -17537,7 +17540,7 @@ endif
 
 ---
 
-## 14. 不兼容性与缺失特性总结(Incompatibilities and Missing Features)
+## 14. Incompatibilities and Missing Features
 
 ### 14.1. GNU make 不兼容性与缺失特性总结
 
