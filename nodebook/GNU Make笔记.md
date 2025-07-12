@@ -4,7 +4,7 @@
 
 ## 1. Overview of make
 
-make 概述 
+make 概述
 
 ---
 
@@ -567,15 +567,15 @@ F --> J["执行实际构建任务"]
 #### 3.5.3. 关键机制解释
 
 1. **Makefile 作为构建目标**
-   
+
    - Makefile 可以像普通文件一样有构建规则
    - 示例：从模板生成 Makefile
-   
+
      ```makefile
      Makefile: Makefile.template
          sed 's/__VERSION__/1.0/' $< > $@
      ```
-   
+
 2. **自动重载机制**
    - 如果任何 Makefile 在初始读取后被更新：
      - make 会**清除当前状态**
@@ -1339,7 +1339,7 @@ graph TD
    # 目录必须先于文件存在，但目录本身由规则生成
    log/2023/app.log: log/2023/ | app
        ./app > $@
-   
+
    log/%/:  # 目录创建规则
        mkdir -p $@
    ```
@@ -2644,7 +2644,7 @@ server: server.c
   # 普通多目标规则：所有目标共享相同依赖
   foo.o bar.o: common.h
       $(CC) -c $< -o $@
-  
+
   # 静态模式规则：每个目标有独立推导的依赖
   objects = foo.o bar.o
   $(objects): %.o: %.c
@@ -4542,7 +4542,7 @@ OBJS = $(DEPS:.c=.o)  # 替换后缀 main.o lib.o
   ```makefile
   # Make变量（使用$( )）
   MAKE_VAR = value
-  
+
   # Shell变量（在命令中使用$ ）
   test:
       @shell_var="hello"; \
@@ -5552,7 +5552,7 @@ endef
 
    ```makefile
    define NEWLINE
-   
+
    endef
    ```
 
@@ -6266,7 +6266,7 @@ $(info 当前默认目标: $(.DEFAULT_GOAL))
   ```makefile
   all: ; @echo "Building ALL"
   release: ; @echo "RELEASE mode"
-  
+
   .DEFAULT_GOAL := release
   ```
 
@@ -10700,7 +10700,7 @@ install:
   ```makefile
   # 避免在规则中多次调用
   COMPLEX_RESULT := $(guile ...)  # 提前计算
-  
+
   all: $(COMPLEX_RESULT)
   ```
 
@@ -11307,7 +11307,7 @@ make -j 2 build package  # 并行构建
   ifneq (,$(filter debug,$(MAKECMDGOALS)))
     CFLAGS += -DDEBUG -g
   endif
-  
+
   debug: program
   release: program
   ```
@@ -11400,7 +11400,7 @@ gcc -o app main.o utils.o
   # 以 "+" 开头的命令
   clean:
       +rm -f *.o app
-  
+
   # 包含 $(MAKE) 的命令
   build:
       $(MAKE) -C subdir
@@ -15638,7 +15638,7 @@ make libmath.a           # 使用规则2：生成整个库
     $ make libmath.a(sin.o)
     gcc -Wall -O2 -c sin.c -o sin.o
     ar cr libmath.a sin.o
-    
+
     # 构建整个库
     $ make libmath.a
     gcc -Wall -O2 -c sin.c -o sin.o
